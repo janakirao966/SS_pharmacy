@@ -1,0 +1,573 @@
+/* 23. Image Blend Optimization for Premium Transparent Look */
+.hero-featured-image,
+.product-catalog-image,
+.detail-primary-image,
+.product-image-box img,
+.manufacturing-main-image,
+.gallery-img {
+  mix-blend-mode: multiply;
+  background-color: transparent !important;
+}
+
+/* 24. Full UI Overhaul Standardizations & Enhancements */
+
+/* Unified Heading Sizes */
+.hero-title,
+.about-title,
+.products-title,
+.contact-title,
+.distributor-title,
+.gallery-title,
+.faq-title,
+.testimonials-title,
+.manufacturing-title,
+.terms-title,
+.privacy-title {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-brand-primary);
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 768px) {
+  .hero-title,
+  .about-title,
+  .products-title,
+  .contact-title,
+  .distributor-title,
+  .gallery-title,
+  .faq-title,
+  .testimonials-title,
+  .manufacturing-title,
+  .terms-title,
+  .privacy-title {
+    font-size: 2.25rem;
+  }
+}
+
+/* Standardized Icon Helper Scale */
+.icon-sm {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.icon-md {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-button);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.search-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(196, 163, 90, 0.15);
+}
+
+@media (max-width: 768px) {
+  .catalog-controls-container {
+    top: 68px; /* Mobile offset for sticky navbar */
+    max-width: calc(100vw - 2rem);
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+/* Form group subdivisions for B2B layouts */
+.form-panel-header {
+  grid-column: span 2;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border-hairline);
+  text-align: left;
+}
+
+.form-panel-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-brand-secondary);
+  font-family: var(--font-body);
+}
+
+@media (max-width: 768px) {
+  .form-panel-header {
+    grid-column: span 1;
+  }
+}
+
+/* Gallery Filter Categories Pills */
+.gallery-filters-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+/* Layout & Flexbox Helper Utilities */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.gap-8 {
+  gap: 2rem;
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.mt-12 {
+  margin-top: 3rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+@media (max-width: 768px) {
+  .hero-title,
+  .about-title,
+  .products-title,
+  .contact-title,
+  .distributor-title,
+  .gallery-title,
+  .faq-title,
+  .testimonials-title,
+  .manufacturing-title,
+  .terms-title,
+  .privacy-title {
+    font-size: 2.25rem;
+  }
+}
+
+/* Standardized Icon Helper Scale */
+.icon-sm {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.icon-md {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.icon-lg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* Focus Indicators for Keyboard Accessibility (WCAG 2.4.7) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-accent) !important;
+  outline-offset: 3px !important;
+}
+
+/* Catalog Search Controls Container & Inputs */
+.catalog-controls-container {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  top: calc(var(--nav-total-height, var(--nav-height, 98px)) + 12px) !important;
+  z-index: 100;
+  background: rgba(245, 240, 232, 0.85); /* Deeper warm cream surface */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(196, 163, 90, 0.15);
+  box-shadow: 0 10px 30px -10px rgba(45, 80, 22, 0.08);
+  margin-top: 2rem !important;
+  margin-bottom: 2rem;
+  width: auto;
+  align-self: center;
+}
+
+.search-bar-container {
+  position: relative;
+  min-width: 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-button);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.search-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(196, 163, 90, 0.15);
+}
+
+@media (max-width: 768px) {
+  .catalog-controls-container {
+    max-width: calc(100vw - 2rem);
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+/* Form group subdivisions for B2B layouts */
+.form-panel-header {
+  grid-column: span 2;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border-hairline);
+  text-align: left;
+}
+
+.form-panel-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-brand-secondary);
+  font-family: var(--font-body);
+}
+
+@media (max-width: 768px) {
+  .form-panel-header {
+    grid-column: span 1;
+  }
+}
+
+/* Gallery Filter Categories Pills */
+.gallery-filters-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+/* Layout & Flexbox Helper Utilities */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.gap-8 {
+  gap: 2rem;
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.mt-12 {
+  margin-top: 3rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+/* Layout Spacing & Paddings */
+.p-0 { padding: 0 !important; }
+.p-2 { padding: 0.5rem !important; }
+.p-3 { padding: 0.75rem !important; }
+.p-4 { padding: 1rem !important; }
+.p-6 { padding: 1.5rem !important; }
+.p-8 { padding: 2rem !important; }
+.p-10 { padding: 2.5rem !important; }
+.p-12 { padding: 3rem !important; }
+
+.pt-2 { padding-top: 0.5rem !important; }
+.pt-4 { padding-top: 1rem !important; }
+.pt-6 { padding-top: 1.5rem !important; }
+.pt-8 { padding-top: 2rem !important; }
+.pt-16 { padding-top: 4rem !important; }
+
+.pb-4 { padding-bottom: 1rem !important; }
+.pb-6 { padding-bottom: 1.5rem !important; }
+.pb-8 { padding-bottom: 2rem !important; }
+.pb-12 { padding-bottom: 3rem !important; }
+.pb-16 { padding-bottom: 4rem !important; }
+.pb-24 { padding-bottom: 6rem !important; }
+
+.px-2\.5 { padding-left: 0.625rem !important; padding-right: 0.625rem !important; }
+.px-3 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+.px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+.px-5 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+.px-6 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+.py-1 { padding-top: 0.25rem !important; padding-bottom: 0.25rem !important; }
+.py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+.py-2\.5 { padding-top: 0.625rem !important; padding-bottom: 0.625rem !important; }
+.py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+.py-4 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+.py-16 { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+
+/* Responsive padding for subpages header */
+.pt-page-header {
+  padding-top: calc(var(--nav-total-height, var(--nav-height)) + var(--space-8)) !important;
+}
+
+/* Margins */
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 0.75rem !important; }
+.mt-4 { margin-top: 1rem !important; }
+.mt-6 { margin-top: 1.5rem !important; }
+.mt-8 { margin-top: 2rem !important; }
+.mt-10 { margin-top: 2.5rem !important; }
+.mt-12 { margin-top: 3rem !important; }
+
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 0.75rem !important; }
+.mb-4 { margin-bottom: 1rem !important; }
+.mb-6 { margin-bottom: 1.5rem !important; }
+.mb-8 { margin-bottom: 2rem !important; }
+.mb-10 { margin-bottom: 2.5rem !important; }
+.mb-12 { margin-bottom: 3rem !important; }
+
+.ml-2 { margin-left: 0.5rem !important; }
+.ml-3 { margin-left: 0.75rem !important; }
+.mr-3 { margin-right: 0.75rem !important; }
+.-ml-3 { margin-left: -0.75rem !important; }
+
+/* Max Widths */
+.max-w-md { max-width: 28rem !important; }
+.max-w-lg { max-width: 32rem !important; }
+.max-w-\[500px\] { max-width: 500px !important; }
+.max-w-\[600px\] { max-width: 600px !important; }
+.max-w-\[650px\] { max-width: 650px !important; }
+.max-w-\[680px\] { max-width: 680px !important; }
+.max-w-\[700px\] { max-width: 700px !important; }
+.max-w-\[800px\] { max-width: 800px !important; }
+
+/* Width & Heights */
+.w-12 { width: 3rem !important; }
+.w-16 { width: 4rem !important; }
+.w-24 { width: 6rem !important; }
+.w-fit { width: fit-content !important; }
+.w-\[90\%\] { width: 90% !important; }
+.h-12 { height: 3rem !important; }
+.h-16 { height: 4rem !important; }
+.h-80 { height: 20rem !important; }
+.min-h-\[50vh\] { min-height: 50vh !important; }
+.min-h-\[60vh\] { min-height: 60vh !important; }
+.min-h-\[300px\] { min-height: 300px !important; }
+.min-h-\[350px\] { min-height: 350px !important; }
+
+/* Borders & Rounding */
+.border { border: 1px solid var(--color-border-medium) !important; }
+.border-t { border-top: 1px solid var(--color-border-medium) !important; }
+.border-b { border-bottom: 1px solid var(--color-border-medium) !important; }
+.border-hairline { border-color: var(--color-border-hairline) !important; }
+.border-gold { border-color: var(--color-brand-secondary) !important; }
+.border-gold\/30 { border-color: rgba(196, 163, 90, 0.3) !important; }
+.border-l-4 { border-left-width: 4px !important; }
+.rounded-xl { border-radius: 0.75rem !important; }
+.rounded-2xl { border-radius: 1rem !important; }
+.rounded-full { border-radius: 9999px !important; }
+.rounded-\[20px\] { border-radius: 20px !important; }
+.rounded-\[32px\] { border-radius: 32px !important; }
+
+/* Flex & Grid Helpers */
+.flex-shrink-0, .shrink-0 { flex-shrink: 0 !important; }
+.space-x-2 > * + * { margin-left: 0.5rem !important; }
+.space-x-3 > * + * { margin-left: 0.75rem !important; }
+.space-x-4 > * + * { margin-left: 1rem !important; }
+.space-y-2 > * + * { margin-top: 0.5rem !important; }
+.space-y-3 > * + * { margin-top: 0.75rem !important; }
+.space-y-4 > * + * { margin-top: 1rem !important; }
+
+/* Typography & Visuals */
+.font-semibold { font-weight: 600 !important; }
+.font-bold { font-weight: 700 !important; }
+.text-xs { font-size: 0.75rem !important; }
+.text-sm { font-size: 0.875rem !important; }
+.text-md { font-size: 1rem !important; }
+.text-lg { font-size: 1.125rem !important; }
+.text-xl { font-size: 1.25rem !important; }
+.text-2xl { font-size: 1.5rem !important; }
+.text-3xl { font-size: 1.875rem !important; }
+.text-4xl { font-size: 2.25rem !important; }
+.text-brand-primary { color: var(--color-brand-primary) !important; }
+.text-light { color: var(--color-text-white) !important; }
+.bg-surface { background-color: var(--color-bg-surface) !important; }
+.bg-\[\#FEFDF8\]\/40 { background-color: rgba(254, 253, 248, 0.4) !important; }
+.bg-\[\#FEFDF8\]\/60 { background-color: rgba(254, 253, 248, 0.6) !important; }
+.bg-\[\#3D6B20\]\/5 { background-color: rgba(61, 107, 32, 0.05) !important; }
+.bg-\[\#3D6B20\]\/8 { background-color: rgba(61, 107, 32, 0.08) !important; }
+.bg-transparent { background-color: transparent !important; }
+.border-\[\#3D6B20\]\/10 { border-color: rgba(61, 107, 32, 0.1) !important; }
+.border-red-200 { border-color: rgba(185, 28, 28, 0.2) !important; }
+.bg-red-50 { background-color: rgba(185, 28, 28, 0.05) !important; }
+.text-red-700 { color: var(--color-error) !important; }
+.leading-relaxed { line-height: 1.625 !important; }
+.not-italic { font-style: normal !important; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Positioning */
+.absolute { position: absolute !important; }
+.fixed { position: fixed !important; }
+.inset-0 { top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important; }
+.top-4 { top: 1rem !important; }
+.left-4 { left: 1rem !important; }
+.right-4 { right: 1rem !important; }
+.bottom-6 { bottom: 1.5rem !important; }
+.left-1\/2 { left: 50% !important; }
+.-translate-x-1\/2 { transform: translateX(-50%) !important; }
+.z-10 { z-index: 10 !important; }
+.z-50 { z-index: 50 !important; }
+.z-\[5000\] { z-index: 5000 !important; }
+
+/* Loading Spinner Utilities */
+.animate-spin {
+  animation: buttonSpinner 1s linear infinite !important;
+}
+.border-t-transparent {
+  border-top-color: transparent !important;
+}
+.border-current {
+  border-color: currentColor !important;
+}
+
+/* Fallback for browsers that don't support mix-blend-mode: multiply */
+@supports not (mix-blend-mode: multiply) {
+  .hero-featured-image,
+  .product-catalog-image,
+  .detail-primary-image,
+  .product-image-box img,
+  .manufacturing-main-image,
+  .gallery-img {
+    background-color: #ffffff !important;
+  }
+}
+
+
+
