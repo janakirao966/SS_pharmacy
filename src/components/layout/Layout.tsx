@@ -2,21 +2,12 @@ import { type ReactNode, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import CartDrawer, { type CartItem } from '../ui/CartDrawer';
-import { type Product } from '../../data/products';
+import CartDrawer from '../ui/CartDrawer';
 
 interface LayoutProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   children: ReactNode;
-  cartItems: CartItem[];
-  isCartOpen: boolean;
-  onCartOpenToggle: () => void;
-  onCartClose: () => void;
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateCartQuantity: (productId: string, quantity: number) => void;
-  onClearCart: () => void;
-  onAddToCart: (product: Product, quantity?: number) => void;
   isSearchOpen: boolean;
   onSearchClose: () => void;
   onSearchOpen: () => void;
@@ -26,20 +17,10 @@ export default function Layout({
   activeTab,
   setActiveTab,
   children,
-  cartItems,
-  isCartOpen,
-  onCartOpenToggle,
-  onCartClose,
-  onRemoveFromCart,
-  onUpdateCartQuantity,
-  onClearCart,
-  onAddToCart,
   isSearchOpen,
   onSearchClose,
   onSearchOpen
 }: LayoutProps) {
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
   const [showCookieConsent, setShowCookieConsent] = useState(false);
 
   useEffect(() => {
@@ -65,8 +46,6 @@ export default function Layout({
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        cartCount={cartCount}
-        onCartClick={onCartOpenToggle}
         isSearchOpen={isSearchOpen}
         onSearchClose={onSearchClose}
         onSearchOpen={onSearchOpen}
@@ -76,15 +55,7 @@ export default function Layout({
       </main>
       <Footer setActiveTab={setActiveTab} />
       
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={onCartClose}
-        cartItems={cartItems}
-        onRemove={onRemoveFromCart}
-        onUpdateQuantity={onUpdateCartQuantity}
-        onClear={onClearCart}
-        onAddToCart={onAddToCart}
-      />
+      <CartDrawer />
       
       {showCookieConsent && (
         <div className="cookie-consent-banner" role="status" aria-live="polite">

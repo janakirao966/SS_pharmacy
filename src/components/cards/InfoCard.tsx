@@ -11,7 +11,7 @@ interface InfoCardProps {
 export default function InfoCard({ icon, title, children, className = '' }: InfoCardProps) {
   return (
     <CleanCard variant="default" className={className} innerClassName="info-item-card">
-      <div className="info-icon-box">
+      <div className="info-icon-box icon-wrapper">
         {icon}
       </div>
       <div className="info-details-box mt-4">

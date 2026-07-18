@@ -31,7 +31,8 @@ export default function Contact() {
     location: '',
     product: '',
     message: '',
-    consent: false
+    consent: false,
+    botcheck: false
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -172,7 +173,8 @@ export default function Contact() {
           email: formData.email,
           location: formData.location,
           product: formData.product || 'Not Specified',
-          message: formData.message
+          message: formData.message,
+          botcheck: formData.botcheck
         })
       });
 
@@ -187,7 +189,8 @@ export default function Contact() {
           location: '',
           product: '',
           message: '',
-          consent: false
+          consent: false,
+          botcheck: false
         });
         setTouched({});
       } else {
@@ -213,6 +216,25 @@ export default function Contact() {
         title="Contact Us - S.S. PHARMACY"
         description="Get in touch with S.S. PHARMACY Kadapa headquarters for retail orders, clinic supply requests, and distributor program enquiries."
         canonical="https://sspharmacy.com/contact"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact S.S. PHARMACY",
+          "url": "https://sspharmacy.com/contact",
+          "mainEntity": {
+            "@type": "MedicalBusiness",
+            "name": "S.S. PHARMACY",
+            "telephone": "+919494323211",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "D. No. 1-2-211 & 1-2-212, Prakash Nagar, Yerraguntla Panchayati",
+              "addressLocality": "YSR Kadapa District",
+              "addressRegion": "Andhra Pradesh",
+              "postalCode": "516309",
+              "addressCountry": "IN"
+            }
+          }
+        }}
       />
       {/* 1. Page Header & Navigation */}
       <Section className="pt-page-header pb-8">
@@ -239,6 +261,7 @@ export default function Contact() {
               <InfoCard
                 icon={<Phone size={18} />}
                 title="Call or WhatsApp"
+                className="contact-detail-card"
               >
                 <p className="mt-1 text-secondary">Primary: +91 9494323211</p>
                 <p className="text-secondary">Office: +91 8563 274701</p>
@@ -247,6 +270,7 @@ export default function Contact() {
               <InfoCard
                 icon={<Mail size={18} />}
                 title="Email Dispatch"
+                className="contact-detail-card"
               >
                 <p className="mt-1 text-secondary">General: info@sspharmacy.com</p>
                 <p className="text-secondary">Dealers: partners@sspharmacy.com</p>
@@ -255,6 +279,7 @@ export default function Contact() {
               <InfoCard
                 icon={<Clock size={18} />}
                 title="Business Hours"
+                className="contact-detail-card"
               >
                 <p className="mt-1 text-secondary">Monday to Saturday</p>
                 <p className="text-secondary">09:00 AM to 06:00 PM IST</p>
@@ -263,6 +288,7 @@ export default function Contact() {
               <InfoCard
                 icon={<MapPin size={18} />}
                 title="Manufacturing Unit"
+                className="contact-detail-card"
               >
                 <p className="mt-1 text-secondary">Prakash Nagar, Yerraguntla,</p>
                 <p className="text-secondary">YSR Kadapa Dist, AP - 516309</p>
@@ -300,20 +326,20 @@ export default function Contact() {
                       </div>
                     )}
 
-                    <FormInput
-                      id="name"
-                      name="name"
-                      type="text"
-                      label="Full Name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      error={errors.name}
-                      success={touched.name && !errors.name && !!formData.name}
-                      required
-                      autoComplete="name"
-                    />
-
                     <Grid cols={2} gap="sm" className="mb-4">
+                      <FormInput
+                        id="name"
+                        name="name"
+                        type="text"
+                        label="Full Name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        error={errors.name}
+                        success={touched.name && !errors.name && !!formData.name}
+                        required
+                        autoComplete="name"
+                      />
+
                       <FormInput
                         id="phone"
                         name="phone"
@@ -326,7 +352,9 @@ export default function Contact() {
                         required
                         autoComplete="tel"
                       />
+                    </Grid>
 
+                    <Grid cols={2} gap="sm" className="mb-4">
                       <FormInput
                         id="email"
                         name="email"
@@ -339,20 +367,20 @@ export default function Contact() {
                         required
                         autoComplete="email"
                       />
-                    </Grid>
 
-                    <FormInput
-                      id="location"
-                      name="location"
-                      type="text"
-                      label="Location (City, State)"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      error={errors.location}
-                      success={touched.location && !errors.location && !!formData.location}
-                      required
-                      autoComplete="address-level2"
-                    />
+                      <FormInput
+                        id="location"
+                        name="location"
+                        type="text"
+                        label="Location (City, State)"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        error={errors.location}
+                        success={touched.location && !errors.location && !!formData.location}
+                        required
+                        autoComplete="address-level2"
+                      />
+                    </Grid>
 
                     <FormSelect
                       id="product"
@@ -382,9 +410,22 @@ export default function Contact() {
                       required
                     />
 
+                    {/* Honeypot field for Web3Forms to prevent bot spam */}
+                    <input
+                      type="checkbox"
+                      name="botcheck"
+                      className="hidden"
+                      style={{ display: 'none' }}
+                      checked={formData.botcheck}
+                      onChange={(e) => handleCheckboxChange('botcheck', e.target.checked)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+
                     <Button
                       type="submit"
                       variant="primary"
+                      rounded="full"
                       className="w-full py-4 justify-center"
                       loading={isSubmitting}
                       aria-live="polite"

@@ -53,7 +53,8 @@ export default function Distributor() {
     regions: '',
     capacity: '',
     message: '',
-    consent: false
+    consent: false,
+    botcheck: false
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -231,7 +232,8 @@ export default function Distributor() {
           years_in_business: formData.yearsInBusiness,
           regions: formData.regions,
           capacity: formData.capacity || 'Not Specified',
-          notes: formData.message
+          notes: formData.message,
+          botcheck: formData.botcheck
         })
       });
 
@@ -251,7 +253,8 @@ export default function Distributor() {
           regions: '',
           capacity: '',
           message: '',
-          consent: false
+          consent: false,
+          botcheck: false
         });
         setTouched({});
         setCurrentStep(1);
@@ -548,6 +551,18 @@ export default function Distributor() {
                         onChange={(e) => handleCheckboxChange('consent', e.target.checked)}
                         error={errors.consent}
                         required
+                      />
+
+                      {/* Honeypot field for Web3Forms to prevent bot spam */}
+                      <input
+                        type="checkbox"
+                        name="botcheck"
+                        className="hidden"
+                        style={{ display: 'none' }}
+                        checked={formData.botcheck}
+                        onChange={(e) => handleCheckboxChange('botcheck', e.target.checked)}
+                        tabIndex={-1}
+                        autoComplete="off"
                       />
                     </div>
                   )}

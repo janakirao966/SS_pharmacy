@@ -5,7 +5,7 @@ interface AyurvedicTermProps {
 /**
  * WCAG-compliant inline element to tag Sanskrit/Ayurvedic medical terms.
  */
-export function AyurvedicTerm({ children }: AyurvedicTermProps) {
+function AyurvedicTerm({ children }: AyurvedicTermProps) {
   return (
     <span lang="sa" className="ayurvedic-term">
       {children}

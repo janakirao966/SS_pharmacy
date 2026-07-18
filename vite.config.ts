@@ -1,9 +1,22 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  base: '/SS_pharmacy/',
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      injectRegister: 'auto',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+        maximumFileSizeToCacheInBytes: 5242880 // 5 MiB
+      },
+      manifest: false // preserve existing public/manifest.json
+    })
+  ],
   build: {
     chunkSizeWarningLimit: 250, // Flag chunk sizes over 250kB
     rollupOptions: {
@@ -15,6 +28,12 @@ export default defineConfig({
             }
             if (id.includes('react-router-dom') || id.includes('react-router') || id.includes('@remix-run')) {
               return 'vendor-router';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('workbox')) {
+              return 'vendor-workbox';
             }
             return 'vendor-libs';
           }

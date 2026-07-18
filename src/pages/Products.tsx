@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Heart } from 'lucide-react';
-import { products, type Product } from '../data/products';
+import { products } from '../data/products';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -20,11 +20,9 @@ import SEO from '../components/ui/SEO';
 interface ProductsProps {
   setActiveTab: (tab: string) => void;
   setSelectedProductId: (id: string) => void;
-  onAddToCart: (product: Product, quantity: number) => void;
-  onBuyNow: (product: Product) => void;
 }
 
-export default function Products({ setActiveTab, setSelectedProductId, onAddToCart, onBuyNow }: ProductsProps) {
+export default function Products({ setActiveTab, setSelectedProductId }: ProductsProps) {
   const [filter, setFilter] = useState('all');
   const { isFavorited, toggleWishlist } = useWishlist();
   const [compareList, setCompareList] = useState<string[]>([]);
@@ -66,11 +64,6 @@ export default function Products({ setActiveTab, setSelectedProductId, onAddToCa
 
   const handleProductDetail = (id: string) => {
     setSelectedProductId(id);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleEnquire = () => {
-    setActiveTab('distributor');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -155,13 +148,14 @@ export default function Products({ setActiveTab, setSelectedProductId, onAddToCa
                   key={product.id}
                   product={product}
                   onClick={handleProductDetail}
-                  onEnquire={handleEnquire}
                   isWishlisted={isFavorited(product.id)}
                   onWishlistToggle={() => toggleWishlist(product.id)}
                   isComparing={compareList.includes(product.id)}
                   onCompareToggle={() => handleToggleCompare(product.id)}
-                  onAddToCart={onAddToCart}
-                  onBuyNow={onBuyNow}
+                  onEnquire={() => {
+                    setActiveTab('contact');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                 />
               ))}
             </Grid>

@@ -1,4 +1,4 @@
-export interface AnalyticsEvent {
+interface AnalyticsEvent {
   event: string;
   category: string;
   action: string;

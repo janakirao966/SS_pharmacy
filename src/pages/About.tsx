@@ -147,12 +147,15 @@ export default function About() {
               <p className="mt-4 text-secondary">
                 Our licensed manufacturing facility is located in Yerraguntla, Kadapa District, Andhra Pradesh. This location handles our research, batch processing, packaging, quality control, and distribution dispatch operations.
               </p>
-              <div className="location-detail-row mt-6 flex items-start space-x-2">
+              <div className="location-detail-row mt-6 flex items-start space-x-3">
                 <MapPin className="text-gold mt-1 flex-shrink-0" size={18} />
-                <address className="not-italic text-secondary text-sm leading-relaxed">
-                  D. No. 1-2-211 and 1-2-212, Prakash Nagar,<br />
-                  Yerraguntla Panchayati, YSR Kadapa District,<br />
-                  Andhra Pradesh - 516309
+                <address className="location-address not-italic">
+                  <h5 className="address-title font-display text-base font-semibold text-brand-primary">Manufacturing Facility</h5>
+                  <p className="address-desc text-secondary text-sm mt-1 leading-relaxed">
+                    D. No. 1-2-211 and 1-2-212, Prakash Nagar,<br />
+                    Yerraguntla Panchayati, YSR Kadapa District,<br />
+                    Andhra Pradesh - 516309
+                  </p>
                 </address>
               </div>
             </div>

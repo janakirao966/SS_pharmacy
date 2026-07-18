@@ -9,6 +9,8 @@
   --color-brand-primary: #3D6B20;        /* Vibrant Green */
   --color-brand-primary-light: #4A7F28;  /* Hover Green */
   --color-brand-primary-dark: #2D5016;   /* Deep Accent Green */
+  --color-brand-primary-muted: rgba(45, 80, 22, 0.08); /* 8% opacity of Forest Green */
+
 
   /* Color Tokens - Accent / Gold */
   --color-brand-secondary: #9B7B35;      /* Darker Gold for WCAG AA compliance */
@@ -72,7 +74,7 @@
   --radius-inner: 16px;
   --radius-button: 9999px;
   --radius-control: 8px;
-  --radius-card: 16px;
+  --radius-card: var(--radius-outer);
 
   /* Spacing Scale */
   --space-1: 0.25rem;   /* 4px */

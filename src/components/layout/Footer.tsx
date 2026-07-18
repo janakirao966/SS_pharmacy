@@ -61,9 +61,9 @@ export default function Footer({ setActiveTab: _setActiveTab }: FooterProps) {
             </p>
             <Link
               to="/about"
-              className="btn-pill btn-pill-secondary border-light text-light text-xs py-2 px-5 hover:bg-white hover:text-[#2D5016]"
+              className="btn-pill border-light text-light text-xs py-2 px-5 hover:bg-white hover:text-[#2D5016]"
               onClick={handleScrollTop}
-              style={{ display: 'inline-flex', borderColor: 'rgba(255,255,255,0.4)', color: '#ffffff' }}
+              style={{ display: 'inline-flex', backgroundColor: 'transparent', borderColor: 'rgba(255,255,255,0.4)', color: '#ffffff', borderWidth: '1px', borderStyle: 'solid' }}
             >
               Know More
             </Link>

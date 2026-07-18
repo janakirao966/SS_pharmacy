@@ -88,13 +88,13 @@ export default function Manufacturing() {
             {standards.map((std, i) => (
               <div
                 key={i}
-                className={`flex flex-col md:flex-row items-center gap-12 mb-20 ${
-                  i % 2 === 1 ? 'md:flex-row-reverse' : ''
+                className={`manufacturing-row ${
+                  i % 2 === 1 ? 'manufacturing-row-reverse' : ''
                 }`}
               >
                 {/* Text Block */}
                 <div className="flex-1 text-left">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#8B6914] font-bold">
+                  <span className="pillar-eyebrow">
                     Pillar 0{i + 1}
                   </span>
                   <h3 className="font-display text-2xl md:text-3xl text-brand-primary mt-2 mb-4">
@@ -105,25 +105,25 @@ export default function Manufacturing() {
                   </p>
                   
                   {i === 1 && (
-                    <div className="manufacturing-license-highlight mt-6 flex items-start space-x-4 bg-surface p-4 rounded-xl border border-hairline">
-                      <div className="license-icon-box text-gold mt-0.5">
+                    <div className="manufacturing-license-highlight">
+                      <div className="license-icon-box">
                         <Factory size={18} />
                       </div>
-                      <div>
-                        <h5 className="font-semibold text-brand-primary text-sm">Govt. Approved Ayurvedic Unit</h5>
-                        <p className="text-[#6E6863] text-xs mt-1">License number R-1970/Ayur ensures compliance with regulatory requirements.</p>
+                      <div className="license-text-box">
+                        <h5>Govt. Approved Ayurvedic Unit</h5>
+                        <p>License number R-1970/Ayur ensures compliance with regulatory requirements.</p>
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* Visual Block (Zoom on Hover Card) */}
-                <div className="w-full md:w-[450px]">
-                  <CleanCard variant="default" innerClassName="manufacturing-visual-container p-6 bg-white flex items-center justify-center h-[280px]">
+                <div className="manufacturing-row-visual-shell">
+                  <CleanCard variant="default" innerClassName="manufacturing-visual-container">
                     <img
                       src={std.image}
                       alt={std.title}
-                      className="manufacturing-main-image max-h-[220px] object-contain hover:scale-105 transition-transform duration-500"
+                      className="manufacturing-main-image"
                       width={400}
                       height={220}
                       loading="lazy"
@@ -151,29 +151,27 @@ export default function Manufacturing() {
           <div className="relative max-w-[650px] mx-auto mt-12">
             {/* Carousel Pane */}
             <div className="certificate-slide-viewport overflow-hidden">
-              <div className="certificate-card-wrapper transition-all duration-300">
-                <CleanCard variant="default" className="transform hover:scale-[1.03] transition-transform duration-300">
-                  <div className="p-8 text-center bg-white rounded-2xl flex flex-col items-center min-h-[300px] justify-between">
-                    <div className="flex flex-col items-center">
-                      <div className="certificate-icon-box text-gold mb-6 bg-[#FAF8F5] p-4 rounded-full border border-gold/30">
-                        <Award size={36} />
-                      </div>
-                      <h3 className="font-display text-xl font-bold text-brand-primary mb-2">
-                        {certificates[activeCert].title}
-                      </h3>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-secondary font-bold block mb-4">
-                        {certificates[activeCert].authority}
-                      </span>
-                      <p className="text-secondary text-sm leading-relaxed max-w-md">
-                        {certificates[activeCert].desc}
-                      </p>
+              <div className="certificate-card-wrapper">
+                <CleanCard variant="default" innerClassName="certificate-card-inner">
+                  <div className="certificate-card-content">
+                    <div className="certificate-icon-box">
+                      <Award size={32} />
                     </div>
-                    
-                    <div className="mt-8 pt-4 border-t border-hairline w-full">
-                      <span className="text-xs font-mono text-[#8B6914] font-semibold">
-                        {certificates[activeCert].ref}
-                      </span>
-                    </div>
+                    <h3 className="certificate-title">
+                      {certificates[activeCert].title}
+                    </h3>
+                    <span className="certificate-authority">
+                      {certificates[activeCert].authority}
+                    </span>
+                    <p className="certificate-desc">
+                      {certificates[activeCert].desc}
+                    </p>
+                  </div>
+                  
+                  <div className="certificate-footer">
+                    <span className="certificate-ref">
+                      {certificates[activeCert].ref}
+                    </span>
                   </div>
                 </CleanCard>
               </div>
@@ -184,7 +182,7 @@ export default function Manufacturing() {
               <button
                 type="button"
                 onClick={handlePrevCert}
-                className="p-3 rounded-full border border-[#EBE6DC] bg-white hover:bg-[#FAF8F5] text-brand-primary transition-all active:scale-95 cursor-pointer flex items-center justify-center"
+                className="carousel-control-btn"
                 aria-label="Previous Certificate"
               >
                 <ChevronLeft size={16} />
@@ -192,7 +190,7 @@ export default function Manufacturing() {
               <button
                 type="button"
                 onClick={handleNextCert}
-                className="p-3 rounded-full border border-[#EBE6DC] bg-white hover:bg-[#FAF8F5] text-brand-primary transition-all active:scale-95 cursor-pointer flex items-center justify-center"
+                className="carousel-control-btn"
                 aria-label="Next Certificate"
               >
                 <ChevronRight size={16} />

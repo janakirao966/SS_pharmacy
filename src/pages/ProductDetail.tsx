@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShieldAlert, Award, FileText, ShoppingBag } from 'lucide-react';
-import { products, type Product } from '../data/products';
+import { products } from '../data/products';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -13,14 +13,14 @@ import ProductCard from '../components/cards/ProductCard';
 import SectionHeader from '../components/ui/SectionHeader';
 import { renderAyurvedicText } from '../utils/lang';
 import SEO from '../components/ui/SEO';
+import { useCart } from '../context/CartContext';
 
 interface ProductDetailProps {
   productId: string;
-  onAddToCart: (product: Product, quantity: number) => void;
-  onBuyNow: (product: Product) => void;
 }
 
-export default function ProductDetail({ productId, onAddToCart, onBuyNow }: ProductDetailProps) {
+export default function ProductDetail({ productId }: ProductDetailProps) {
+  const { handleAddToCart, handleBuyNow } = useCart();
   const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState<'ingredients' | 'usage' | 'manufacturer' | null>('ingredients');
 
@@ -127,7 +127,8 @@ export default function ProductDetail({ productId, onAddToCart, onBuyNow }: Prod
                   width={500}
                   height={500}
                   loading="eager"
-                  decoding="async"
+                  fetchPriority="high"
+                  decoding="sync"
                 />
               </CleanCard>
             </div>
@@ -137,58 +138,58 @@ export default function ProductDetail({ productId, onAddToCart, onBuyNow }: Prod
               <div className="w-fit">
                 <Badge variant="tag">{renderAyurvedicText(product.category)}</Badge>
               </div>
-              <h1 className="detail-title mt-3 text-3xl font-display font-bold text-brand-primary">{renderAyurvedicText(product.name)}</h1>
+              <h1 className="detail-title">{renderAyurvedicText(product.name)}</h1>
               
-              <div className="detail-meta-price-box mt-4 bg-surface p-6 rounded-2xl border border-hairline">
+              <div className="detail-meta-price-box">
                 <div className="price-tag">
-                  <span className="label text-xs uppercase tracking-wider text-[#C4A35A] font-semibold">Maximum Retail Price (MRP)</span>
-                  <div className="flex items-baseline gap-2 mt-1">
-                    <span className="value font-display text-2xl font-bold text-brand-primary">₹{product.mrp}/-</span>
-                    <span className="subtext text-xs text-[#737373]">(Inclusive of all taxes)</span>
+                  <span className="label">Maximum Retail Price (MRP)</span>
+                  <div className="price-value-container">
+                    <span className="value">₹{product.mrp}/-</span>
+                    <span className="subtext">(Inclusive of all taxes)</span>
                   </div>
                 </div>
-                <div className="pack-tag mt-4 pt-4 border-t border-hairline">
-                  <span className="label text-xs uppercase tracking-wider text-[#C4A35A] font-semibold">Pack Weight / Size</span>
-                  <span className="value block text-lg font-bold text-brand-primary mt-1">{product.packSize}</span>
+                <div className="pack-tag">
+                  <span className="label">Pack Weight / Size</span>
+                  <span className="value">{product.packSize}</span>
                 </div>
               </div>
 
               {/* Product overview description */}
-              <div className="detail-description-section mt-6">
+              <div className="detail-description-section">
                 <p className="text-secondary leading-relaxed">
                   {renderAyurvedicText(product.name)} is developed under government-licensed Ayurvedic manufacturing standards. We utilize premium, authenticated herbs and active concentrates in clean processing settings to preserve the natural potency and purity of classic Ayurvedic medicine.
                 </p>
               </div>
 
               {/* Redesigned Accordion Tabs */}
-              <div className="detail-accordion mt-8 border-t border-hairline">
+              <div className="detail-accordion">
                 
                 {/* Accordion Item 1: Ingredients & Benefits */}
-                <div className="accordion-item border-b border-hairline">
+                <div className="accordion-item">
                   <button
                     type="button"
                     onClick={() => setActiveAccordion(activeAccordion === 'ingredients' ? null : 'ingredients')}
-                    className="accordion-header w-full py-4 flex justify-between items-center text-left font-display text-[#3D6B20] font-semibold text-lg cursor-pointer bg-transparent border-0"
+                    className="accordion-header"
                     aria-expanded={activeAccordion === 'ingredients'}
                   >
                     <span>1. Composition & Key Ingredients</span>
-                    <span className="text-[#C4A35A] font-mono text-xl">{activeAccordion === 'ingredients' ? '−' : '+'}</span>
+                    <span className="accordion-header-icon" />
                   </button>
                   <div className={`accordion-panel ${activeAccordion === 'ingredients' ? 'expanded' : ''}`}>
                     <div className="accordion-inner">
                       <div className="pb-6">
-                        <div className="ingredients-header-row flex items-center space-x-2 mb-4">
+                        <div className="ingredients-header-row">
                           <FileText size={18} className="text-[#C4A35A]" />
                           <h4 className="font-semibold text-brand-primary">Ayurvedic Composition</h4>
                         </div>
-                        <CleanCard variant="default" className="mb-6" innerClassName="ingredients-composition-box p-4 bg-[#F8F7F4]">
-                          <p className="composition-text text-sm leading-relaxed text-secondary">{renderAyurvedicText(product.composition)}</p>
+                        <CleanCard variant="default" className="mb-6" innerClassName="ingredients-composition-box">
+                          <p className="composition-text">{renderAyurvedicText(product.composition)}</p>
                         </CleanCard>
                         <h4 className="font-semibold text-brand-primary mb-3">Key Benefits & Indications</h4>
-                        <ul className="detail-benefits-list space-y-2">
+                        <ul className="detail-benefits-list">
                           {product.benefits.map((benefit, i) => (
-                            <li key={i} className="flex items-start space-x-2 text-sm text-secondary">
-                              <Award size={16} className="benefit-icon text-[#C4A35A] mt-0.5 flex-shrink-0" />
+                            <li key={i}>
+                              <Award size={16} className="benefit-icon mt-0.5 flex-shrink-0" />
                               <span>{renderAyurvedicText(benefit)}</span>
                             </li>
                           ))}
@@ -199,20 +200,20 @@ export default function ProductDetail({ productId, onAddToCart, onBuyNow }: Prod
                 </div>
 
                 {/* Accordion Item 2: Directions & Safety */}
-                <div className="accordion-item border-b border-hairline">
+                <div className="accordion-item">
                   <button
                     type="button"
                     onClick={() => setActiveAccordion(activeAccordion === 'usage' ? null : 'usage')}
-                    className="accordion-header w-full py-4 flex justify-between items-center text-left font-display text-[#3D6B20] font-semibold text-lg cursor-pointer bg-transparent border-0"
+                    className="accordion-header"
                     aria-expanded={activeAccordion === 'usage'}
                   >
                     <span>2. Directions for Use & Safety Information</span>
-                    <span className="text-[#C4A35A] font-mono text-xl">{activeAccordion === 'usage' ? '−' : '+'}</span>
+                    <span className="accordion-header-icon" />
                   </button>
                   <div className={`accordion-panel ${activeAccordion === 'usage' ? 'expanded' : ''}`}>
                     <div className="accordion-inner">
                       <div className="pb-6 text-left">
-                        <div className="usage-warning-header flex items-center space-x-2 mb-4">
+                        <div className="usage-warning-header">
                           <ShieldAlert size={18} className="text-[#B91C1C]" />
                           <h4 className="font-semibold text-[#B91C1C]">Usage Instructions</h4>
                         </div>
@@ -230,20 +231,20 @@ export default function ProductDetail({ productId, onAddToCart, onBuyNow }: Prod
                 </div>
 
                 {/* Accordion Item 3: Manufacturing Details */}
-                <div className="accordion-item border-b border-hairline">
+                <div className="accordion-item">
                   <button
                     type="button"
                     onClick={() => setActiveAccordion(activeAccordion === 'manufacturer' ? null : 'manufacturer')}
-                    className="accordion-header w-full py-4 flex justify-between items-center text-left font-display text-[#3D6B20] font-semibold text-lg cursor-pointer bg-transparent border-0"
+                    className="accordion-header"
                     aria-expanded={activeAccordion === 'manufacturer'}
                   >
                     <span>3. Manufacturer & License Compliance</span>
-                    <span className="text-[#C4A35A] font-mono text-xl">{activeAccordion === 'manufacturer' ? '−' : '+'}</span>
+                    <span className="accordion-header-icon" />
                   </button>
                   <div className={`accordion-panel ${activeAccordion === 'manufacturer' ? 'expanded' : ''}`}>
                     <div className="accordion-inner">
                       <div className="pb-6 text-left">
-                        <table className="compliance-table-inline w-full text-sm">
+                        <table className="compliance-table-inline">
                           <tbody>
                             <tr className="border-b border-hairline">
                               <td className="py-2.5 font-semibold text-brand-primary w-1/3">Manufacturer</td>
@@ -271,13 +272,13 @@ export default function ProductDetail({ productId, onAddToCart, onBuyNow }: Prod
               </div>
 
               {/* Action Buttons Row */}
-              <div className="detail-actions-row flex gap-4 mt-8">
+              <div className="detail-actions-row">
                 <Button
                   variant="outline"
                   size="lg"
-                  rounded="md"
+                  rounded="full"
                   className="flex-1 flex items-center justify-center gap-2"
-                  onClick={() => onAddToCart(product, 1)}
+                  onClick={() => handleAddToCart(product, 1)}
                 >
                   <ShoppingBag size={18} />
                   <span>Add to Cart</span>
@@ -286,9 +287,9 @@ export default function ProductDetail({ productId, onAddToCart, onBuyNow }: Prod
                 <Button
                   variant="primary"
                   size="lg"
-                  rounded="md"
-                  className="flex-1"
-                  onClick={() => onBuyNow(product)}
+                  rounded="full"
+                  className="flex-1 btn-buy-now-premium"
+                  onClick={() => handleBuyNow(product)}
                 >
                   Buy Now
                 </Button>
@@ -315,8 +316,6 @@ export default function ProductDetail({ productId, onAddToCart, onBuyNow }: Prod
                   key={p.id}
                   product={p}
                   onClick={handleRelatedProductClick}
-                  onAddToCart={onAddToCart}
-                  onBuyNow={onBuyNow}
                 />
               ))}
             </Grid>

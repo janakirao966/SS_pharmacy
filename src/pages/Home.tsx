@@ -1,5 +1,5 @@
 import { ShieldCheck, Award, Zap, Leaf } from 'lucide-react';
-import { products, type Product } from '../data/products';
+import { products } from '../data/products';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -13,11 +13,9 @@ import ScrollReveal from '../components/ui/ScrollReveal';
 interface HomeProps {
   setActiveTab: (tab: string) => void;
   setSelectedProductId: (id: string) => void;
-  onAddToCart: (product: Product, quantity: number) => void;
-  onBuyNow: (product: Product) => void;
 }
 
-export default function Home({ setActiveTab, setSelectedProductId, onAddToCart, onBuyNow }: HomeProps) {
+export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) {
   const handleProductClick = (id: string) => {
     setSelectedProductId(id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -52,7 +50,11 @@ export default function Home({ setActiveTab, setSelectedProductId, onAddToCart, 
           "priceRange": "$$",
           "knowsAbout": ["Ayurveda", "Ayurvedic proprietary medicine", "Pain relief cream"],
           "license": "R-1970/Ayur",
-          "url": "https://sspharmacy.com/"
+          "url": "https://sspharmacy.com/",
+          "sameAs": [
+            "https://www.linkedin.com/company/ss-pharmacy",
+            "https://twitter.com/ss_pharmacy"
+          ]
         }}
       />
  
@@ -129,8 +131,9 @@ export default function Home({ setActiveTab, setSelectedProductId, onAddToCart, 
                     key={product.id}
                     product={product}
                     onClick={handleProductClick}
-                    onAddToCart={onAddToCart}
-                    onBuyNow={onBuyNow}
+                    onEnquire={() => {
+                      handleTabChange('contact');
+                    }}
                   />
                 ))}
               </Grid>

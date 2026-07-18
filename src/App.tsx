@@ -4,10 +4,8 @@ import Layout from './components/layout/Layout';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import ScrollToTop from './components/layout/ScrollToTop';
 import Spinner from './components/ui/Spinner';
-import type { CartItem } from './components/ui/CartDrawer';
-import type { Product } from './data/products';
-import { useToast } from './context/ToastContext';
-import { trackPageView, trackEvent } from './utils/analytics';
+import { trackPageView } from './utils/analytics';
+import { useCart } from './context/CartContext';
 
 // Lazy load page components for optimal bundle splitting and faster initial LCP
 const Home = lazy(() => import('./pages/Home'));
@@ -26,78 +24,21 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Distributor = lazy(() => import('./pages/Distributor'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
-interface ProductDetailWrapperProps {
-  onAddToCart: (product: Product, quantity: number) => void;
-  onBuyNow: (product: Product) => void;
-}
-
-function ProductDetailWrapper({ onAddToCart, onBuyNow }: ProductDetailWrapperProps) {
+function ProductDetailWrapper() {
   const { id } = useParams<{ id: string }>();
   return (
     <Suspense fallback={<div className="flex items-center justify-center min-h-[50vh]"><Spinner size={32} /></div>}>
-      <ProductDetail
-        productId={id || 'dr-lion-pain-cream'}
-        onAddToCart={onAddToCart}
-        onBuyNow={onBuyNow}
-      />
+      <ProductDetail productId={id || 'dr-lion-pain-cream'} />
     </Suspense>
   );
 }
 
 export default function App() {
-  const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<string>('home');
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    try {
-      const saved = localStorage.getItem('ss_cart');
-      const savedTime = localStorage.getItem('ss_cart_timestamp');
-      if (saved && savedTime) {
-        const age = Date.now() - parseInt(savedTime, 10);
-        const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
-        if (age < maxAge) {
-          return JSON.parse(saved);
-        }
-      }
-    } catch {
-      // ignore parsing error
-    }
-    return [];
-  });
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [cartAnnouncement, setCartAnnouncement] = useState('');
-
-  // Sync cart across tabs
-  useEffect(() => {
-    if (navigator.webdriver) return;
-    const channel = new BroadcastChannel('ss_cart_channel');
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === 'UPDATE_CART') {
-        setCartItems(event.data.cartItems);
-      }
-    };
-    channel.addEventListener('message', handleMessage);
-    return () => {
-      channel.removeEventListener('message', handleMessage);
-      channel.close();
-    };
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('ss_cart', JSON.stringify(cartItems));
-    if (cartItems.length > 0) {
-      localStorage.setItem('ss_cart_timestamp', Date.now().toString());
-    } else {
-      localStorage.removeItem('ss_cart_timestamp');
-    }
-    if (navigator.webdriver) return;
-    // Broadcast to other tabs
-    const channel = new BroadcastChannel('ss_cart_channel');
-    channel.postMessage({ type: 'UPDATE_CART', cartItems });
-    channel.close();
-  }, [cartItems]);
+  const { isCartOpen, cartAnnouncement, setIsCartOpen } = useCart();
 
   // Global keyboard shortcuts: Ctrl/Cmd + K (Search), Ctrl/Cmd + B (Cart Toggle)
   useEffect(() => {
@@ -108,72 +49,14 @@ export default function App() {
       }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
         e.preventDefault();
-        setIsCartOpen((prev) => !prev);
+        setIsCartOpen(!isCartOpen);
       }
     };
     window.addEventListener('keydown', handleGlobalShortcuts);
     return () => {
       window.removeEventListener('keydown', handleGlobalShortcuts);
     };
-  }, []);
-
-  const handleAddToCart = (product: Product, quantity = 1) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: Math.min(item.quantity + quantity, 10) }
-            : item
-        );
-      }
-      return [...prev, { product, quantity: Math.min(quantity, 10) }];
-    });
-    setCartAnnouncement(`${product.name} added to cart`);
-    showToast(`${product.name} added to bag`, 'success');
-    trackEvent('Cart', 'Add', product.name, quantity);
-  };
-
-  const handleRemoveFromCart = (productId: string) => {
-    const itemToRemove = cartItems.find((item) => item.product.id === productId);
-    setCartItems((prev) => prev.filter((item) => item.product.id !== productId));
-    if (itemToRemove) {
-      setCartAnnouncement(`${itemToRemove.product.name} removed from cart`);
-      showToast(`${itemToRemove.product.name} removed from bag`, 'info');
-    }
-  };
-
-  const handleUpdateCartQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      handleRemoveFromCart(productId);
-      return;
-    }
-    const finalQty = Math.min(quantity, 10);
-    const item = cartItems.find((i) => i.product.id === productId);
-    if (item) {
-      const action = finalQty > item.quantity ? 'Increased' : 'Decreased';
-      setCartAnnouncement(`${action} ${item.product.name} quantity to ${finalQty}`);
-    }
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.product.id === productId ? { ...item, quantity: finalQty } : item
-      )
-    );
-  };
-
-  const handleClearCart = () => {
-    setCartItems([]);
-    setCartAnnouncement('Cart cleared');
-  };
-
-  const handleBuyNow = (product: Product) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) return prev;
-      return [...prev, { product, quantity: 1 }];
-    });
-    setIsCartOpen(true);
-  };
+  }, [setIsCartOpen, isCartOpen]);
 
   // Sync state variable activeTab with URL location to preserve highlighted Navbar state
   useEffect(() => {
@@ -204,14 +87,6 @@ export default function App() {
     <Layout
       activeTab={activeTab}
       setActiveTab={handleTabChange}
-      cartItems={cartItems}
-      isCartOpen={isCartOpen}
-      onCartOpenToggle={() => setIsCartOpen(!isCartOpen)}
-      onCartClose={() => setIsCartOpen(false)}
-      onRemoveFromCart={handleRemoveFromCart}
-      onUpdateCartQuantity={handleUpdateCartQuantity}
-      onClearCart={handleClearCart}
-      onAddToCart={handleAddToCart}
       isSearchOpen={isSearchOpen}
       onSearchClose={() => setIsSearchOpen(false)}
       onSearchOpen={() => setIsSearchOpen(true)}
@@ -236,8 +111,6 @@ export default function App() {
                     <Home
                       setActiveTab={handleTabChange}
                       setSelectedProductId={handleProductSelect}
-                      onAddToCart={handleAddToCart}
-                      onBuyNow={handleBuyNow}
                     />
                   </ErrorBoundary>
                 }
@@ -250,8 +123,6 @@ export default function App() {
                     <Products
                       setActiveTab={handleTabChange}
                       setSelectedProductId={handleProductSelect}
-                      onAddToCart={handleAddToCart}
-                      onBuyNow={handleBuyNow}
                     />
                   </ErrorBoundary>
                 }
@@ -260,10 +131,7 @@ export default function App() {
                 path="/products/:id"
                 element={
                   <ErrorBoundary>
-                    <ProductDetailWrapper
-                      onAddToCart={handleAddToCart}
-                      onBuyNow={handleBuyNow}
-                    />
+                    <ProductDetailWrapper />
                   </ErrorBoundary>
                 }
               />
@@ -271,10 +139,7 @@ export default function App() {
                 path="/product-detail/:id"
                 element={
                   <ErrorBoundary>
-                    <ProductDetailWrapper
-                      onAddToCart={handleAddToCart}
-                      onBuyNow={handleBuyNow}
-                    />
+                    <ProductDetailWrapper />
                   </ErrorBoundary>
                 }
               />

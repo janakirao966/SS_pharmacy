@@ -59,9 +59,9 @@ export default function HeroCarousel() {
               alt={slide.alt}
               width={1920}
               height={600}
-              loading={i === 0 ? 'eager' : 'lazy'}
-              decoding={i === 0 ? 'sync' : 'async'}
-              fetchPriority={i === 0 ? 'high' : 'auto'}
+              loading={i === 0 ? "eager" : "lazy"}
+              fetchPriority={i === 0 ? "high" : "auto"}
+              decoding={i === 0 ? "sync" : "async"}
               className="hero-carousel-image"
             />
           </div>

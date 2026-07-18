@@ -4,6 +4,7 @@ import CleanCard from './CleanCard';
 import Button from '../ui/Button';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { renderAyurvedicText } from '../../utils/lang';
+import { useCart } from '../../context/CartContext';
 
 interface ProductCardProps {
   product: Product;
@@ -13,8 +14,6 @@ interface ProductCardProps {
   onWishlistToggle?: () => void;
   isComparing?: boolean;
   onCompareToggle?: () => void;
-  onAddToCart?: (product: Product, quantity: number) => void;
-  onBuyNow?: (product: Product) => void;
 }
 
 const ProductCard = memo(function ProductCard({
@@ -24,10 +23,9 @@ const ProductCard = memo(function ProductCard({
   isWishlisted = false,
   onWishlistToggle,
   isComparing = false,
-  onCompareToggle,
-  onAddToCart,
-  onBuyNow
+  onCompareToggle
 }: ProductCardProps) {
+  const { handleAddToCart, handleBuyNow } = useCart();
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
 
@@ -109,35 +107,31 @@ const ProductCard = memo(function ProductCard({
         </div>
         
         <div className="product-actions">
-          {onAddToCart && (
-            <Button
-              variant="outline"
-              size="sm"
-              rounded="md"
-              className="flex items-center gap-1.5 justify-center"
-              onClick={(e) => {
-                e.stopPropagation();
-                onAddToCart(product, 1);
-              }}
-            >
-              <ShoppingBag size={14} />
-              <span>Add</span>
-            </Button>
-          )}
-          {onBuyNow && (
-            <Button
-              variant="primary"
-              size="sm"
-              rounded="md"
-              onClick={(e) => {
-                e.stopPropagation();
-                onBuyNow(product);
-              }}
-            >
-              Buy Now
-            </Button>
-          )}
-          {!onAddToCart && !onBuyNow && onEnquire && (
+          <Button
+            variant="outline"
+            size="sm"
+            rounded="md"
+            className="flex items-center gap-1.5 justify-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddToCart(product, 1);
+            }}
+          >
+            <ShoppingBag size={14} />
+            <span>Add</span>
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            rounded="md"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleBuyNow(product);
+            }}
+          >
+            Buy Now
+          </Button>
+          {onEnquire && (
             <Button
               variant="secondary"
               size="sm"

@@ -32,7 +32,14 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('[ErrorBoundary] Uncaught error:', error, errorInfo);
+    console.error(JSON.stringify({
+      type: 'FATAL_ERROR',
+      timestamp: new Date().toISOString(),
+      url: window.location.href,
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack
+    }));
 
     // Auto-recover from chunk load errors (stale code-split bundles after deploy)
     if (

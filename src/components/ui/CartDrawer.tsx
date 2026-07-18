@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Smartphone, CheckCircle, ArrowRight } from 'lucide-react';
-import { products, type Product } from '../../data/products';
-
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
+import { products } from '../../data/products';
+import { useCart } from '../../context/CartContext';
 
 interface ShippingFormType {
   name: string;
@@ -17,28 +13,21 @@ interface ShippingFormType {
   country: string;
 }
 
-interface CartDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  cartItems: CartItem[];
-  onRemove: (productId: string) => void;
-  onUpdateQuantity: (productId: string, quantity: number) => void;
-  onClear: () => void;
-  onAddToCart: (product: Product, quantity?: number) => void;
-}
-
 type CheckoutStep = 'cart' | 'shipping' | 'payment' | 'success';
 type PaymentMethod = 'card' | 'upi' | 'cod';
 
-export default function CartDrawer({
-  isOpen,
-  onClose,
-  cartItems,
-  onRemove,
-  onUpdateQuantity,
-  onClear,
-  onAddToCart
-}: CartDrawerProps) {
+export default function CartDrawer() {
+  const {
+    isCartOpen: isOpen,
+    setIsCartOpen,
+    cartItems,
+    handleRemoveFromCart: onRemove,
+    handleUpdateCartQuantity: onUpdateQuantity,
+    handleClearCart: onClear,
+    handleAddToCart: onAddToCart
+  } = useCart();
+
+  const onClose = () => setIsCartOpen(false);
   const [isMounted, setIsMounted] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -391,9 +380,7 @@ export default function CartDrawer({
                         type="button"
                         className="cart-item-remove"
                         onClick={() => {
-                          if (window.confirm(`Remove ${item.product.name} from your bag?`)) {
-                            onRemove(item.product.id);
-                          }
+                          onRemove(item.product.id);
                         }}
                         aria-label={`Remove ${item.product.name} from bag`}
                       >
