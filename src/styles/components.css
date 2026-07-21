@@ -5373,11 +5373,39 @@
     flex-direction: row !important;
     gap: 0.5rem !important;
   }
-  .product-actions button {
-    flex: 1 !important;
+}
+
+/* Phase 6: Footer, About, Contact, Gallery & Legal Mobile Polish */
+@media (max-width: 640px) {
+  .footer-section {
+    padding: 2.5rem 0 1.5rem !important;
+  }
+  .footer-grid {
+    gap: 1.75rem !important;
+    margin-bottom: 2rem !important;
+  }
+  .footer-testimonial-slider {
+    min-height: 180px !important;
+  }
+  .values-grid,
+  .gallery-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+  .story-image-container {
+    height: 220px !important;
+    max-height: 40vh !important;
+  }
+  .legal-text-box {
+    padding: 1.25rem !important;
+    max-width: 70ch !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .faq-question-btn,
+  .accordion-trigger {
     min-height: 44px !important;
-    font-size: 0.8rem !important;
-    padding: 0.5rem 0.75rem !important;
+    padding: 0.85rem 1rem !important;
   }
 }
 
