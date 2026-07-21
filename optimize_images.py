@@ -37,3 +37,10 @@ optimize_image(
     "public/products/Hero section/home_page_image.webp",
     max_width=1200
 )
+
+# 4. Optimize why choose us image
+optimize_image(
+    "public/products/why choose us image.png",
+    "public/products/why_choose_us_image.webp",
+    max_width=800
+)

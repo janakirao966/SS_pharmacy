@@ -119,8 +119,8 @@ export default function WhyChooseUs() {
 
             <div className="wcu-spotlight-image-frame">
               <img
-                src={`${import.meta.env.BASE_URL}products/Dr lion pain cream/Pain cream transparent image.webp`}
-                alt="S.S. Pharmacy quality standard showcase — transparent product jar with visible herbal contents"
+                src={`${import.meta.env.BASE_URL}products/why_choose_us_image.webp`}
+                alt="S.S. Pharmacy quality standard showcase"
                 className="wcu-spotlight-image"
                 width={600}
                 height={320}
