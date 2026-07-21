@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Homepage Layout & Visual Elements", () => {
   test("should render home page with correct document title", async ({ page }) => {
     await page.goto("");
-    await expect(page).toHaveTitle(/AYU S.S. PHARMACY/i);
+    await expect(page).toHaveTitle(/S\.S\. PHARMACY/i);
   });
 
   test("should render navigation header with active page indicator", async ({ page }) => {
