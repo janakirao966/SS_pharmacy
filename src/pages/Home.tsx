@@ -1,4 +1,4 @@
-import { ShieldCheck, Award, Zap, Leaf } from 'lucide-react';
+import { ShieldCheck, Award, Zap, Leaf, Sparkles } from 'lucide-react';
 import { products } from '../data/products';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
@@ -153,7 +153,7 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
 
       {/* 5. Home Page Large Showcase Image */}
       <ScrollReveal animation="fade-up" delay={200}>
-        <Section className="home-large-showcase-section pb-24 pt-4 border-t border-hairline">
+        <Section className="home-large-showcase-section pb-16 pt-4">
           <Container>
             <div className="home-large-showcase-container">
               <img
@@ -168,6 +168,55 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
             </div>
           </Container>
         </Section>
+      </ScrollReveal>
+
+      {/* 6. STEP 12: Intentional High-Impact Dark Green Trust & Quality Band */}
+      <ScrollReveal animation="fade-up" delay={150}>
+        <section className="trust-quality-band">
+          <Container>
+            <div className="trust-band-grid">
+              <div className="trust-band-item">
+                <div className="trust-band-icon">
+                  <Leaf size={22} />
+                </div>
+                <div className="trust-band-content">
+                  <h4>Authentic Ayurveda</h4>
+                  <p>Classic formulations rooted in traditional botanical extraction research.</p>
+                </div>
+              </div>
+
+              <div className="trust-band-item">
+                <div className="trust-band-icon">
+                  <Award size={22} />
+                </div>
+                <div className="trust-band-content">
+                  <h4>Licensed Facility</h4>
+                  <p>Government certified under State Ayur code R-1970/Ayur.</p>
+                </div>
+              </div>
+
+              <div className="trust-band-item">
+                <div className="trust-band-icon">
+                  <ShieldCheck size={22} />
+                </div>
+                <div className="trust-band-content">
+                  <h4>Trusted Quality</h4>
+                  <p>Standardized physico-chemical batch testing & purity metrics.</p>
+                </div>
+              </div>
+
+              <div className="trust-band-item">
+                <div className="trust-band-icon">
+                  <Sparkles size={22} />
+                </div>
+                <div className="trust-band-content">
+                  <h4>Safe Packaging</h4>
+                  <p>Hygienic processing & secure distributor dispatch nationwide.</p>
+                </div>
+              </div>
+            </div>
+          </Container>
+        </section>
       </ScrollReveal>
     </div>
   );

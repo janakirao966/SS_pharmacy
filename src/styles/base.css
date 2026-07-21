@@ -17,8 +17,8 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--color-bg-primary);
-  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  color: var(--color-text);
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -51,7 +51,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 500;
   line-height: 1.15;
-  color: var(--color-brand-primary);
+  color: var(--color-primary-dark);
   letter-spacing: -0.02em;
 }
 
@@ -80,11 +80,11 @@ h6 { font-size: var(--text-lg);  }
 .ayurvedic-term {
   font-style: italic;
   font-weight: 600;
-  color: #7a6027;
+  color: var(--color-gold-dark);
 }
 
 p {
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   font-size: 1rem;
   max-width: 65ch; /* Comfortable reading length */
 }

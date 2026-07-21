@@ -1,39 +1,99 @@
 :root {
-  /* Color Tokens - Backgrounds */
-  --color-bg-primary: #FDFCFA;
-  --color-bg-surface: #F8F7F4;
-  --color-bg-secondary: #FFFFFF;
-  --color-bg-accent: #F5F3EF;
+  /* ================================
+     BRAND (Botanical Green Spectrum)
+     ================================ */
+  --color-primary: #3D6B20;
+  --color-primary-dark: #2D5016;
+  --color-primary-hover: #407020;
+  --color-primary-deep: #1E3F0E;
 
-  /* Color Tokens - Brand */
-  --color-brand-primary: #2D5016;        /* Deep Forest Green (WCAG AAA >= 7:1) */
-  --color-brand-primary-light: #3D6B20;  /* Hover Green */
-  --color-brand-primary-dark: #1E370F;   /* Deepest Accent Green */
-  --color-brand-primary-muted: rgba(45, 80, 22, 0.08); /* 8% opacity of Forest Green */
-
-
-  /* Color Tokens - Accent / Gold */
-  --color-brand-secondary: #7D5D1A;      /* WCAG AA Compliant Heritage Gold (>= 4.5:1 on #FDFCFA) */
+  /* ================================
+     LUXURY ACCENT (Heritage Gold)
+     ================================ */
+  --color-gold: #9B7B35;
+  --color-gold-rich: #C4A35A;
   --color-gold-light: #D4B878;
-  --color-gold-dark: #7D5D1A;
-  --color-accent: #C4A35A;               /* Fallback Accent */
+  --color-gold-dark: #7A6027;
 
-  /* Color Tokens - Text */
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #404040;
-  --color-text-muted: #737373;
-  --color-text-light: #A3A3A3;
-  --color-text-white: #FFFFFF;
+  /* ================================
+     SURFACES (Warm Sandstone & Pure Surfaces)
+     ================================ */
+  --color-background: #FDFCFA;
+  --color-surface-soft: #F8F7F4;
+  --color-surface-cream: #FEFDF8;
+  --color-surface-muted: #FAF8F5;
+  --color-surface-secondary: #F5F3EF;
+  --color-footer: #F5F2EB;
+  --color-surface-hover: #F2ECE4;
+  --color-surface: #FFFFFF;
 
-  /* Color Tokens - Borders */
-  --color-border-light: rgba(0, 0, 0, 0.06);
-  --color-border-medium: rgba(0, 0, 0, 0.12);
-  --color-border-accent: rgba(196, 163, 90, 0.3);
-  --color-border-hairline: rgba(0, 0, 0, 0.06);
+  /* ================================
+     TEXT
+     ================================ */
+  --color-heading: #1A1A1A;
+  --color-heading-brand: #2D5016;
+  --color-text: #404040;
+  --color-text-secondary: #525252;
+  --color-text-muted: #595959;
+  --color-text-on-dark: #FFFFFF;
 
-  /* Color Tokens - Status */
-  --color-error: #B91C1C;
+  /* ================================
+     BORDER
+     ================================ */
+  --color-border: #EBE6DC;
+  --color-border-medium: #B5AEA7;
+  --color-border-focus: #D3C9B6;
+
+  /* ================================
+     DECORATIVE TINTS
+     ================================ */
+  --botanical-tint: rgba(45, 80, 22, 0.08);
+  --botanical-tint-subtle: rgba(61, 107, 32, 0.05);
+  --gold-tint: rgba(196, 163, 90, 0.15);
+
+  /* ================================
+     STATUS & UTILITY
+     ================================ */
   --color-success: #15803D;
+  --color-error: #B91C1C;
+  --color-rating: #FBBF24;
+  --color-whatsapp: #25D366;
+
+  /* ================================
+     ELEVATION & SHADOWS
+     ================================ */
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 10px 30px rgba(30, 63, 14, 0.10);
+  --shadow-floating: 0 8px 24px rgba(30, 63, 14, 0.14);
+
+  /* ================================
+     LEGACY ALIASES (Backwards Compatibility)
+     ================================ */
+  --color-bg-primary: var(--color-background);
+  --color-bg-surface: var(--color-surface-soft);
+  --color-bg-secondary: var(--color-surface);
+  --color-bg-accent: var(--color-surface-secondary);
+
+  --color-brand-primary: var(--color-primary-dark);
+  --color-brand-primary-light: var(--color-primary);
+  --color-brand-primary-dark: var(--color-primary-deep);
+  --color-brand-primary-muted: var(--botanical-tint);
+
+  --color-brand-secondary: var(--color-gold-dark);
+  --color-gold-dark: #7A6027;
+  --color-accent: var(--color-gold-rich);
+
+  --color-text-primary: var(--color-heading);
+  --color-text-secondary: var(--color-text);
+  --color-text-muted: var(--color-text-secondary);
+  --color-text-light: var(--color-text-muted);
+  --color-text-white: var(--color-text-on-dark);
+
+  --color-border-light: var(--color-border);
+  --color-border-medium: var(--color-border-medium);
+  --color-border-accent: var(--color-border-focus);
+  --color-border-hairline: var(--color-border);
+  --color-border-gold: var(--color-border-focus);
 
   /* Fonts */
   --font-display: "Playfair Display", Georgia, serif;

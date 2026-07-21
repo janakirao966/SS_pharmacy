@@ -515,13 +515,13 @@ textarea:focus-visible {
 .text-2xl { font-size: 1.5rem !important; }
 .text-3xl { font-size: 1.875rem !important; }
 .text-4xl { font-size: 2.25rem !important; }
-.text-brand-primary { color: var(--color-brand-primary) !important; }
-.text-light { color: var(--color-text-white) !important; }
-.bg-surface { background-color: var(--color-bg-surface) !important; }
-.bg-\[\#FEFDF8\]\/40 { background-color: rgba(254, 253, 248, 0.4) !important; }
-.bg-\[\#FEFDF8\]\/60 { background-color: rgba(254, 253, 248, 0.6) !important; }
-.bg-\[\#3D6B20\]\/5 { background-color: rgba(61, 107, 32, 0.05) !important; }
-.bg-\[\#3D6B20\]\/8 { background-color: rgba(61, 107, 32, 0.08) !important; }
+.text-brand-primary { color: var(--color-primary-dark) !important; }
+.text-light { color: var(--color-text-on-dark) !important; }
+.bg-surface { background-color: var(--color-surface-soft) !important; }
+.bg-\[\#FEFDF8\]\/40 { background-color: var(--color-surface-cream) !important; opacity: 0.4 !important; }
+.bg-\[\#FEFDF8\]\/60 { background-color: var(--color-surface-cream) !important; opacity: 0.6 !important; }
+.bg-\[\#3D6B20\]\/5 { background-color: var(--botanical-tint-subtle) !important; }
+.bg-\[\#3D6B20\]\/8 { background-color: var(--botanical-tint) !important; }
 .bg-transparent { background-color: transparent !important; }
 .border-\[\#3D6B20\]\/10 { border-color: rgba(61, 107, 32, 0.1) !important; }
 .border-red-200 { border-color: rgba(185, 28, 28, 0.2) !important; }

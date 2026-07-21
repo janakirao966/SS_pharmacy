@@ -104,19 +104,19 @@ export default function Testimonials() {
                   {/* Verified Badge & Rating Row */}
                   <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
                     <span className="verified-partner-badge">
-                      <CheckCircle2 size={12} className="text-[#3D6B20]" />
+                      <CheckCircle2 size={12} className="text-brand-primary" />
                       Verified Partner
                     </span>
                     
-                    <div className="rating-stars flex gap-0.5 text-gold">
+                    <div className="rating-stars flex gap-0.5">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={15} fill="currentColor" className="text-[#9B7B35]" />
+                        <Star key={i} size={15} fill="currentColor" className="text-[var(--color-rating)]" />
                       ))}
                     </div>
                   </div>
 
                   {/* Quote content */}
-                  <blockquote className="font-display italic text-lg md:text-xl leading-relaxed text-[#3D6B20] font-medium flex-1 mb-8">
+                  <blockquote className="font-display italic text-lg md:text-xl leading-relaxed text-brand-primary font-medium flex-1 mb-8">
                     &ldquo;{testimonials[activeTestimonial].quote}&rdquo;
                   </blockquote>
 
@@ -128,11 +128,11 @@ export default function Testimonials() {
                     </div>
                     
                     <div className="author-meta text-left">
-                      <h6 className="font-bold text-[#1A1A1A] text-sm md:text-md leading-tight">
+                      <h6 className="font-bold text-heading text-sm md:text-md leading-tight">
                         {testimonials[activeTestimonial].author}
                       </h6>
                       <p className="text-secondary text-xs mt-1">
-                        {testimonials[activeTestimonial].role} &middot; <span className="text-[#9B7B35] font-semibold">{testimonials[activeTestimonial].location}</span>
+                        {testimonials[activeTestimonial].role} &middot; <span className="text-[var(--color-gold-dark)] font-semibold">{testimonials[activeTestimonial].location}</span>
                       </p>
                     </div>
                   </div>
@@ -143,7 +143,7 @@ export default function Testimonials() {
             <button
               type="button"
               onClick={handlePrevTestimonial}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 md:-translate-x-16 p-3 rounded-full border border-[#EBE6DC] bg-white hover:bg-[#FAF8F5] text-brand-primary transition-all active:scale-95 shadow-md cursor-pointer flex items-center justify-center z-10"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 md:-translate-x-16 p-3 rounded-full border border-[var(--color-border)] bg-surface hover:bg-[var(--color-surface-soft)] text-brand-primary transition-all active:scale-95 shadow-md cursor-pointer flex items-center justify-center z-10"
               aria-label="Previous Testimonial"
             >
               <ChevronLeft size={16} />
@@ -151,7 +151,7 @@ export default function Testimonials() {
             <button
               type="button"
               onClick={handleNextTestimonial}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 md:translate-x-16 p-3 rounded-full border border-[#EBE6DC] bg-white hover:bg-[#FAF8F5] text-brand-primary transition-all active:scale-95 shadow-md cursor-pointer flex items-center justify-center z-10"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 md:translate-x-16 p-3 rounded-full border border-[var(--color-border)] bg-surface hover:bg-[var(--color-surface-soft)] text-brand-primary transition-all active:scale-95 shadow-md cursor-pointer flex items-center justify-center z-10"
               aria-label="Next Testimonial"
             >
               <ChevronRight size={16} />
