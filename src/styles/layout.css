@@ -503,7 +503,7 @@
   justify-content: space-between;
   width: 100%;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--color-border-hairline, #EBE6DC);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .mobile-overlay-close-btn {
@@ -513,16 +513,16 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid var(--color-border-hairline, #EBE6DC);
-  background-color: var(--color-bg-surface, #F5F0E6);
-  color: var(--color-brand-primary, #2D5016);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface-soft);
+  color: var(--color-primary-dark);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .mobile-overlay-close-btn:hover {
-  background-color: var(--color-brand-primary);
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-text-on-dark);
   transform: rotate(90deg);
 }
 
@@ -558,7 +558,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.85rem 1.25rem; /* Ensures 44px+ height */
+  padding: 0.85rem 1.25rem;
   border-radius: 1rem;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
@@ -566,8 +566,8 @@
 
 .nav-link-mobile-btn:hover,
 .nav-link-mobile-btn.active {
-  color: var(--color-brand-primary);
-  background-color: rgba(45, 80, 22, 0.06);
+  color: var(--color-primary-dark);
+  background-color: var(--botanical-tint);
   font-weight: 600;
 }
 
@@ -575,7 +575,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--color-brand-secondary, #C4A35A);
+  background-color: var(--color-gold);
 }
 
 .mobile-overlay-footer {
@@ -584,7 +584,7 @@
   align-items: center;
   gap: 0.4rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--color-border-hairline, #EBE6DC);
+  border-top: 1px solid var(--color-border);
   font-size: 0.8rem;
   color: var(--color-text-secondary);
 }
