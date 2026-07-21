@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react';
 import type { Product } from '../data/products';
 import { useToast } from './ToastContext';
 import { trackEvent } from '../utils/analytics';
@@ -25,6 +25,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const { showToast } = useToast();
+  const isUserAction = useRef(false);
   
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
@@ -84,6 +85,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       console.warn('CartContext: QuotaExceededError or localStorage unavailable', e);
     }
     
+    // Only broadcast if the action was initiated by a user click/interaction in this tab
+    if (!isUserAction.current) return;
+    isUserAction.current = false;
+    
     if (typeof navigator !== 'undefined' && navigator.webdriver) return;
     try {
       if (typeof BroadcastChannel !== 'undefined') {
@@ -97,6 +102,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [cartItems]);
 
   const handleAddToCart = (product: Product, quantity = 1) => {
+    isUserAction.current = true;
     setCartItems((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
       if (existing) {
@@ -114,6 +120,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const handleRemoveFromCart = (productId: string) => {
+    isUserAction.current = true;
     const itemToRemove = cartItems.find((item) => item.product.id === productId);
     setCartItems((prev) => prev.filter((item) => item.product.id !== productId));
     if (itemToRemove) {
@@ -123,6 +130,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const handleUpdateCartQuantity = (productId: string, quantity: number) => {
+    isUserAction.current = true;
     if (quantity <= 0) {
       handleRemoveFromCart(productId);
       return;
@@ -141,11 +149,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const handleClearCart = () => {
+    isUserAction.current = true;
     setCartItems([]);
     setCartAnnouncement('Cart cleared');
   };
 
   const handleBuyNow = (product: Product) => {
+    isUserAction.current = true;
     setCartItems((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
       if (existing) return prev;
