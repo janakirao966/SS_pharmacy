@@ -5303,12 +5303,34 @@
   }
 }
 
-@media (max-width: 400px) {
-  .cart-steps-indicator span {
-    font-size: 0.68rem !important;
+/* Phase 4: Search Modal, Overlays & Floating Actions Mobile Polish */
+@media (max-width: 640px) {
+  .search-modal-overlay {
+    padding-top: 2.5rem !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
   }
-  .cart-item-info h4 {
-    font-size: 0.85rem !important;
+  .search-modal-container {
+    max-height: 82vh !important;
+    max-height: 82dvh !important;
+    border-radius: 1.25rem !important;
+  }
+  .search-modal-body {
+    padding: 1rem !important;
+    max-height: 55vh !important;
+    max-height: 55dvh !important;
+    box-shadow: inset 0 -12px 16px -12px rgba(0, 0, 0, 0.1) !important;
+  }
+  .search-kbd-shortcuts {
+    display: none !important;
+  }
+  .whatsapp-float-btn {
+    bottom: max(1.25rem, env(safe-area-inset-bottom) + 1.25rem) !important;
+    right: 1.25rem !important;
+    padding: 0.8rem !important;
+  }
+  .whatsapp-float-btn::after {
+    display: none !important;
   }
 }
 
