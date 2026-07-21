@@ -5871,4 +5871,146 @@
   }
 }
 
+/* Reusable Premium UI Components Architecture (Lucide React & Botanical System) */
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 56px;
+  border-radius: 50%;
+  color: var(--color-brand-primary, #2D5016);
+  background: var(--color-brand-primary-muted, rgba(45, 80, 22, 0.08));
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.feature-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.quality-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-hairline, #EBE6DC);
+  border-radius: var(--radius-inner, 16px);
+  transition: transform var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+}
+
+.quality-feature:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.quality-feature__icon {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-brand-primary-muted, rgba(45, 80, 22, 0.08));
+  color: var(--color-brand-primary, #2D5016);
+}
+
+.quality-feature__content h3 {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-brand-primary, #2D5016);
+  margin-bottom: 0.35rem;
+}
+
+.quality-feature__content p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #404040);
+  line-height: 1.5;
+}
+
+.stats-panel {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-hairline, #EBE6DC);
+  border-radius: var(--radius-outer, 20px);
+  box-shadow: 0 8px 30px rgba(30, 63, 14, 0.05);
+  overflow: hidden;
+}
+
+.stat-item {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.75rem 1.5rem;
+}
+
+.stat-item + .stat-item {
+  border-left: 1px solid var(--color-border-hairline, #EBE6DC);
+}
+
+.stat-item__icon {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-brand-primary-muted, rgba(45, 80, 22, 0.08));
+  color: var(--color-brand-primary, #2D5016);
+}
+
+.stat-item__value {
+  margin: 0;
+  color: var(--color-brand-primary, #2D5016);
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  line-height: 1.1;
+}
+
+.stat-item__label {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-secondary, #404040);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.eyebrow-badge__icon {
+  color: var(--color-brand-primary, #2D5016);
+  margin-right: 0.35rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.botanical-leaves-bg {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.7;
+}
+
+@media (max-width: 1024px) {
+  .stats-panel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .stat-item + .stat-item {
+    border-left: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-panel {
+    grid-template-columns: 1fr;
+  }
+  .stat-item {
+    border-bottom: 1px solid var(--color-border-hairline, #EBE6DC);
+  }
+}
+
+
 

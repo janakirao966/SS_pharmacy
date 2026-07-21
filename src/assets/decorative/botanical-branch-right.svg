@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M200 300 C160 220 120 140 40 20" opacity="0.3" stroke="var(--color-brand-primary, #2D5016)" />
+  <path d="M120 220 Q80 180 60 160" opacity="0.25" stroke="var(--color-brand-primary, #2D5016)" />
+  <path d="M160 260 C180 230 200 240 190 210 Q170 200 150 220" fill="var(--color-brand-primary, #2D5016)" opacity="0.12" />
+  <path d="M130 200 C155 170 175 185 165 155 Q142 150 125 175" fill="var(--color-brand-primary, #2D5016)" opacity="0.15" />
+  <path d="M100 140 C125 110 145 125 135 95 Q112 90 95 115" fill="var(--color-brand-primary, #2D5016)" opacity="0.18" />
+  <path d="M70 80 C90 55 105 70 98 45 Q78 42 65 62" fill="var(--color-brand-primary, #2D5016)" opacity="0.22" />
+  <path d="M45 30 C50 15 62 18 58 8 Q45 5 40 20" fill="var(--color-brand-primary, #2D5016)" opacity="0.25" />
+</svg>
