@@ -5161,8 +5161,10 @@
 /* Hero carousel banner min-height scaling for mobile viewports */
 @media (max-width: 768px) {
   .hero-carousel-image {
-    min-height: 200px;
-    object-fit: cover;
+    min-height: auto !important;
+    aspect-ratio: 16 / 9 !important;
+    object-fit: cover !important;
+    object-position: center !important;
   }
   .hero-title {
     font-size: 2.25rem !important;
@@ -5171,11 +5173,25 @@
 
 @media (max-width: 480px) {
   .hero-carousel-image {
-    min-height: 160px;
-    object-fit: cover;
+    min-height: auto !important;
+    aspect-ratio: 16 / 9 !important;
+    object-fit: cover !important;
+    object-position: center !important;
   }
   .hero-title {
     font-size: 1.75rem !important;
+  }
+  .hero-slider-dots {
+    bottom: 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+  .hero-slider-dot {
+    width: 6px !important;
+    height: 6px !important;
+  }
+  .hero-slider-dot::after {
+    width: 20px !important;
+    height: 20px !important;
   }
 }
 
@@ -5328,10 +5344,31 @@
 
 @media (max-width: 640px) {
   .cookie-consent-banner {
-    bottom: 1rem;
-    left: 1rem;
-    right: 1rem;
-    max-width: calc(100% - 2rem);
+    bottom: 0.75rem !important;
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    max-width: calc(100% - 1.5rem) !important;
+    padding: 0.85rem 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .cookie-consent-banner p {
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .cookie-consent-actions {
+    display: flex !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .btn-cookie-accept,
+  .btn-cookie-decline {
+    flex: 1 !important;
+    text-align: center !important;
+    padding: 0.45rem 0.5rem !important;
+    font-size: 0.7rem !important;
   }
 }
 

@@ -586,3 +586,28 @@ button:active,
   transform: scale(0.98) !important;
 }
 
+/* Mobile Top Bar Polish */
+@media (max-width: 640px) {
+  .top-bar {
+    padding: 0.35rem 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+  .top-bar-middle {
+    display: none !important;
+  }
+  .top-bar-left {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  .top-bar-left span {
+    font-size: 0.68rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+  }
+  .top-bar-socials {
+    display: none !important;
+  }
+}
+
