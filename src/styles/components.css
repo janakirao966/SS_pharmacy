@@ -5161,19 +5161,32 @@
 /* Hero carousel banner min-height scaling for mobile viewports */
 @media (max-width: 768px) {
   .hero-carousel-image {
-    min-height: auto !important;
+    min-height: 200px !important;
     aspect-ratio: 16 / 9 !important;
     object-fit: cover !important;
     object-position: center !important;
   }
   .hero-title {
     font-size: 2.25rem !important;
+    line-height: 1.15 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 1.85rem !important;
+    line-height: 1.15 !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  .btn-pill {
+    white-space: nowrap !important;
   }
 }
 
 @media (max-width: 480px) {
   .hero-carousel-image {
-    min-height: auto !important;
+    min-height: 200px !important;
     aspect-ratio: 16 / 9 !important;
     object-fit: cover !important;
     object-position: center !important;
@@ -5192,6 +5205,42 @@
   .hero-slider-dot::after {
     width: 20px !important;
     height: 20px !important;
+  }
+  .feature-highlights-section {
+    padding: 1.75rem 0 !important;
+  }
+  .feature-highlight-card {
+    padding: 1rem !important;
+    gap: 0.75rem !important;
+    min-width: 0 !important;
+  }
+  .feature-highlight-icon {
+    padding: 0.65rem !important;
+    flex-shrink: 0 !important;
+  }
+  .feature-highlight-icon svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  .feature-highlight-info h4 {
+    font-size: 0.9rem !important;
+  }
+  .feature-highlight-info p {
+    font-size: 0.78rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-title {
+    font-size: 1.6rem !important;
+    line-height: 1.12 !important;
+  }
+  .btn-pill {
+    padding: 0.6rem 1.15rem !important;
+    font-size: 0.85rem !important;
+  }
+  .feature-highlight-card {
+    padding: 0.85rem !important;
   }
 }
 

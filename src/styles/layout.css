@@ -95,26 +95,14 @@
 
 @media (max-width: 1024px) {
   .bento-grid {
-    grid-template-columns: repeat(12, 1fr);
-  }
-  .bento-grid .col-span-8,
-  .bento-grid .col-span-7 {
-    grid-column: span 12;
-  }
-  .bento-grid .col-span-5,
-  .bento-grid .col-span-4 {
-    grid-column: span 6;
-  }
-}
-
-@media (max-width: 768px) {
-  .bento-grid {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
+  .bento-grid [class*="col-span-"],
   .bento-grid .bento-cell {
     grid-column: span 12 !important;
+    width: 100% !important;
   }
 }
 
