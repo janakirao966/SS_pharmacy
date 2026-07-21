@@ -5192,6 +5192,9 @@
     font-size: 2.25rem !important;
     line-height: 1.15 !important;
   }
+  .hero-slider-dots {
+    display: none !important;
+  }
 }
 
 @media (max-width: 640px) {
@@ -5215,21 +5218,6 @@
   }
   .hero-title {
     font-size: 1.75rem !important;
-  }
-  .hero-slider-dots {
-    bottom: 0.75rem !important;
-    right: 0.75rem !important;
-    left: auto !important;
-    transform: none !important;
-    padding: 0.35rem 0.6rem !important;
-    gap: 0.4rem !important;
-  }
-  .hero-slider-dot {
-    width: 6px !important;
-    height: 6px !important;
-  }
-  .hero-slider-dot.active {
-    width: 14px !important;
   }
   .feature-highlights-section {
     padding: 1.75rem 0 !important;
