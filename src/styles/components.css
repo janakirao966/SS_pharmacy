@@ -5438,7 +5438,13 @@
     padding: 0.35rem 1rem !important;
   }
   .cart-drawer-footer {
-    padding: 1rem !important;
+    padding: 1rem 1rem max(1rem, env(safe-area-inset-bottom) + 1rem) 1rem !important;
+  }
+  .cookie-consent-banner {
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: max(1rem, env(safe-area-inset-bottom) + 1rem) !important;
+    max-width: calc(100vw - 2rem) !important;
   }
 }
 

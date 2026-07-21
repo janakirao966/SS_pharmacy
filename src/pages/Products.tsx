@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Heart } from 'lucide-react';
 import { products } from '../data/products';
+import { useToast } from '../context/ToastContext';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -23,6 +24,7 @@ interface ProductsProps {
 }
 
 export default function Products({ setActiveTab, setSelectedProductId }: ProductsProps) {
+  const { showToast } = useToast();
   const [filter, setFilter] = useState('all');
   const { isFavorited, toggleWishlist } = useWishlist();
   const [compareList, setCompareList] = useState<string[]>([]);
@@ -34,7 +36,7 @@ export default function Products({ setActiveTab, setSelectedProductId }: Product
         return prev.filter((id) => id !== productId);
       }
       if (prev.length >= 3) {
-        alert("You can compare up to 3 formulations at a time.");
+        showToast("You can compare up to 3 formulations at a time.", "info");
         return prev;
       }
       return [...prev, productId];

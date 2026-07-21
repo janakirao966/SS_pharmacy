@@ -1,3 +1,4 @@
+/* oxlint-disable react/only-export-components */
 import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react';
 import type { Product } from '../data/products';
 import { useToast } from './ToastContext';
@@ -96,27 +97,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
         channel.postMessage({ type: 'UPDATE_CART', cartItems });
         channel.close();
       }
-    } catch (e) {
+    } catch {
       // ignore
     }
   }, [cartItems]);
 
   const handleAddToCart = (product: Product, quantity = 1) => {
     isUserAction.current = true;
+    const sanitizedQty = Math.max(1, Math.min(Math.floor(quantity) || 1, 999));
     setCartItems((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
       if (existing) {
         return prev.map((item) =>
           item.product.id === product.id
-            ? { ...item, quantity: Math.min(item.quantity + quantity, 10) }
+            ? { ...item, quantity: Math.min(item.quantity + sanitizedQty, 999) }
             : item
         );
       }
-      return [...prev, { product, quantity: Math.min(quantity, 10) }];
+      return [...prev, { product, quantity: sanitizedQty }];
     });
     setCartAnnouncement(`${product.name} added to cart`);
     showToast(`${product.name} added to bag`, 'success');
-    trackEvent('Cart', 'Add', product.name, quantity);
+    trackEvent('Cart', 'Add', product.name, sanitizedQty);
   };
 
   const handleRemoveFromCart = (productId: string) => {
@@ -135,7 +137,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       handleRemoveFromCart(productId);
       return;
     }
-    const finalQty = Math.min(quantity, 10);
+    const finalQty = Math.max(1, Math.min(Math.floor(quantity) || 1, 999));
     const item = cartItems.find((i) => i.product.id === productId);
     if (item) {
       const action = finalQty > item.quantity ? 'Increased' : 'Decreased';

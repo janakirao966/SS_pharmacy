@@ -15,7 +15,7 @@ test.describe('Accessibility (a11y) Audits', () => {
       await page.goto(path);
       
       // Wait for the page content to be stable
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Execute Axe audit
       const accessibilityScanResults = await new AxeBuilder({ page })

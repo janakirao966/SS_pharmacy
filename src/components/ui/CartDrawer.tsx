@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Smartphone, CheckCircle, ArrowRight } from 'lucide-react';
 import { products } from '../../data/products';
@@ -27,7 +27,7 @@ export default function CartDrawer() {
     handleAddToCart: onAddToCart
   } = useCart();
 
-  const onClose = () => setIsCartOpen(false);
+  const onClose = useCallback(() => setIsCartOpen(false), [setIsCartOpen]);
   const [isMounted, setIsMounted] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -423,11 +423,12 @@ export default function CartDrawer() {
                     value={shippingForm.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     onBlur={() => handleBlur('name')}
+                    aria-describedby={formErrors.name && formTouched.name ? 'shipping-name-error' : undefined}
                     className={`form-input-field ${formErrors.name && formTouched.name ? 'invalid' : ''}`}
                   />
                   {formTouched.name && !formErrors.name && <span className="input-success-tick">✓</span>}
                 </div>
-                {formErrors.name && formTouched.name && <span className="input-error-msg">{formErrors.name}</span>}
+                {formErrors.name && formTouched.name && <span id="shipping-name-error" className="input-error-msg">{formErrors.name}</span>}
               </div>
 
               <div className="form-field-group">
@@ -440,11 +441,12 @@ export default function CartDrawer() {
                     value={shippingForm.phone}
                     onChange={(e) => handlePhoneChange(e.target.value)}
                     onBlur={() => handleBlur('phone')}
+                    aria-describedby={formErrors.phone && formTouched.phone ? 'shipping-phone-error' : undefined}
                     className={`form-input-field ${formErrors.phone && formTouched.phone ? 'invalid' : ''}`}
                   />
                   {formTouched.phone && !formErrors.phone && <span className="input-success-tick">✓</span>}
                 </div>
-                {formErrors.phone && formTouched.phone && <span className="input-error-msg">{formErrors.phone}</span>}
+                {formErrors.phone && formTouched.phone && <span id="shipping-phone-error" className="input-error-msg">{formErrors.phone}</span>}
               </div>
 
               <div className="form-field-group">
@@ -455,10 +457,11 @@ export default function CartDrawer() {
                   value={shippingForm.address}
                   onChange={(e) => handleInputChange('address', e.target.value)}
                   onBlur={() => handleBlur('address')}
+                  aria-describedby={formErrors.address && formTouched.address ? 'shipping-address-error' : undefined}
                   rows={3}
                   className={`form-textarea-field ${formErrors.address && formTouched.address ? 'invalid' : ''}`}
                 />
-                {formErrors.address && formTouched.address && <span className="input-error-msg">{formErrors.address}</span>}
+                {formErrors.address && formTouched.address && <span id="shipping-address-error" className="input-error-msg">{formErrors.address}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -472,11 +475,12 @@ export default function CartDrawer() {
                       value={shippingForm.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
                       onBlur={() => handleBlur('city')}
+                      aria-describedby={formErrors.city && formTouched.city ? 'shipping-city-error' : undefined}
                       className={`form-input-field ${formErrors.city && formTouched.city ? 'invalid' : ''}`}
                     />
                     {formTouched.city && !formErrors.city && <span className="input-success-tick">✓</span>}
                   </div>
-                  {formErrors.city && formTouched.city && <span className="input-error-msg">{formErrors.city}</span>}
+                  {formErrors.city && formTouched.city && <span id="shipping-city-error" className="input-error-msg">{formErrors.city}</span>}
                 </div>
 
                 <div className="form-field-group">
@@ -492,11 +496,12 @@ export default function CartDrawer() {
                       value={shippingForm.pincode}
                       onChange={(e) => handleInputChange('pincode', shippingForm.country === 'India' ? e.target.value.replace(/\D/g, '') : e.target.value)}
                       onBlur={() => handleBlur('pincode')}
+                      aria-describedby={formErrors.pincode && formTouched.pincode ? 'shipping-pincode-error' : undefined}
                       className={`form-input-field ${formErrors.pincode && formTouched.pincode ? 'invalid' : ''}`}
                     />
                     {formTouched.pincode && !formErrors.pincode && <span className="input-success-tick">✓</span>}
                   </div>
-                  {formErrors.pincode && formTouched.pincode && <span className="input-error-msg">{formErrors.pincode}</span>}
+                  {formErrors.pincode && formTouched.pincode && <span id="shipping-pincode-error" className="input-error-msg">{formErrors.pincode}</span>}
                 </div>
               </div>
             </div>

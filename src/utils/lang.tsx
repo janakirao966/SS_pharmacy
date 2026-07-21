@@ -1,3 +1,4 @@
+/* oxlint-disable react/only-export-components */
 interface AyurvedicTermProps {
   children: React.ReactNode;
 }

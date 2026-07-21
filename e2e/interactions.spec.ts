@@ -1,12 +1,15 @@
 import { test, expect } from "@playwright/test";
 
 // Helper to dismiss cookie consent banner to avoid viewport click blocking
-async function dismissCookieBanner(page) {
-  await page.waitForTimeout(2000); // Wait for the 1.5s banner delay
-  const acceptBtn = page.locator('.btn-cookie-accept:visible').first();
-  if (await acceptBtn.count() > 0) {
-    await acceptBtn.click({ force: true });
-    await page.waitForTimeout(1000); // Allow banner exit animation and layout settlement
+async function dismissCookieBanner(page: any) {
+  try {
+    const acceptBtn = page.locator('.btn-cookie-accept').first();
+    if (await acceptBtn.isVisible({ timeout: 2000 })) {
+      await acceptBtn.click({ force: true });
+      await page.waitForTimeout(300);
+    }
+  } catch {
+    // Banner was not displayed or already dismissed
   }
 }
 
