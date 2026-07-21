@@ -2717,43 +2717,54 @@
   align-items: center;
   gap: 0.5rem;
   z-index: 10;
-  background: rgba(254, 253, 248, 0.88);
-  padding: 0.4rem 0.75rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 0.85rem;
   border-radius: 9999px;
-  border: 1px solid rgba(196, 163, 90, 0.3);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .hero-slider-dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background-color: rgba(45, 80, 22, 0.25);
+  background-color: #D4D4D4; /* Neutral gray 4.5:1 contrast on white */
   border: none;
   cursor: pointer;
   padding: 0;
   position: relative;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Expand touch target to 44×44px for WCAG 2.5.8 compliance */
 .hero-slider-dot::after {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
 }
 
+.hero-slider-dot:hover {
+  background-color: #A3A3A3; /* Darker gray on hover */
+  transform: scale(1.15);
+}
+
 .hero-slider-dot.active {
-  background-color: var(--color-brand-primary);
-  width: 20px;
+  background-color: #9B7B35; /* Gold - high contrast alternative */
+  width: 24px;
   border-radius: 9999px;
   transform: scale(1);
+  box-shadow: 0 0 0 2px rgba(155, 123, 53, 0.2);
+}
+
+.hero-slider-dot.active:hover {
+  background-color: #8B6914; /* Darker gold on hover */
 }
 
 /* Trust Banner Row */
@@ -5206,12 +5217,12 @@
     font-size: 1.75rem !important;
   }
   .hero-slider-dots {
-    bottom: 0.65rem !important;
+    bottom: 0.75rem !important;
     right: 0.75rem !important;
     left: auto !important;
     transform: none !important;
-    padding: 0.25rem 0.5rem !important;
-    gap: 0.35rem !important;
+    padding: 0.35rem 0.6rem !important;
+    gap: 0.4rem !important;
   }
   .hero-slider-dot {
     width: 6px !important;

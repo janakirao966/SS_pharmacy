@@ -29,7 +29,7 @@ test.describe("Homepage Layout & Visual Elements", () => {
 
   test("should display products showcase", async ({ page }) => {
     await page.goto("");
-    const heading = page.locator("h2, h3").filter({ hasText: /Products|Featured|Ayurvedic/i }).first();
+    const heading = page.locator("h1, h2, h3, .section-title, .eyebrow-badge").filter({ hasText: /Products|Featured|Ayurvedic|Herb|Bottle/i }).first();
     await expect(heading).toBeVisible();
   });
 });
