@@ -5462,9 +5462,9 @@
 .wcu-spotlight-image {
   display: block;
   width: 100%;
-  height: 320px;
-  object-fit: contain;
-  background-color: #FFFFFF;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
   border-radius: var(--radius-inner, 16px);
   border: 1px solid rgba(0, 0, 0, 0.04);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.02);
@@ -5477,7 +5477,7 @@
 
 @media (max-width: 768px) {
   .wcu-spotlight-image {
-    height: 260px;
+    height: auto;
   }
 }
 
