@@ -557,6 +557,33 @@
   }
 }
 
+@media (max-width: 340px) {
+  .logo-text {
+    font-size: 0.9rem !important;
+    white-space: nowrap !important;
+  }
+  .logo-tagline {
+    display: none !important;
+  }
+  .top-bar-left span {
+    font-size: 0.62rem !important;
+  }
+}
+
+/* Enforce 44px x 44px Minimum Touch Targets Across All Viewports (WCAG 2.5.8) */
+.nav-mobile-toggle,
+.mobile-cart-navbar-btn {
+  min-width: 44px !important;
+  min-height: 44px !important;
+}
+
+/* Scrolled Header Opaque Backdrop Contrast */
+.nav-wrapper.scrolled {
+  background-color: rgba(254, 253, 248, 0.98) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
 /* Fallback background for browsers that don't support backdrop-filter (e.g. older Firefox/Safari) */
 @supports (not (backdrop-filter: blur(1px))) and (not (-webkit-backdrop-filter: blur(1px))) {
   .nav-mobile-overlay {
