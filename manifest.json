@@ -2,14 +2,14 @@
   "name": "AYU S.S. PHARMACY",
   "short_name": "SS Pharmacy",
   "description": "Licensed Ayurvedic manufacturing facility showcasing authentic Ayurvedic formulations.",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FDFCFA",
   "theme_color": "#3D6B20",
   "icons": [
     {
-      "src": "/products/logo/logo.webp",
+      "src": "products/logo/logo.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "any maskable"
