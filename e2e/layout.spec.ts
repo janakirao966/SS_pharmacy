@@ -2,12 +2,12 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Homepage Layout & Visual Elements", () => {
   test("should render home page with correct document title", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("");
     await expect(page).toHaveTitle(/AYU S.S. PHARMACY/i);
   });
 
   test("should render navigation header with active page indicator", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("");
     const nav = page.locator("nav").first();
     await expect(nav).toBeVisible();
     
@@ -17,7 +17,7 @@ test.describe("Homepage Layout & Visual Elements", () => {
   });
 
   test("should contain key home page sections", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("");
     // Hero carousel slider container should be visible
     const heroSlider = page.locator(".home-page, .hero-slider, .hero-carousel, .hero-container").first();
     await expect(heroSlider).toBeVisible();
@@ -28,7 +28,7 @@ test.describe("Homepage Layout & Visual Elements", () => {
   });
 
   test("should display products showcase", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("");
     const heading = page.locator("h2, h3").filter({ hasText: /Products|Featured|Ayurvedic/i }).first();
     await expect(heading).toBeVisible();
   });
@@ -36,7 +36,7 @@ test.describe("Homepage Layout & Visual Elements", () => {
 
 test.describe("Products Page & Navigation", () => {
   test("should navigate to products page and display items", async ({ page }) => {
-    await page.goto("/products");
+    await page.goto("products");
     // Wait for Suspense loading state to detach
     await page.locator('text=Loading formulations...').waitFor({ state: 'detached', timeout: 15000 }).catch(() => {});
     
@@ -51,7 +51,7 @@ test.describe("Products Page & Navigation", () => {
 
 test.describe("Contact Form Usability", () => {
   test("should render contact form with fields", async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("contact");
     // Wait for Suspense loading state to detach
     await page.locator('text=Loading formulations...').waitFor({ state: 'detached', timeout: 15000 }).catch(() => {});
 
@@ -65,13 +65,13 @@ test.describe("Contact Form Usability", () => {
 
 test.describe("Visual Regression Checks", () => {
   test("homepage visual check", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("");
     await page.waitForTimeout(1000); // Allow animations to settle
     await expect(page).toHaveScreenshot("homepage.png", { fullPage: true, maxDiffPixelRatio: 0.08 });
   });
 
   test("about page visual check", async ({ page }) => {
-    await page.goto("/about");
+    await page.goto("about");
     await page.waitForTimeout(1000);
     await expect(page).toHaveScreenshot("about.png", { fullPage: true, maxDiffPixelRatio: 0.08 });
   });

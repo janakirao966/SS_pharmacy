@@ -30,8 +30,8 @@ export const products: Product[] = [
     mrp: 2999,
     shelfLife: "3 Years",
     safetyNote: "Ayurvedic cream for external use only",
-    image: "/products/Dr lion pain cream/Pain cream front view.webp",
-    transparentImage: "/products/Dr lion pain cream/Pain cream front view.webp"
+    image: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp",
+    transparentImage: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp"
   },
   {
     id: "dr-lion-pain-pills",
@@ -49,8 +49,8 @@ export const products: Product[] = [
     mrp: 2999,
     shelfLife: "2 Years",
     safetyNote: "Use only as directed. Consult a qualified healthcare professional for individual conditions.",
-    image: "/products/Dr lion Pain pills/Pain_pills.webp",
-    transparentImage: "/products/Dr lion Pain pills/Pain_pills.webp"
+    image: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp",
+    transparentImage: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp"
   },
   {
     id: "moon-light-cream",
@@ -68,7 +68,7 @@ export const products: Product[] = [
     mrp: 199,
     shelfLife: "3 Years",
     safetyNote: "Ayurvedic cream for external use only",
-    image: "/products/Moon-light/Moon cream front view.webp",
-    transparentImage: "/products/Moon-light/Moon cream front view.webp"
+    image: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp",
+    transparentImage: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp"
   }
 ];

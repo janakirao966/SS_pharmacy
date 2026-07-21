@@ -119,7 +119,7 @@ export default function WhyChooseUs() {
 
             <div className="wcu-spotlight-image-frame">
               <img
-                src="/products/Dr lion pain cream/Pain cream transparent image.webp"
+                src={`${import.meta.env.BASE_URL}products/Dr lion pain cream/Pain cream transparent image.webp`}
                 alt="S.S. Pharmacy quality standard showcase — transparent product jar with visible herbal contents"
                 className="wcu-spotlight-image"
                 width={600}

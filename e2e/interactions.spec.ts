@@ -21,7 +21,7 @@ test.describe("B2B Distributor Form Submission (Mock API)", () => {
       });
     });
 
-    await page.goto("/distributor");
+    await page.goto("distributor");
     await page.locator('text=Loading formulations...').waitFor({ state: 'detached', timeout: 10000 }).catch(() => {});
     await dismissCookieBanner(page);
 
@@ -58,7 +58,7 @@ test.describe("B2B Distributor Form Submission (Mock API)", () => {
 
 test.describe("Search Modal Hotkeys & Interactivity", () => {
   test("should toggle search modal using click trigger and execute search queries", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("");
     await dismissCookieBanner(page);
 
     // Click search icon in navbar
@@ -90,7 +90,7 @@ test.describe("Search Modal Hotkeys & Interactivity", () => {
       return;
     }
 
-    await page.goto("/");
+    await page.goto("");
     await dismissCookieBanner(page);
 
     // Focus body and press Ctrl+k
@@ -108,7 +108,7 @@ test.describe("B2B Cart Workflow Operations", () => {
     page.on("console", msg => console.log(`[BROWSER CONSOLE]: ${msg.text()}`));
     page.on("pageerror", err => console.log(`[BROWSER ERROR]: ${err.message}`));
 
-    await page.goto("/products");
+    await page.goto("products");
     await page.locator('text=Loading formulations...').waitFor({ state: 'detached', timeout: 15000 }).catch(() => {});
     await page.waitForLoadState("networkidle").catch(() => {});
     await dismissCookieBanner(page);
@@ -165,7 +165,7 @@ test.describe("B2B Cart Workflow Operations", () => {
 
 test.describe("Accessibility Focus Trapping", () => {
   test("should trap focus inside Search modal when active", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("");
     await dismissCookieBanner(page);
 
     // Open search modal via visible button click
@@ -193,7 +193,7 @@ test.describe("Accessibility Focus Trapping", () => {
 
 test.describe("PWA Service Worker Verification", () => {
   test("should register service worker successfully on load", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("");
     await page.waitForLoadState("networkidle").catch(() => {});
     
     // Check if service worker is registered in browser window context

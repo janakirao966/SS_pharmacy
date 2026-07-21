@@ -19,27 +19,27 @@ export default function Gallery() {
 
   const galleryItems = [
     {
-      src: '/products/Dr lion pain cream/Pain cream front view.webp',
+      src: import.meta.env.BASE_URL + 'products/Dr lion pain cream/Pain cream front view.webp',
       title: 'Dr. Lion Pain Cream Packshot',
       category: 'Packaging'
     },
     {
-      src: '/products/Moon-light/Moon cream front view.webp',
+      src: import.meta.env.BASE_URL + 'products/Moon-light/Moon cream front view.webp',
       title: 'Moon Light Cream Packshot',
       category: 'Packaging'
     },
     {
-      src: '/products/Dr lion Pain pills/Pain_pills.webp',
+      src: import.meta.env.BASE_URL + 'products/Dr lion Pain pills/Pain_pills.webp',
       title: 'Dr. Lion Pain Pills Bottle',
       category: 'Packaging'
     },
     {
-      src: '/products/Hero section/home_page_image.webp',
+      src: import.meta.env.BASE_URL + 'products/Hero section/home_page_image.webp',
       title: 'Licensed Manufacturing Facility',
       category: 'Facility'
     },
     {
-      src: '/products/logo/logo.webp',
+      src: import.meta.env.BASE_URL + 'products/logo/logo.webp',
       title: 'Official S.S. PHARMACY Logo',
       category: 'Logos'
     }

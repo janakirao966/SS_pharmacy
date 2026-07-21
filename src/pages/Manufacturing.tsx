@@ -14,17 +14,17 @@ export default function Manufacturing() {
     {
       title: "Authentic Formulation Sourcing",
       desc: "Our products follow classic Ayurvedic recipes and preparation rules, utilizing time-tested herbal ratios. Every raw herb is checked for quality parameters and purity before entering the extraction phase, ensuring consistent batch strength.",
-      image: "/products/Dr lion Pain pills/Pain_pills.webp"
+      image: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp"
     },
     {
       title: "Hygienic Production Process",
       desc: "Our facility maintains clean environments, ensuring all machinery and tools undergo strict cleaning checks between batches. We enforce strict hygiene and quality management practices across our entire supply chain.",
-      image: "/products/Dr lion pain cream/Pain cream front view.webp"
+      image: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp"
     },
     {
       title: "Quality Assurance & Lab Checks",
       desc: "We enforce rigorous validation guidelines. From agricultural sourcing to final extraction, every step is monitored to deliver consistent Ayurvedic formulations that support natural healing and musculoskeletal wellness.",
-      image: "/products/Moon-light/Moon cream front view.webp"
+      image: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp"
     }
   ];
 

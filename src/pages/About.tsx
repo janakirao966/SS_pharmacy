@@ -54,7 +54,7 @@ export default function About() {
             <div className="story-image-block">
               <CleanCard variant="default" innerClassName="story-image-container">
                 <img
-                  src="/products/Moon-light/Moon cream Hero_section.webp"
+                  src={`${import.meta.env.BASE_URL}products/Moon-light/Moon cream Hero_section.webp`}
                   alt="Ayurvedic ingredients formulation"
                   className="story-visual-image"
                   width={600}

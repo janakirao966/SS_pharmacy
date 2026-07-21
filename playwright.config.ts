@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:5173",
+    baseURL: "http://localhost:5173/SS_pharmacy/",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
@@ -24,7 +24,7 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run dev",
-    url: "http://localhost:5173",
+    url: "http://localhost:5173/SS_pharmacy/",
     reuseExistingServer: true,
     timeout: 30_000,
   },

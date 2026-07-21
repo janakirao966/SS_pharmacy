@@ -14,7 +14,10 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
         maximumFileSizeToCacheInBytes: 5242880 // 5 MiB
       },
-      manifest: false // preserve existing public/manifest.json
+      manifest: false, // preserve existing public/manifest.json
+      devOptions: {
+        enabled: true
+      }
     })
   ],
   build: {

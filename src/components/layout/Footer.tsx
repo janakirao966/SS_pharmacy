@@ -91,7 +91,7 @@ export default function Footer({ setActiveTab: _setActiveTab }: FooterProps) {
               </li>
             </ul>
             <img
-              src="/products/chemist_lab.webp"
+              src={`${import.meta.env.BASE_URL}products/chemist_lab.webp`}
               alt="Ayurvedic Chemist Facility"
               className="footer-chemist-img"
               width={800}

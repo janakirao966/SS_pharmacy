@@ -130,7 +130,7 @@ export default function Navbar({
         <nav className="nav-pill" aria-label="Main Navigation">
           <Link to="/" className="nav-logo" onClick={() => setIsOpen(false)}>
             <img
-              src="/products/logo/logo.webp"
+              src={`${import.meta.env.BASE_URL}products/logo/logo.webp`}
               alt="AYU S.S. PHARMACY Logo"
               className="w-12 h-12 object-contain rounded-full border border-[#EBE6DC]"
               style={{ width: '44px', height: '44px' }}

@@ -2,19 +2,19 @@ import { useState, useEffect, useCallback } from 'react';
 
 const heroSlides = [
   {
-    src: '/products/Hero section/hero-section1.webp',
+    src: import.meta.env.BASE_URL + 'products/Hero section/hero-section1.webp',
     alt: 'S.S. Pharmacy – Authentic Ayurvedic Product Range',
   },
   {
-    src: '/products/Hero section/hero-section-moon.webp',
+    src: import.meta.env.BASE_URL + 'products/Hero section/hero-section-moon.webp',
     alt: 'Moon Light Cream – Premium Ayurvedic Night Cream',
   },
   {
-    src: '/products/Hero section/hero-section-pain-pills.webp',
+    src: import.meta.env.BASE_URL + 'products/Hero section/hero-section-pain-pills.webp',
     alt: 'Dr. Lion Pain Tablets – Natural Pain Relief',
   },
   {
-    src: '/products/Hero section/pain-cream-hero-section.webp',
+    src: import.meta.env.BASE_URL + 'products/Hero section/pain-cream-hero-section.webp',
     alt: 'Dr. Lion Pain Cream – Ayurvedic Pain Relief',
   },
 ];

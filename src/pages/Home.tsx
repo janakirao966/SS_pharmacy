@@ -157,7 +157,7 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
           <Container>
             <div className="home-large-showcase-container">
               <img
-                src="/products/Hero section/home_page_image.webp"
+                src={`${import.meta.env.BASE_URL}products/Hero section/home_page_image.webp`}
                 alt="S.S. PHARMACY Herbal Showcase"
                 className="home-large-showcase-image"
                 width={1200}

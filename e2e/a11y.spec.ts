@@ -4,10 +4,10 @@ import AxeBuilder from '@axe-core/playwright';
 test.describe('Accessibility (a11y) Audits', () => {
   // Common paths to audit for accessibility
   const paths = [
-    '/',
-    '/products',
-    '/contact',
-    '/about',
+    '',
+    'products',
+    'contact',
+    'about',
   ];
 
   for (const path of paths) {
