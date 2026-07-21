@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ShoppingBag, Search, MessageCircle } from 'lucide-react';
+import { ArrowUpRight, ShoppingBag, Search, MessageCircle, X, Phone } from 'lucide-react';
 import SearchModal from '../ui/SearchModal';
 import { useCart } from '../../context/CartContext';
 
@@ -115,9 +115,9 @@ export default function Navbar({
             <button
               type="button"
               onClick={handleDismissAnnouncement}
-              className="p-1 hover:bg-white/10 rounded-full text-white/80 hover:text-white transition-colors cursor-pointer border-none bg-transparent"
+              className="p-2 hover:bg-white/10 rounded-full text-white/80 hover:text-white transition-colors cursor-pointer border-none bg-transparent"
               aria-label="Dismiss announcement"
-              style={{ fontSize: '10px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ minWidth: '44px', minHeight: '44px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
             >
               ✕
             </button>
@@ -132,7 +132,7 @@ export default function Navbar({
             <img
               src={`${import.meta.env.BASE_URL}products/logo/logo.webp`}
               alt="AYU S.S. PHARMACY Logo"
-              className="w-12 h-12 object-contain rounded-full border border-[#EBE6DC]"
+              className="w-12 h-12 object-contain rounded-full border border-[var(--color-border-hairline,#EBE6DC)]"
               style={{ width: '44px', height: '44px' }}
               width={44}
               height={44}
@@ -192,74 +192,114 @@ export default function Navbar({
             </button>
           </div>
 
-          {/* Mobile Search Toggle */}
-          <button
-            type="button"
-            className="mobile-cart-navbar-btn"
-            onClick={onSearchOpen}
-            aria-label="Search Catalog"
-            style={{ marginRight: '0.5rem' }}
-          >
-            <Search size={20} />
-          </button>
+          {/* Mobile Actions Wrapper (Search, Cart, Hamburger Toggle) */}
+          <div className="mobile-actions-wrapper">
+            <button
+              type="button"
+              className="mobile-cart-navbar-btn"
+              onClick={onSearchOpen}
+              aria-label="Search Catalog"
+            >
+              <Search size={20} />
+            </button>
 
-          {/* Mobile Cart Toggle */}
-          <button
-            type="button"
-            className="mobile-cart-navbar-btn"
-            onClick={() => setIsCartOpen(true)}
-            aria-label="Open Shopping Bag"
-          >
-            <ShoppingBag size={20} />
-            {cartCount > 0 && (
-              <span key={cartCount} className="cart-badge-count">{cartCount}</span>
-            )}
-          </button>
+            <button
+              type="button"
+              className="mobile-cart-navbar-btn"
+              onClick={() => setIsCartOpen(true)}
+              aria-label="Open Shopping Bag"
+            >
+              <ShoppingBag size={20} />
+              {cartCount > 0 && (
+                <span key={cartCount} className="cart-badge-count">{cartCount}</span>
+              )}
+            </button>
 
-          {/* Mobile Toggle */}
-          <button
-            type="button"
-            className={`nav-mobile-toggle ${isOpen ? 'open' : ''}`}
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle navigation menu"
-            aria-expanded={isOpen}
-          >
-            <span className="hamburger-line line-1"></span>
-            <span className="hamburger-line line-2"></span>
-            <span className="hamburger-line line-3"></span>
-          </button>
+            <button
+              type="button"
+              className={`nav-mobile-toggle ${isOpen ? 'open' : ''}`}
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle navigation menu"
+              aria-expanded={isOpen}
+            >
+              <span className="hamburger-line line-1"></span>
+              <span className="hamburger-line line-2"></span>
+              <span className="hamburger-line line-3"></span>
+            </button>
+          </div>
         </nav>
       </div>
 
       {/* Mobile Navigation Overlay */}
       <div className={`nav-mobile-overlay ${isOpen ? 'active' : ''}`} role="dialog" aria-modal="true" aria-label="Mobile Navigation Menu">
-        <ul className="nav-links-mobile">
-          {navItems.map((item, index) => (
-            <li
-              key={item.id}
-              style={{ animationDelay: `${index * 80}ms` }}
-              className={isOpen ? 'fade-in-slide' : ''}
-            >
-              <Link
-                to={item.path}
-                className={`nav-link-mobile-btn ${activeTab === item.id ? 'active' : ''}`}
-                onClick={() => setIsOpen(false)}
-                aria-current={activeTab === item.id ? 'page' : undefined}
+        {/* Mobile Overlay Top Header Bar */}
+        <div className="mobile-overlay-header">
+          <Link to="/" className="nav-logo" onClick={() => setIsOpen(false)}>
+            <img
+              src={`${import.meta.env.BASE_URL}products/logo/logo.webp`}
+              alt="AYU S.S. PHARMACY Logo"
+              style={{ width: '40px', height: '40px' }}
+              width={40}
+              height={40}
+              decoding="async"
+              className="rounded-full border border-[var(--color-border-hairline)]"
+            />
+            <span className="logo-text">
+              <span style={{ fontSize: '1.1rem' }}>AYU S.S. PHARMACY</span>
+              <span className="logo-tagline" style={{ fontSize: '0.75rem' }}>One Step Solution</span>
+            </span>
+          </Link>
+          <button
+            type="button"
+            className="mobile-overlay-close-btn"
+            onClick={() => setIsOpen(false)}
+            aria-label="Close navigation menu"
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        {/* Mobile Overlay Navigation Links Body */}
+        <div className="mobile-overlay-body">
+          <ul className="nav-links-mobile">
+            {navItems.map((item, index) => (
+              <li
+                key={item.id}
+                style={{ animationDelay: `${index * 60}ms` }}
+                className={isOpen ? 'fade-in-slide' : ''}
               >
-                {item.label}
+                <Link
+                  to={item.path}
+                  className={`nav-link-mobile-btn ${activeTab === item.id ? 'active' : ''}`}
+                  onClick={() => setIsOpen(false)}
+                  aria-current={activeTab === item.id ? 'page' : undefined}
+                >
+                  <span>{item.label}</span>
+                  {activeTab === item.id && <span className="mobile-active-indicator" />}
+                </Link>
+              </li>
+            ))}
+            <li style={{ animationDelay: `${navItems.length * 60}ms` }} className={isOpen ? 'fade-in-slide' : ''}>
+              <Link
+                to="/contact"
+                className="btn-pill btn-pill-primary w-full mt-4 justify-center"
+                onClick={() => setIsOpen(false)}
+              >
+                Enquire Now
+                <ArrowUpRight size={16} style={{ marginLeft: '4px' }} />
               </Link>
             </li>
-          ))}
-          <li style={{ animationDelay: `${navItems.length * 80}ms` }} className={isOpen ? 'fade-in-slide' : ''}>
-            <Link
-              to="/contact"
-              className="btn-pill btn-pill-primary w-full mt-4 justify-center"
-              onClick={() => setIsOpen(false)}
-            >
-              Enquire Now
-            </Link>
-          </li>
-        </ul>
+          </ul>
+        </div>
+
+        {/* Mobile Overlay Footer Strip */}
+        <div className="mobile-overlay-footer">
+          <a href="tel:+919494323211" className="mobile-footer-contact">
+            <Phone size={14} />
+            <span>+91 94943 23211</span>
+          </a>
+          <span className="mobile-footer-lic">Mfg. Lic. No. R-1970/Ayur</span>
+        </div>
       </div>
 
       {/* Search Modal */}

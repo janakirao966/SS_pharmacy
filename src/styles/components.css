@@ -1147,7 +1147,7 @@
   font-size: 0.7rem;
   font-weight: var(--font-semibold);
   text-transform: uppercase;
-  color: #7a6027; /* Darkened for contrast on white background */
+  color: #5E481B; /* Darkened for WCAG AA contrast (>= 4.5:1) */
   letter-spacing: 0.1em;
 }
 
@@ -3282,7 +3282,7 @@
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  z-index: 6000; /* Must sit above cart drawer overlay (z-index 5000) */
+  z-index: 9000; /* Sits below full overlay modals (z-index 10000) */
   padding: 0.95rem; /* Large touch target for mobile (WCAG 2.5.8) */
   background-color: #25D366;
   color: white;
@@ -3395,9 +3395,10 @@
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   justify-content: flex-end;
-  z-index: 5000;
+  z-index: 10000;
 }
 
 .cart-drawer-backdrop {
@@ -3406,6 +3407,7 @@
   left: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;
   background-color: rgba(45, 80, 22, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -3423,7 +3425,7 @@
   display: flex;
   flex-direction: column;
   animation: slideInDrawer 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  z-index: 5001;
+  z-index: 10001;
 }
 
 @keyframes fadeInBackdrop {
@@ -4767,7 +4769,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 9999; /* Ensure it is above all headers, announcements, and buttons */
+  height: 100dvh;
+  z-index: 10000; /* Sit above headers and floating widgets */
   display: flex;
   align-items: start;
   justify-content: center;
@@ -5086,7 +5089,7 @@
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  z-index: 9999;
+  z-index: 10002;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -5192,7 +5195,8 @@
     font-size: 2.25rem !important;
     line-height: 1.15 !important;
   }
-  .hero-slider-dots {
+  .hero-slider-dots,
+  .footer-slider-controls {
     display: none !important;
   }
 }
@@ -5257,16 +5261,17 @@
   }
 }
 
-/* Footer testimonial slider min-height adjustment to prevent text overflow overlaps */
-@media (max-width: 640px) {
-  .footer-testimonial-slider {
-    min-height: 220px;
-  }
+/* Footer testimonial slider responsive layout adjustment */
+.footer-testimonial-slider {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .footer-testimonial-slider {
-    min-height: 260px;
+    min-height: 200px;
+    height: auto;
   }
 }
 
@@ -5347,6 +5352,12 @@
   }
 }
 
+@media (pointer: coarse) {
+  .search-kbd-shortcuts {
+    display: none !important;
+  }
+}
+
 /* Phase 5: Catalog, Filters, Product Detail & Price Boxes Mobile Polish */
 @media (max-width: 640px) {
   .category-filters-row {
@@ -5365,6 +5376,9 @@
     flex-shrink: 0 !important;
     padding: 0.4rem 1rem !important;
     font-size: 0.8rem !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
   }
   .detail-image-box {
     max-height: 280px !important;
@@ -5399,6 +5413,9 @@
   }
   .footer-testimonial-slider {
     min-height: 180px !important;
+  }
+  .footer-slider-controls {
+    display: none !important;
   }
   .values-grid,
   .gallery-layout-grid {
@@ -5472,7 +5489,7 @@
   border-radius: 1.5rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   padding: 1.25rem 1.5rem;
-  z-index: 9999;
+  z-index: 9000;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   animation: slideUpCookie 0.5s var(--transition-bezier);
@@ -5526,6 +5543,10 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.3s var(--transition-bezier);
 }
 
@@ -5545,6 +5566,10 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.3s var(--transition-bezier);
 }
 
@@ -5555,7 +5580,7 @@
 
 @media (max-width: 640px) {
   .cookie-consent-banner {
-    bottom: 0.75rem !important;
+    bottom: max(0.75rem, env(safe-area-inset-bottom) + 0.75rem) !important;
     left: 0.75rem !important;
     right: 0.75rem !important;
     max-width: calc(100% - 1.5rem) !important;
@@ -5829,4 +5854,21 @@
     min-width: 44px !important;
   }
 }
+
+/* iOS Safari Input Zoom Prevention (Mobile Viewports <= 768px) */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea,
+  .form-input,
+  .form-textarea,
+  .form-select,
+  .form-input-field,
+  .form-textarea-field,
+  .search-modal-input,
+  .search-input {
+    font-size: 16px !important;
+  }
+}
+
 

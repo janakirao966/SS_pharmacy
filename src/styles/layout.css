@@ -426,17 +426,17 @@
   width: 100%;
   height: 100vh;
   height: 100dvh;
-  background: rgba(254, 253, 248, 0.95); /* Translucent Warm Cream */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(254, 253, 248, 0.97); /* Translucent Heritage Cream */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   z-index: 10000;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 1.5rem;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s var(--transition-bezier);
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-mobile-overlay.active {
@@ -444,13 +444,51 @@
   pointer-events: auto;
 }
 
+.mobile-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border-hairline, #EBE6DC);
+}
+
+.mobile-overlay-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-hairline, #EBE6DC);
+  background-color: var(--color-bg-surface, #F5F0E6);
+  color: var(--color-brand-primary, #2D5016);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-overlay-close-btn:hover {
+  background-color: var(--color-brand-primary);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.mobile-overlay-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0;
+  overflow-y: auto;
+}
+
 .nav-links-mobile {
   list-style: none;
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 1rem;
   text-align: center;
 }
 
@@ -458,20 +496,58 @@
   background: none;
   border: none;
   font-family: var(--font-body);
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;
   width: 100%;
-  display: block;
-  padding: 0.75rem 0; /* Ensures 44px+ height */
-  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.25rem; /* Ensures 44px+ height */
+  border-radius: 1rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
 .nav-link-mobile-btn:hover,
 .nav-link-mobile-btn.active {
   color: var(--color-brand-primary);
-  transform: translateY(-2px);
+  background-color: rgba(45, 80, 22, 0.06);
+  font-weight: 600;
+}
+
+.mobile-active-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-brand-secondary, #C4A35A);
+}
+
+.mobile-overlay-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border-hairline, #EBE6DC);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.mobile-footer-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-brand-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mobile-footer-lic {
+  font-size: 0.72rem;
+  color: var(--color-text-light);
 }
 
 /* Morph reveal animation for mobile menu links */
@@ -481,9 +557,17 @@
   animation: navReveal 0.6s var(--transition-bezier) forwards;
 }
 @media (max-width: 1024px) {
+  .top-bar {
+    display: none !important;
+  }
   .nav-links-desktop,
   .nav-actions-desktop {
     display: none;
+  }
+  .mobile-actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   .nav-mobile-toggle {
     display: flex;
@@ -503,14 +587,14 @@
     color: var(--color-brand-secondary);
     cursor: pointer;
     transition: background-color 0.2s;
-    margin-right: 8px !important;
+    margin-right: 0 !important;
     position: relative;
   }
   .mobile-cart-navbar-btn:hover {
     background-color: #F2ECE4;
   }
   .nav-pill {
-    padding: 0.5rem 1.25rem;
+    padding: 0.5rem 1rem;
   }
 }
 

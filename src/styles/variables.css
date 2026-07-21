@@ -6,9 +6,9 @@
   --color-bg-accent: #F5F3EF;
 
   /* Color Tokens - Brand */
-  --color-brand-primary: #3D6B20;        /* Vibrant Green */
-  --color-brand-primary-light: #4A7F28;  /* Hover Green */
-  --color-brand-primary-dark: #2D5016;   /* Deep Accent Green */
+  --color-brand-primary: #2D5016;        /* Deep Forest Green (WCAG AAA >= 7:1) */
+  --color-brand-primary-light: #3D6B20;  /* Hover Green */
+  --color-brand-primary-dark: #1E370F;   /* Deepest Accent Green */
   --color-brand-primary-muted: rgba(45, 80, 22, 0.08); /* 8% opacity of Forest Green */
 
 

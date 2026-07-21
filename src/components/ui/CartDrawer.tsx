@@ -38,7 +38,9 @@ export default function CartDrawer() {
       previouslyFocusedElement.current = document.activeElement as HTMLElement;
       setIsMounted(true);
       setIsClosing(false);
+      document.body.style.overflow = 'hidden';
     } else {
+      document.body.style.overflow = '';
       setIsClosing(true);
       const timer = setTimeout(() => {
         setIsMounted(false);
@@ -48,6 +50,10 @@ export default function CartDrawer() {
       }
       return () => clearTimeout(timer);
     }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isOpen]);
 
   // Escape key close & focus trapping trap
