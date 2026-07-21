@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Heart } from 'lucide-react';
 import { products } from '../data/products';
-import { useToast } from '../context/ToastContext';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -24,24 +23,10 @@ interface ProductsProps {
 }
 
 export default function Products({ setActiveTab, setSelectedProductId }: ProductsProps) {
-  const { showToast } = useToast();
   const [filter, setFilter] = useState('all');
-  const { isFavorited, toggleWishlist } = useWishlist();
+  const { isFavorited } = useWishlist();
   const [compareList, setCompareList] = useState<string[]>([]);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
-
-  const handleToggleCompare = (productId: string) => {
-    setCompareList((prev) => {
-      if (prev.includes(productId)) {
-        return prev.filter((id) => id !== productId);
-      }
-      if (prev.length >= 3) {
-        showToast("You can compare up to 3 formulations at a time.", "info");
-        return prev;
-      }
-      return [...prev, productId];
-    });
-  };
 
   const categories = [
     { id: 'all', label: 'All Formulations' },
@@ -150,10 +135,6 @@ export default function Products({ setActiveTab, setSelectedProductId }: Product
                   key={product.id}
                   product={product}
                   onClick={handleProductDetail}
-                  isWishlisted={isFavorited(product.id)}
-                  onWishlistToggle={() => toggleWishlist(product.id)}
-                  isComparing={compareList.includes(product.id)}
-                  onCompareToggle={() => handleToggleCompare(product.id)}
                   onEnquire={() => {
                     setActiveTab('contact');
                     window.scrollTo({ top: 0, behavior: 'smooth' });

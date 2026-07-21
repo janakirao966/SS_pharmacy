@@ -124,8 +124,8 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
               subtitle="Explore our government-licensed Ayurvedic proprietary remedies crafted under strict quality controls."
             />
 
-            <div className="mt-12">
-              <Grid cols={3} gap="lg">
+            <div className="home-portfolio-grid-wrapper">
+              <Grid cols={3} gap="lg" className="products-catalogue-grid-container">
                 {products.map((product) => (
                   <ProductCard
                     key={product.id}
@@ -139,9 +139,10 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
               </Grid>
             </div>
 
-            <div className="flex justify-center mt-12">
+            <div className="catalog-view-all-container">
               <Button
-                variant="secondary"
+                variant="outline"
+                className="btn-view-all-products"
                 onClick={() => handleTabChange('products')}
               >
                 View All Products
@@ -153,7 +154,7 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
 
       {/* 5. Home Page Large Showcase Image */}
       <ScrollReveal animation="fade-up" delay={200}>
-        <Section className="home-large-showcase-section pb-16 pt-4">
+        <Section className="home-large-showcase-section py-6 md:py-8">
           <Container>
             <div className="home-large-showcase-container">
               <img
