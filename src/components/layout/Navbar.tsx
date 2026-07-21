@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ShoppingBag, Search, MessageCircle, X, Phone } from 'lucide-react';
+import { ArrowUpRight, ShoppingBag, Search, MessageCircle, X, Phone, Menu } from 'lucide-react';
 import SearchModal from '../ui/SearchModal';
 import { useCart } from '../../context/CartContext';
 
@@ -83,7 +83,7 @@ export default function Navbar({
       {isAnnounceVisible && (
         <div className="top-bar">
           <div className="top-bar-left">
-            <span>Welcome to AYU S.S. Pharmacy - One Step Solution for Your Health</span>
+            <span>Welcome to S.S. PHARMACY - One Step Solution for Your Health</span>
           </div>
           <div className="top-bar-middle">
             <span>Mfg. Lic. No. R-1970/Ayur</span>
@@ -115,9 +115,8 @@ export default function Navbar({
             <button
               type="button"
               onClick={handleDismissAnnouncement}
-              className="p-2 hover:bg-white/10 rounded-full text-white/80 hover:text-white transition-colors cursor-pointer border-none bg-transparent"
+              className="top-bar-dismiss-btn"
               aria-label="Dismiss announcement"
-              style={{ minWidth: '44px', minHeight: '44px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
             >
               ✕
             </button>
@@ -131,16 +130,15 @@ export default function Navbar({
           <Link to="/" className="nav-logo" onClick={() => setIsOpen(false)}>
             <img
               src={`${import.meta.env.BASE_URL}products/logo/logo.webp`}
-              alt="AYU S.S. PHARMACY Logo"
-              className="w-12 h-12 object-contain rounded-full border border-[var(--color-border-hairline,#EBE6DC)]"
-              style={{ width: '44px', height: '44px' }}
-              width={44}
-              height={44}
+              alt="S.S. PHARMACY Logo"
+              className="nav-logo-img"
+              width={56}
+              height={56}
               decoding="async"
             />
-            <span className="logo-text">
-              <span>AYU S.S. PHARMACY</span>
-              <span className="logo-tagline">One Step Solution</span>
+            <span className="logo-text-wrapper">
+              <span className="logo-title">S.S. PHARMACY</span>
+              <span className="logo-tagline">Pure Ayurveda, Pure Life</span>
             </span>
           </Link>
 
@@ -166,7 +164,7 @@ export default function Navbar({
               className="cart-navbar-btn"
               aria-label="Search Catalog"
             >
-              <Search size={18} />
+              <Search size={20} />
             </button>
 
             <Link
@@ -185,33 +183,33 @@ export default function Navbar({
               className="cart-navbar-btn"
               aria-label="Open Shopping Bag"
             >
-              <ShoppingBag size={18} />
+              <ShoppingBag size={20} />
               {cartCount > 0 && (
-                <span key={cartCount} className="cart-badge-count">{cartCount}</span>
+                <span key={cartCount} className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
               )}
             </button>
           </div>
 
-          {/* Mobile Actions Wrapper (Search, Cart, Hamburger Toggle) */}
+          {/* Mobile Actions Wrapper (Search, Cart, Menu Toggle) */}
           <div className="mobile-actions-wrapper">
             <button
               type="button"
-              className="mobile-cart-navbar-btn"
+              className="mobile-action-btn"
               onClick={onSearchOpen}
               aria-label="Search Catalog"
             >
-              <Search size={20} />
+              <Search size={20} className="action-icon" />
             </button>
 
             <button
               type="button"
-              className="mobile-cart-navbar-btn"
+              className="mobile-action-btn"
               onClick={() => setIsCartOpen(true)}
               aria-label="Open Shopping Bag"
             >
-              <ShoppingBag size={20} />
+              <ShoppingBag size={20} className="action-icon" />
               {cartCount > 0 && (
-                <span key={cartCount} className="cart-badge-count">{cartCount}</span>
+                <span key={cartCount} className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
               )}
             </button>
 
@@ -222,9 +220,7 @@ export default function Navbar({
               aria-label="Toggle navigation menu"
               aria-expanded={isOpen}
             >
-              <span className="hamburger-line line-1"></span>
-              <span className="hamburger-line line-2"></span>
-              <span className="hamburger-line line-3"></span>
+              {isOpen ? <X size={22} className="toggle-icon" /> : <Menu size={22} className="toggle-icon" />}
             </button>
           </div>
         </nav>
@@ -237,16 +233,15 @@ export default function Navbar({
           <Link to="/" className="nav-logo" onClick={() => setIsOpen(false)}>
             <img
               src={`${import.meta.env.BASE_URL}products/logo/logo.webp`}
-              alt="AYU S.S. PHARMACY Logo"
-              style={{ width: '40px', height: '40px' }}
-              width={40}
-              height={40}
+              alt="S.S. PHARMACY Logo"
+              width={48}
+              height={48}
               decoding="async"
-              className="rounded-full border border-[var(--color-border-hairline)]"
+              className="nav-logo-img overlay-logo"
             />
-            <span className="logo-text">
-              <span style={{ fontSize: '1.1rem' }}>AYU S.S. PHARMACY</span>
-              <span className="logo-tagline" style={{ fontSize: '0.75rem' }}>One Step Solution</span>
+            <span className="logo-text-wrapper">
+              <span className="logo-title">S.S. PHARMACY</span>
+              <span className="logo-tagline">Pure Ayurveda, Pure Life</span>
             </span>
           </Link>
           <button
@@ -255,7 +250,7 @@ export default function Navbar({
             onClick={() => setIsOpen(false)}
             aria-label="Close navigation menu"
           >
-            <X size={22} />
+            <X size={24} />
           </button>
         </div>
 
@@ -307,3 +302,4 @@ export default function Navbar({
     </header>
   );
 }
+

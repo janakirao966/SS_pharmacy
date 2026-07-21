@@ -13,9 +13,9 @@
 
 
   /* Color Tokens - Accent / Gold */
-  --color-brand-secondary: #9B7B35;      /* Darker Gold for WCAG AA compliance */
+  --color-brand-secondary: #7D5D1A;      /* WCAG AA Compliant Heritage Gold (>= 4.5:1 on #FDFCFA) */
   --color-gold-light: #D4B878;
-  --color-gold-dark: #9B7B35;
+  --color-gold-dark: #7D5D1A;
   --color-accent: #C4A35A;               /* Fallback Accent */
 
   /* Color Tokens - Text */
