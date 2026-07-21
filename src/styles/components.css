@@ -3414,6 +3414,24 @@
   to { transform: translateX(0); }
 }
 
+@keyframes fadeOutBackdrop {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideOutDrawer {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+.cart-drawer-overlay.closing .cart-drawer-backdrop {
+  animation: fadeOutBackdrop 0.3s ease forwards;
+}
+
+.cart-drawer-overlay.closing .cart-drawer-panel {
+  animation: slideOutDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .cart-drawer-header {
   padding: 1.5rem;
   border-bottom: 1px solid var(--color-border-hairline);
@@ -3498,7 +3516,19 @@
   border-radius: 20px;
   padding: 1rem;
   position: relative;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: cardFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .cart-item-card:hover {
@@ -5279,8 +5309,8 @@
 
 .btn-cookie-decline {
   background-color: transparent;
-  color: #6E6863 !important;
-  border: 1px solid #EBE6DC !important;
+  color: #4A4542 !important; /* Darker tone for WCAG AA compliance */
+  border: 1px solid #B5AEA7 !important; /* Darker border for visibility */
   padding: 0.5rem 1.25rem;
   border-radius: 9999px;
   font-size: 0.75rem;
@@ -5293,7 +5323,7 @@
 
 .btn-cookie-decline:hover {
   background-color: rgba(26, 26, 26, 0.05);
-  color: var(--color-text-primary, #1A1A1A);
+  color: var(--color-text-primary, #1A1A1A) !important;
 }
 
 @media (max-width: 640px) {
