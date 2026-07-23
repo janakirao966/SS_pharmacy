@@ -1,70 +1,100 @@
-# Universal Project Template
+# 🌿 S.S. PHARMACY — Premium Ayurvedic E-Commerce & Lead Platform
 
-A pre-configured `.agents/` workspace template with **169 curated skills**, universal agent profiles, and design system defaults for rapid project bootstrapping.
+> **Authentic Ayurvedic Medicines & Licensed Manufacturing Facility (Mfg. Lic. No. R-1970/Ayur)**  
+> High-performance e-commerce storefront, B2B distributor lead generation engine, customer order tracking portal, and isolated enterprise Admin Control Center.
 
-## 🚀 Quick Start
+---
 
-1. **Copy the template** into your new project folder:
-   ```bash
-   xcopy "C:\Users\janak\Downloads\ProjectTemplate" "C:\Users\janak\Downloads\_Projects\my-new-project" /E /I
-   ```
+## 🌟 Key Features
 
-2. **Customize `GEMINI.md`** — Replace `[PROJECT_NAME]`, `[Tech Stack]`, and constraint placeholders with your project details.
+* **Authentic Ayurvedic Catalog**: Interactive catalog showcasing traditional formulations (*Arishtas*, *Asavas*, *Tailas*, *Bhasmas*, *Lauhas*, *Ghulikas*).
+* **Enterprise Admin Control Center (`/admin/login` & `/admin/orders`)**:
+  * Isolated standalone dashboard layout (no storefront Header/Footer).
+  * Primetek-inspired dark glassmorphism night theme (`#0C1A12`) with `#C5A059` gold accents.
+  * Real-time order fulfillment tracker (Status accordions, debounced 400ms search, itemized product tables).
+  * B2B Distributor Lead Manager connected to Supabase database.
+  * Hardened Row-Level Security (RLS) & `is_admin` role authorization.
+* **Customer Account & Tracking (`/account` & `/track-order`)**:
+  * 4-step live order progress timeline (*Placed* ➔ *Preparing* ➔ *Dispatched* ➔ *Delivered*).
+  * Seamless customer profile management and order history.
+* **Seamless Payment Integration**:
+  * Razorpay India online checkout + Cash on Delivery (COD).
+* **High Performance & PWA Support**:
+  * Vite 8 + React 19 + TypeScript stack.
+  * Sub-2.0s LCP load time & offline Progressive Web App (PWA) service worker caching.
+* **Vercel & Supabase Ready**:
+  * Pre-configured `vercel.json` SPA rewrites & security headers.
+  * Production-ready SQL migrations in `supabase/migrations/`.
 
-3. **Customize `.agents/project-agents.md`** — Replace `[PROJECT_TYPE]` in each agent profile with your project context (e.g., "SaaS dashboard", "portfolio site").
+---
 
-4. **Customize `.agents/local-overrides.json`** — Set your project's fonts, theme, and component-specific design tokens.
+## 🛠️ Technology Stack
 
-5. **Run the audit** — Copy the prompt from `AUDIT_PROMPT.md` into your AI agent to validate everything is wired up correctly.
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Frontend Core** | React 19 + Vite 8 | Ultra-fast UI component tree & build bundle |
+| **Language** | TypeScript | Strict type safety across components and schemas |
+| **Styling System** | Vanilla CSS + Tokens | Custom design variables (`variables.css`, `components.css`) |
+| **Routing** | React Router 7 | Client-side SEO route management |
+| **Database & Auth** | Supabase (PostgreSQL) | Auth users, Row-Level Security (RLS) policies & database tables |
+| **Payments** | Razorpay India | Online UPI, Debit/Credit Cards & Net Banking |
+| **PWA** | Vite PWA Plugin | Offline caching & web app manifest |
+| **Deployment** | Vercel | Automatic CI/CD build deployment pipeline |
 
-## 📁 Structure
+---
 
+## 🚀 Quick Start (Local Development)
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/janakirao966/SS_pharmacy.git
+cd SS_pharmacy
 ```
-ProjectTemplate/
-├── GEMINI.md                    ← Agent bootloader (project config)
-├── README.md                    ← This file
-├── AUDIT_PROMPT.md              ← v3 structural audit prompt
-├── SKILLS_REPORT.md             ← Full skill reference guide (169 skills)
-├── .gitignore                   ← Standard ignores
-└── .agents/
-    ├── AGENTS.md                ← Workspace rules (3 enforcement rules)
-    ├── local-overrides.json     ← Design system tokens
-    ├── project-agents.md        ← 6 agent role profiles
-    ├── skill-manifest.json      ← Skill inventory registry
-    └── skills/                  ← 169 skill folders (each with SKILL.md)
+
+### 2. Install dependencies
+```bash
+npm install
 ```
 
-## 📋 What's Included
+### 3. Configure environment variables
+Create a `.env` file in the root directory:
+```env
+VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOi...
+VITE_RAZORPAY_KEY_ID=rzp_live_...
+```
 
-### Workspace Rules (AGENTS.md)
-- **Post-Task Skill Attribution** — Agent must list which skills it used after every task.
-- **Mandatory Skill Ingestion** — Agent must read relevant SKILL.md files before making changes.
-- **Dual-Prompt Optimization** — Auto-chains `prompt-master` + `enhance-prompt` for prompt tasks.
+### 4. Run local development server
+```bash
+npm run dev
+```
+Open `http://localhost:5173/SS_pharmacy/` in your browser.
 
-### Agent Profiles (project-agents.md)
-| Profile | Focus |
-|---|---|
-| UI/UX Designer | Design system, typography, animations, contrast |
-| Frontend Developer | App code, CSS, routing, performance |
-| QA / Accessibility | WCAG 2.2, SEO, cross-browser |
-| Content & Copy | Descriptions, CTAs, microcopy |
-| Backend / API | Endpoints, database, auth, RLS |
-| DevOps / Deployment | CI/CD, env vars, monitoring |
+---
 
-### Design Tokens (local-overrides.json)
-Neutral defaults (Inter font, auto theme, 8px scale) — customize per project.
+## 🗄️ Database Setup & SQL Migrations
 
-## 🔧 Maintenance
+Run the SQL migration scripts located in `supabase/migrations/` inside your **Supabase SQL Editor**:
 
-Run the `AUDIT_PROMPT.md` periodically to catch:
-- Orphaned skills (folder exists, manifest entry missing)
-- Missing skills (manifest entry exists, folder missing)
-- Broken profile references
-- JSON schema violations
+1. **`supabase/migrations/01_ss_pharmacy.sql`**: Base tables (`orders`, `order_items`, `profiles`).
+2. **`supabase/migrations/02_hardened_rls.sql`**: Hardened Row Level Security (RLS), `is_admin()` helper function, and `distributor_applications` table.
 
-## 📊 Audit Scoring
+---
 
-The audit calculates a Health Score (0–100):
-- **-15 pts** per CRITICAL error
-- **-5 pts** per WARNING
-- **-2 pts** per INFO item
+## 🔐 Granting Admin Access
+
+To authorize an administrator account:
+```sql
+INSERT INTO public.profiles (id, full_name, email, is_admin)
+SELECT id, 'S.S. Pharmacy Admin', email, true
+FROM auth.users
+WHERE email = 'your-admin-email@example.com'
+ON CONFLICT (id) DO UPDATE SET is_admin = true;
+```
+
+---
+
+## 📜 License & Copyright
+
+© 2026 **S.S. PHARMACY**. All Rights Reserved.  
+Manufacturing License No: **R-1970/Ayur**
