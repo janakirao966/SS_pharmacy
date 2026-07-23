@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Smartphone, CheckCircle, ArrowRight } from 'lucide-react';
-import { products } from '../../data/products';
 import { useCart } from '../../context/CartContext';
 
 interface ShippingFormType {
@@ -24,7 +23,6 @@ export default function CartDrawer() {
     handleRemoveFromCart: onRemove,
     handleUpdateCartQuantity: onUpdateQuantity,
     handleClearCart: onClear,
-    handleAddToCart: onAddToCart,
     openCheckout
   } = useCart();
 
@@ -323,30 +321,8 @@ export default function CartDrawer() {
                   <ShoppingBag size={48} className="text-[#B0A796] mx-auto mb-4" />
                   <p className="text-secondary text-sm mb-6">Your order bag is currently empty.</p>
                   
-                  <div className="cart-recommended-section border-t border-[#EBE6DC] pt-6 text-left w-full">
-                    <h5 className="font-sans text-[11px] font-bold text-[#8B6914] uppercase tracking-wider mb-4">Recommended Formulations</h5>
-                    <div className="flex flex-col gap-3">
-                      {products.slice(0, 2).map((prod) => (
-                        <div key={prod.id} className="flex items-center gap-3 p-3 bg-[#FEFDF8]/60 rounded-2xl border border-[#EBE6DC] hover:border-[#8B6914] transition-all">
-                          <img src={prod.image} alt={prod.name} className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-[#EBE6DC]" width={48} height={48} loading="lazy" decoding="async" />
-                          <div className="flex-1 min-w-0">
-                            <h6 className="text-xs font-semibold text-[#1A1A1A] truncate">{prod.name}</h6>
-                            <span className="text-[10px] text-secondary">₹{prod.mrp}</span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => onAddToCart(prod, 1)}
-                            className="btn-pill btn-pill-secondary py-1 px-3 text-[10px] uppercase font-bold tracking-wider"
-                          >
-                            Add
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <button type="button" onClick={onClose} className="btn-pill btn-pill-primary mt-6 w-full justify-center">
-                    Browse Formulations
+                  <button type="button" onClick={onClose} className="btn-pill btn-pill-primary mt-2 w-full justify-center">
+                    Browse Ayurvedic Formulations
                   </button>
                 </div>
               ) : (
