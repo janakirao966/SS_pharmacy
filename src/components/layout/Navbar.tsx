@@ -184,7 +184,9 @@ export default function Navbar({
               aria-label="Open Shopping Cart"
             >
               <ShoppingCart size={20} />
-              <span className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
+              {cartCount > 0 && (
+                <span className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
+              )}
             </button>
           </div>
 
@@ -206,7 +208,9 @@ export default function Navbar({
               aria-label="Open Shopping Cart"
             >
               <ShoppingCart size={20} className="action-icon" />
-              <span className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
+              {cartCount > 0 && (
+                <span className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
+              )}
             </button>
 
             <button
