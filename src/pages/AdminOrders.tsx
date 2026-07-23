@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import { 
-  ShieldCheck, 
   RefreshCw, 
   Filter, 
-  AlertCircle, 
   Search, 
   TrendingUp, 
   ShoppingBag, 
@@ -33,9 +32,6 @@ interface B2BLead {
 
 export default function AdminOrders() {
   const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState(false);
-
   const [activeTab, setActiveTab] = useState<'orders' | 'inquiries'>('orders');
   const [orders, setOrders] = useState<DatabaseOrder[]>([]);
   const [leads, setLeads] = useState<B2BLead[]>([]);
@@ -44,8 +40,6 @@ export default function AdminOrders() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
-
-  const adminPasscode = import.meta.env.VITE_ADMIN_PASSCODE || 'sspharmacy2026';
 
   // Check session storage for admin login
   useEffect(() => {
@@ -63,17 +57,6 @@ export default function AdminOrders() {
     }, 400);
     return () => clearTimeout(handler);
   }, [searchQuery]);
-
-  const handleAdminLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === adminPasscode) {
-      setAuthenticated(true);
-      setLoginError(false);
-      fetchData();
-    } else {
-      setLoginError(true);
-    }
-  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -199,36 +182,7 @@ export default function AdminOrders() {
   const pendingLeadsCount = leads.filter(l => l.status === 'new' || l.status === 'under_review').length;
 
   if (!authenticated) {
-    return (
-      <div className="min-h-[80vh] flex items-center justify-center p-4 bg-[#F9F8F3]">
-        <div className="bg-[#FEFDF8] border border-[#C5A059]/40 rounded-2xl p-8 max-w-sm w-full shadow-2xl text-center">
-          <div className="w-14 h-14 bg-[#1D3A28]/10 text-[#1D3A28] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#C5A059]/30">
-            <ShieldCheck size={32} className="text-[#1D3A28]" />
-          </div>
-          <h2 className="font-display text-2xl font-bold text-[#1D3A28] mb-1">S.S. PHARMACY</h2>
-          <p className="text-xs text-[#8A6B29] font-medium mb-6">Enterprise Admin Control Portal</p>
-
-          <form onSubmit={handleAdminLogin} className="space-y-4">
-            {loginError && (
-              <div className="p-2.5 bg-red-50 text-red-600 text-xs rounded-lg flex items-center gap-1.5 justify-center font-medium">
-                <AlertCircle size={14} />
-                <span>Incorrect Admin Passcode</span>
-              </div>
-            )}
-            <input
-              type="password"
-              placeholder="Enter Admin Passcode"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-[#1D3A28]"
-            />
-            <Button type="submit" variant="primary" className="w-full bg-[#1D3A28] hover:bg-[#2D5016] text-white py-2.5 text-xs font-bold rounded-xl">
-              Authorize Login
-            </Button>
-          </form>
-        </div>
-      </div>
-    );
+    return <Navigate to="/admin/login" replace />;
   }
 
   return (
