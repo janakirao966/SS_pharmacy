@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ShoppingBag, Search, MessageCircle, X, Phone, Menu } from 'lucide-react';
+import { MagnifyingGlass, ShoppingCart, ArrowUpRight, X, List, WhatsappLogo, Phone } from '@phosphor-icons/react';
 import SearchModal from '../ui/SearchModal';
 import { useCart } from '../../context/CartContext';
 
@@ -109,7 +109,7 @@ export default function Navbar({
                 </svg>
               </a>
               <a href="https://wa.me/919494323211" target="_blank" rel="noopener noreferrer" className="top-bar-social-link" aria-label="WhatsApp">
-                <MessageCircle size={14} />
+                <WhatsappLogo size={14} weight="fill" />
               </a>
             </div>
             <button
@@ -164,7 +164,7 @@ export default function Navbar({
               className="cart-navbar-btn"
               aria-label="Search Catalog"
             >
-              <Search size={20} />
+              <MagnifyingGlass size={20} weight="bold" />
             </button>
 
             <Link
@@ -173,20 +173,18 @@ export default function Navbar({
             >
               Enquire Now
               <span className="cta-icon-wrapper">
-                <ArrowUpRight className="cta-icon" size={14} />
+                <ArrowUpRight className="cta-icon" size={14} weight="bold" />
               </span>
             </Link>
 
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
-              className="cart-navbar-btn"
-              aria-label="Open Shopping Bag"
+              className="cart-navbar-btn nav-cart-btn"
+              aria-label="Open Shopping Cart"
             >
-              <ShoppingBag size={20} />
-              {cartCount > 0 && (
-                <span key={cartCount} className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
-              )}
+              <ShoppingCart size={20} />
+              <span className="cart-badge-count">{cartCount > 0 ? (cartCount > 999 ? '999+' : cartCount) : 2}</span>
             </button>
           </div>
 
@@ -198,19 +196,17 @@ export default function Navbar({
               onClick={onSearchOpen}
               aria-label="Search Catalog"
             >
-              <Search size={20} className="action-icon" />
+              <MagnifyingGlass size={20} weight="bold" className="action-icon" />
             </button>
 
             <button
               type="button"
               className="mobile-action-btn"
               onClick={() => setIsCartOpen(true)}
-              aria-label="Open Shopping Bag"
+              aria-label="Open Shopping Cart"
             >
-              <ShoppingBag size={20} className="action-icon" />
-              {cartCount > 0 && (
-                <span key={cartCount} className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
-              )}
+              <ShoppingCart size={20} className="action-icon" />
+              <span className="cart-badge-count">{cartCount > 0 ? (cartCount > 999 ? '999+' : cartCount) : 2}</span>
             </button>
 
             <button
@@ -220,7 +216,7 @@ export default function Navbar({
               aria-label="Toggle navigation menu"
               aria-expanded={isOpen}
             >
-              {isOpen ? <X size={22} className="toggle-icon" /> : <Menu size={22} className="toggle-icon" />}
+              {isOpen ? <X size={22} weight="bold" className="toggle-icon" /> : <List size={22} weight="bold" className="toggle-icon" />}
             </button>
           </div>
         </nav>
@@ -290,7 +286,7 @@ export default function Navbar({
         {/* Mobile Overlay Footer Strip */}
         <div className="mobile-overlay-footer">
           <a href="tel:+919494323211" className="mobile-footer-contact">
-            <Phone size={14} />
+            <Phone size={14} weight="fill" />
             <span>+91 94943 23211</span>
           </a>
           <span className="mobile-footer-lic">Mfg. Lic. No. R-1970/Ayur</span>

@@ -19,7 +19,7 @@ test.describe("Homepage Layout & Visual Elements", () => {
   test("should contain key home page sections", async ({ page }) => {
     await page.goto("");
     // Hero carousel slider container should be visible
-    const heroSlider = page.locator(".home-page, .hero-slider, .hero-carousel, .hero-container").first();
+    const heroSlider = page.locator(".home-page, .hero-slider-container, .hero-carousel, .hero-container").first();
     await expect(heroSlider).toBeVisible();
 
     // Key features section or page container text

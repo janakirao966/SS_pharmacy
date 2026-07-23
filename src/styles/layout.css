@@ -16,14 +16,14 @@
 }
 
 .section-spacing {
-  padding-top: var(--spacing-section-desktop);
-  padding-bottom: var(--spacing-section-desktop);
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
 }
 
 @media (max-width: 768px) {
   .section-spacing {
-    padding-top: var(--spacing-section-mobile-reduced);
-    padding-bottom: var(--spacing-section-mobile-reduced);
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
   }
 }
 
@@ -260,19 +260,20 @@
 .logo-title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.35rem;
-  color: var(--color-primary-dark);
-  letter-spacing: 0.01em;
+  font-size: 1.45rem;
+  color: #23452B;
+  letter-spacing: -0.01em;
   white-space: nowrap;
+  line-height: 1.05;
 }
 
 .logo-tagline {
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.785rem;
   font-weight: 600;
-  color: var(--color-gold-dark);
+  color: #B88A44;
   margin-top: 0.1rem;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   white-space: nowrap;
 }
 
@@ -325,7 +326,7 @@
 .nav-actions-desktop {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1.25rem;
 }
 
 /* Desktop Cart Navbar Button */
@@ -344,11 +345,34 @@
   position: relative;
 }
 
+.cart-navbar-btn::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: -2px;
+  right: -2px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.cart-navbar-btn.nav-cart-btn {
+  margin-left: 0.5rem;
+}
+
 .cart-navbar-btn:hover {
   background-color: var(--color-surface-hover);
   color: var(--color-primary-dark);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(45, 80, 22, 0.08);
+}
+
+.cart-navbar-btn svg {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cart-navbar-btn:hover svg {
+  transform: scale(1.08);
 }
 
 .cart-navbar-btn:active {
@@ -674,8 +698,8 @@
     font-size: 1.05rem;
     letter-spacing: -0.01em;
   }
-  .logo-tagline {
-    font-size: 0.68rem;
+  .nav-pill .logo-tagline {
+    display: none; /* Hide tagline in main header bar at narrow mobile widths to avoid cramping */
   }
   .nav-logo {
     gap: 0.4rem;
@@ -690,9 +714,6 @@
   .logo-title {
     font-size: 0.98rem;
   }
-  .logo-tagline {
-    font-size: 0.65rem;
-  }
 }
 
 @media (max-width: 330px) {
@@ -702,9 +723,6 @@
   }
   .logo-title {
     font-size: 0.9rem;
-  }
-  .logo-tagline {
-    font-size: 0.62rem;
   }
 }
 

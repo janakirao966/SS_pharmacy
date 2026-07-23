@@ -1,4 +1,4 @@
-import { ShieldCheck, Award, Sparkles, HeartHandshake, Leaf, Factory, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, SealCheck, Sparkle, Handshake, Plant, Factory, CheckCircle } from '@phosphor-icons/react';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Breadcrumbs from '../components/layout/Breadcrumbs';
@@ -9,32 +9,32 @@ import SEO from '../components/ui/SEO';
 export default function WhyChooseUs() {
   const valueProps = [
     {
-      icon: <Leaf aria-hidden="true" />,
+      icon: <Plant weight="duotone" size={28} aria-hidden="true" />,
       title: "Authentic Herbs & Sourcing",
       description: "We source our herbs directly from sustainable local growers, ensuring the active phytochemical components are intact and free from pesticides."
     },
     {
-      icon: <Factory aria-hidden="true" />,
+      icon: <Factory weight="duotone" size={28} aria-hidden="true" />,
       title: "Licensed GMP Facility",
       description: "Our state-of-the-art manufacturing plant follows strict Good Manufacturing Practices (GMP) and is licensed by the government (Lic. R-1970/Ayur)."
     },
     {
-      icon: <ShieldCheck aria-hidden="true" />,
+      icon: <ShieldCheck weight="duotone" size={28} aria-hidden="true" />,
       title: "Rigorous Quality Assurances",
       description: "Every batch of our Ayurvedic proprietary medicines undergoes standard laboratory checks to guarantee safety, potency, and heavy-metal compliance."
     },
     {
-      icon: <Sparkles aria-hidden="true" />,
+      icon: <Sparkle weight="duotone" size={28} aria-hidden="true" />,
       title: "Standardized Formulations",
       description: "Our extraction methodologies ensure each batch yields a reliable, high-potency formula with exact concentrations of active ingredients."
     },
     {
-      icon: <HeartHandshake aria-hidden="true" />,
+      icon: <Handshake weight="duotone" size={28} aria-hidden="true" />,
       title: "Reliable Channel Partnerships",
       description: "We provide wholesale distributors, clinics, and pharmacies with prompt shipping, certified document compliance, and dedicated support."
     },
     {
-      icon: <Award aria-hidden="true" />,
+      icon: <SealCheck weight="duotone" size={28} aria-hidden="true" />,
       title: "One Step Solution Tagline",
       description: "We aim to provide comprehensive formulations that address the root causes of musculoskeletal and skin conditions, delivering wellness in every drop."
     }
@@ -98,19 +98,19 @@ export default function WhyChooseUs() {
               <ul className="wcu-checklist">
                 <li className="wcu-checklist-item">
                   <span className="wcu-checklist-icon">
-                    <CheckCircle2 aria-hidden="true" />
+                    <CheckCircle weight="fill" size={18} aria-hidden="true" />
                   </span>
                   <span className="wcu-checklist-label">Standardized extraction temperatures to preserve active botanicals.</span>
                 </li>
                 <li className="wcu-checklist-item">
                   <span className="wcu-checklist-icon">
-                    <CheckCircle2 aria-hidden="true" />
+                    <CheckCircle weight="fill" size={18} aria-hidden="true" />
                   </span>
                   <span className="wcu-checklist-label">Batch-coded logs for full traceability from raw herbs to final package.</span>
                 </li>
                 <li className="wcu-checklist-item">
                   <span className="wcu-checklist-icon">
-                    <CheckCircle2 aria-hidden="true" />
+                    <CheckCircle weight="fill" size={18} aria-hidden="true" />
                   </span>
                   <span className="wcu-checklist-label">Strict zero-chemical, paraben-free, and steroid-free formulations.</span>
                 </li>

@@ -1,48 +1,49 @@
 :root {
   /* ================================
-     BRAND (Botanical Green Spectrum)
+     BRAND (Deep Forest Green Spectrum)
      ================================ */
-  --color-primary: #3D6B20;
-  --color-primary-dark: #2D5016;
-  --color-primary-hover: #407020;
-  --color-primary-deep: #1E3F0E;
+  --color-primary: #214A2F;
+  --color-primary-dark: #1D3A28;
+  --color-primary-hover: #173622;
+  --color-primary-deep: #13281C;
 
   /* ================================
-     LUXURY ACCENT (Heritage Gold)
+     LUXURY ACCENT (Rich Antique Gold)
      ================================ */
-  --color-gold: #9B7B35;
+  --color-gold: #B88A44;
   --color-gold-rich: #C4A35A;
-  --color-gold-light: #D4B878;
+  --color-gold-light: #D9C8A9;
+  --color-gold-soft: #F5EFE3;
   --color-gold-dark: #7A6027;
 
   /* ================================
-     SURFACES (Warm Sandstone & Pure Surfaces)
+     SURFACES (Warm Alabaster & Cream)
      ================================ */
-  --color-background: #FDFCFA;
-  --color-surface-soft: #F8F7F4;
-  --color-surface-cream: #FEFDF8;
+  --color-background: #FDFBF7;
+  --color-surface-soft: #F9F6F0;
+  --color-surface-cream: #F5EFE3;
   --color-surface-muted: #FAF8F5;
   --color-surface-secondary: #F5F3EF;
-  --color-footer: #F5F2EB;
+  --color-footer: #F3ECE0;
   --color-surface-hover: #F2ECE4;
   --color-surface: #FFFFFF;
 
   /* ================================
      TEXT
      ================================ */
-  --color-heading: #1A1A1A;
-  --color-heading-brand: #2D5016;
+  --color-heading: #1D3A28;
+  --color-heading-brand: #1D3A28;
   --color-text: #404040;
-  --color-text-secondary: #525252;
-  --color-text-muted: #595959;
+  --color-text-secondary: #555555;
+  --color-text-muted: #666666;
   --color-text-on-dark: #FFFFFF;
 
   /* ================================
      BORDER
      ================================ */
-  --color-border: #EBE6DC;
-  --color-border-medium: #B5AEA7;
-  --color-border-focus: #D3C9B6;
+  --color-border: #E8E2D5;
+  --color-border-medium: #D9C8A9;
+  --color-border-focus: #B88A44;
 
   /* ================================
      DECORATIVE TINTS
@@ -96,7 +97,7 @@
   --color-border-gold: var(--color-border-focus);
 
   /* Fonts */
-  --font-display: "Playfair Display", Georgia, serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
   --font-body: "Plus Jakarta Sans", sans-serif;
   --font-script: "Alex Brush", "Great Vibes", "Playfair Display", cursive, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -150,9 +151,9 @@
   --space-24: 6rem;     /* 96px */
 
   /* Section Spacing */
-  --section-padding-mobile: var(--space-16);
-  --section-padding-tablet: var(--space-20);
-  --section-padding-desktop: var(--space-24);
+  --section-padding-mobile: 2.25rem;    /* 36px */
+  --section-padding-tablet: 3rem;       /* 48px */
+  --section-padding-desktop: 3.75rem;   /* 60px */
   --spacing-section-desktop: var(--section-padding-desktop);
   --spacing-section-mobile-reduced: var(--section-padding-mobile);
 

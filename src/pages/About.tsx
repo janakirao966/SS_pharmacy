@@ -161,12 +161,34 @@ export default function About() {
             </div>
 
             <div className="location-visual-block">
-              <CleanCard variant="default" innerClassName="map-placeholder">
-                <div className="map-icon-pulse">
-                  <MapPin size={32} />
+              <div className="w-full rounded-2xl overflow-hidden border border-brand-border shadow-md bg-white group flex flex-col">
+                <div className="relative w-full h-[210px] overflow-hidden bg-slate-100">
+                  <img
+                    src="https://maps.geoapify.com/v1/staticmap?style=osm-carto&width=900&height=420&center=lonlat:78.571027,14.755504&zoom=14&marker=lonlat:78.571027,14.755504;color:%232d5016;size:medium&apiKey=34036dd1e9ed4badb10aed72da04affb"
+                    alt="S.S. PHARMACY Manufacturing Facility Map"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
                 </div>
-                <span className="mt-4 text-secondary text-sm font-semibold">Kadapa, Andhra Pradesh</span>
-              </CleanCard>
+                <div className="p-3.5 bg-white border-t border-brand-border/60 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse flex-shrink-0" />
+                    <div>
+                      <h5 className="font-display text-xs font-semibold text-brand-primary leading-snug">Manufacturing Facility</h5>
+                      <p className="text-[11px] text-secondary leading-tight mt-0.5">Yerraguntla, Kadapa District, AP - 516309</p>
+                    </div>
+                  </div>
+                  <a
+                    href="https://maps.app.goo.gl/UwgF81SSMDMUAEFV8"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#1D3A28] text-white text-[11px] font-semibold rounded-lg hover:bg-[#2D5016] shadow-sm transition-all duration-200 flex-shrink-0"
+                  >
+                    <MapPin size={12} className="text-[#C5A059]" />
+                    Open Maps &rarr;
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </Container>

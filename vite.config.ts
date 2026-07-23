@@ -5,6 +5,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig({
   base: '/SS_pharmacy/',
+  server: {
+    allowedHosts: true
+  },
   plugins: [
     react(),
     VitePWA({
@@ -12,7 +15,8 @@ export default defineConfig({
       injectRegister: 'auto',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
-        maximumFileSizeToCacheInBytes: 5242880 // 5 MiB
+        globIgnores: ['**/backup/**', '**/*.png'],
+        maximumFileSizeToCacheInBytes: 10485760 // 10 MiB
       },
       manifest: false, // preserve existing public/manifest.json
       devOptions: {
