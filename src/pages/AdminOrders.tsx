@@ -31,7 +31,9 @@ interface B2BLead {
 }
 
 export default function AdminOrders() {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(() => {
+    return sessionStorage.getItem('ssp-admin-auth') === 'true';
+  });
   const [activeTab, setActiveTab] = useState<'orders' | 'inquiries'>('orders');
   const [orders, setOrders] = useState<DatabaseOrder[]>([]);
   const [leads, setLeads] = useState<B2BLead[]>([]);
@@ -41,14 +43,14 @@ export default function AdminOrders() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
-  // Check session storage for admin login
+  // Check session storage for admin login & fetch data
   useEffect(() => {
     const isAuth = sessionStorage.getItem('ssp-admin-auth') === 'true';
     if (isAuth) {
-      setAuthenticated(true);
+      if (!authenticated) setAuthenticated(true);
       fetchData();
     }
-  }, []);
+  }, [authenticated]);
 
   // 400ms Debounce search input
   useEffect(() => {
