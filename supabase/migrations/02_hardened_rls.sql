@@ -32,13 +32,16 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- 4. Enable RLS on core tables
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
-IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'orders') THEN
-  ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-END IF;
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'orders') THEN
+    ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+  END IF;
 
-IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'order_items') THEN
-  ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
-END IF;
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'order_items') THEN
+    ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
+  END IF;
+END $$;
 
 -- 5. PROFILES RLS POLICIES
 DROP POLICY IF EXISTS "Users view own profile" ON public.profiles;
