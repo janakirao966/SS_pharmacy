@@ -16,6 +16,7 @@ import FormTextarea from '../components/forms/FormTextarea';
 import FormSelect from '../components/forms/FormSelect';
 import FormCheckbox from '../components/forms/FormCheckbox';
 import SEO from '../components/ui/SEO';
+import { supabase } from '../lib/supabase';
 
 // Reading this as: General enquiry form and contact details page for Ayurvedic facility, with a clean B2B responsive split layout, utilizing modular floating-label form controls and info detail cards.
 // DESIGN_VARIANCE: 6
@@ -118,24 +119,25 @@ export default function Contact() {
 
   const validateForm = () => {
     const tempErrors: Record<string, string> = {};
-    if (!formData.name.trim()) tempErrors.name = "Name is required.";
+
+    if (!formData.name.trim()) tempErrors.name = 'Full Name is required';
     if (!formData.phone.trim()) {
-      tempErrors.phone = "Phone number is required.";
-    } else if (!/^\+?[0-9\s-]{10,15}$/.test(formData.phone.trim()) || formData.phone.replace(/[^\d]/g, '').length < 10) {
-      tempErrors.phone = "Enter a valid phone number (10 to 15 digits).";
+      tempErrors.phone = 'Phone Number is required';
+    } else if (!/^[6-9]\d{9}$/.test(formData.phone.replace(/\D/g, ''))) {
+      tempErrors.phone = 'Please enter a valid 10-digit mobile number';
     }
+
     if (!formData.email.trim()) {
-      tempErrors.email = "Email is required.";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email.trim())) {
-      tempErrors.email = "Enter a valid email address.";
+      tempErrors.email = 'Email Address is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      tempErrors.email = 'Please enter a valid email address';
     }
-    if (!formData.location.trim()) tempErrors.location = "City and State are required.";
-    if (!formData.message.trim()) tempErrors.message = "Message details are required.";
-    if (!formData.consent) tempErrors.consent = "You must agree to the contact terms.";
+
+    if (!formData.location.trim()) tempErrors.location = 'City / Location is required';
+    if (!formData.message.trim()) tempErrors.message = 'Enquiry Message is required';
+    if (!formData.consent) tempErrors.consent = 'You must consent to be contacted';
 
     setErrors(tempErrors);
-    
-    // Mark all as touched
     setTouched({
       name: true,
       phone: true,
@@ -152,36 +154,31 @@ export default function Contact() {
     e.preventDefault();
     if (!validateForm()) return;
 
+    if (formData.botcheck) {
+      console.warn('Bot attempt blocked');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
-    const web3formsAccessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || 'YOUR_ACCESS_KEY_HERE';
-
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        },
-        body: JSON.stringify({
-          access_key: web3formsAccessKey,
-          subject: `SS_Pharmacy Lead: General Enquiry from ${formData.name}`,
-          from_name: 'SS_Pharmacy Website',
-          name: formData.name,
+      const { error: dbError } = await supabase
+        .from('distributor_applications')
+        .insert([{
+          company_name: formData.product ? `Enquiry: ${formData.product}` : 'General Contact Enquiry',
+          contact_person: formData.name,
           phone: formData.phone,
           email: formData.email,
-          location: formData.location,
-          product: formData.product || 'Not Specified',
-          message: formData.message,
-          botcheck: formData.botcheck
-        })
-      });
+          city: formData.location || 'Not Specified',
+          state: 'Andhra Pradesh',
+          notes: formData.message,
+          status: 'new'
+        }]);
 
-      const result = await response.json();
-      if (result.success || response.status === 200) {
+      if (!dbError) {
         setSubmitStatus('success');
-        showToast('Enquiry submitted successfully! We will contact you soon.', 'success');
+        showToast('Enquiry submitted successfully! Our team will contact you soon.', 'success');
         setFormData({
           name: '',
           phone: '',
@@ -194,12 +191,14 @@ export default function Contact() {
         });
         setTouched({});
       } else {
+        console.error('Supabase contact submission error:', dbError);
         setSubmitStatus('error');
-        showToast('Failed to submit. Please try again.', 'error');
+        showToast('Failed to submit enquiry to database. Please try again.', 'error');
       }
-    } catch {
+    } catch (err) {
+      console.error('Error submitting contact enquiry:', err);
       setSubmitStatus('error');
-      showToast('Failed to submit. Please try again.', 'error');
+      showToast('Failed to submit enquiry. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
     }
