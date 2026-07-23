@@ -17,6 +17,7 @@ import FormTextarea from '../components/forms/FormTextarea';
 import FormSelect from '../components/forms/FormSelect';
 import FormCheckbox from '../components/forms/FormCheckbox';
 import SEO from '../components/ui/SEO';
+import { supabase } from '../lib/supabase';
 
 // Reading this as: Multi-step B2B distributorship registration page with progress bar, benefits grid, and validation error messages.
 // DESIGN_VARIANCE: 6
@@ -237,6 +238,25 @@ export default function Distributor() {
         })
       });
 
+      // Store in Supabase DB for Admin Review
+      try {
+        await supabase.from('distributor_applications').insert([
+          {
+            company_name: formData.businessName,
+            contact_person: formData.contactPerson,
+            phone: formData.phone,
+            email: formData.email,
+            city: formData.location,
+            state: 'Andhra Pradesh',
+            expected_monthly_volume: formData.capacity || 'Not Specified',
+            notes: formData.message,
+            status: 'new'
+          }
+        ]);
+      } catch (dbErr) {
+        console.warn('Supabase DB lead store notice:', dbErr);
+      }
+
       const result = await response.json();
       if (result.success || response.status === 200) {
         setSubmitStatus('success');
@@ -326,7 +346,7 @@ export default function Distributor() {
 
         {/* 3. Form Application Card */}
         <div style={{ order: variant === 'A' ? 2 : 1 }}>
-          <Section className="pb-24 pt-4">
+          <Section className="pt-6 md:pt-8 pb-12 md:pb-16 lg:pb-24">
         <Container>
           <CleanCard variant="elevated" className="distributor-form-wrapper" innerClassName="p-8 md:p-12">
             {submitStatus === 'success' ? (

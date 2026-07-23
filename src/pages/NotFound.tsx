@@ -24,7 +24,7 @@ export default function NotFound() {
         description="The requested page could not be found. Return to S.S. PHARMACY home page."
         canonical="https://sspharmacy.com/404"
       />
-      <Section className="pt-page-header pb-24">
+      <Section className="pt-page-header pb-12 md:pb-16 lg:pb-24">
         <Container className="flex flex-col items-center max-w-[680px] mx-auto text-center">
           <SectionHeader
             eyebrow="Error 404"

@@ -48,7 +48,7 @@ export default function About() {
       </Section>
 
       {/* 2. Brand Story / Storytelling */}
-      <Section className="about-story-section pb-16 pt-4">
+      <Section className="about-story-section pt-8 md:pt-12 pb-12 md:pb-16">
         <Container>
           <div className="about-story-grid">
             <div className="story-image-block">
@@ -89,7 +89,7 @@ export default function About() {
       </Section>
 
       {/* 3. Core Values Grid */}
-      <Section className="pb-16 pt-8">
+      <Section className="pt-8 md:pt-12 pb-12 md:pb-16">
         <Container>
           <SectionHeader
             eyebrow="Principles"
@@ -138,7 +138,7 @@ export default function About() {
       </Section>
 
       {/* 4. Geography / Facility Details */}
-      <Section className="about-location-section pb-24 pt-8">
+      <Section className="about-location-section pt-8 md:pt-12 pb-12 md:pb-16 lg:pb-24">
         <Container>
           <div className="about-location-grid">
             <div className="location-info-block">

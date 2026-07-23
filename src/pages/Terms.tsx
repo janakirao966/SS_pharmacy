@@ -11,7 +11,7 @@ export default function Terms() {
         description="Terms of use for S.S. PHARMACY informational lead-generation platform and B2B distributor program."
         canonical="https://sspharmacy.com/terms"
       />
-      <Section className="pt-page-header pb-24">
+      <Section className="pt-page-header pb-12 md:pb-16 lg:pb-24">
         <Container className="max-w-[800px] mx-auto text-left">
           <span className="eyebrow-badge">Legal</span>
           <h1 className="page-title mt-2">Terms &amp; Conditions</h1>

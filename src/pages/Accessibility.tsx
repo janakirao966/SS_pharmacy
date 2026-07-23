@@ -12,7 +12,7 @@ export default function Accessibility() {
         description="Read S.S. PHARMACY's digital accessibility compliance policy and learn about our keyboard shortcuts and accessibility features."
         canonical="https://sspharmacy.com/accessibility"
       />
-      <Section className="pt-page-header pb-24">
+      <Section className="pt-page-header pb-12 md:pb-16 lg:pb-24">
         <Container className="max-w-[800px] mx-auto text-left">
           <span className="eyebrow-badge">Compliance</span>
           <h1 className="page-title mt-2">Accessibility Statement</h1>

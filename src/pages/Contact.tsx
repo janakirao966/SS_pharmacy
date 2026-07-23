@@ -253,7 +253,7 @@ export default function Contact() {
       </Section>
 
       {/* 2. Contact Details & Form */}
-      <Section className="pb-24 pt-4">
+      <Section className="pt-6 md:pt-8 pb-12 md:pb-16 lg:pb-24">
         <Container>
           <div className="contact-layout-grid">
             {/* Info cards column */}

@@ -11,7 +11,7 @@ export default function Privacy() {
         description="Read how S.S. PHARMACY handles your contact submissions and B2B partner application data."
         canonical="https://sspharmacy.com/privacy"
       />
-      <Section className="pt-page-header pb-24">
+      <Section className="pt-page-header pb-12 md:pb-16 lg:pb-24">
         <Container className="max-w-[800px] mx-auto text-left">
           <span className="eyebrow-badge">Data Policy</span>
           <h1 className="page-title mt-2">Privacy Policy</h1>

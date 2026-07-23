@@ -1,5 +1,5 @@
 import { type ReactNode, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import CartDrawer from '../ui/CartDrawer';
@@ -21,15 +21,18 @@ export default function Layout({
   onSearchClose,
   onSearchOpen
 }: LayoutProps) {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
   const [showCookieConsent, setShowCookieConsent] = useState(false);
 
   useEffect(() => {
+    if (isAdminRoute) return;
     const consent = localStorage.getItem('ss_cookie_consent');
     if (!consent) {
       const timer = setTimeout(() => setShowCookieConsent(true), 1500);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isAdminRoute]);
 
   const handleAcceptCookies = () => {
     localStorage.setItem('ss_cookie_consent', 'accepted');
@@ -40,6 +43,16 @@ export default function Layout({
     localStorage.setItem('ss_cookie_consent', 'declined');
     setShowCookieConsent(false);
   };
+
+  if (isAdminRoute) {
+    return (
+      <div className="admin-standalone-wrapper min-h-screen bg-[#F9F8F3]">
+        <main id="main-content" className="w-full">
+          {children}
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app-layout">

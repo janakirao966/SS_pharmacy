@@ -12,6 +12,7 @@ export interface CartItem {
 interface CartContextType {
   cartItems: CartItem[];
   isCartOpen: boolean;
+  isCheckoutOpen: boolean;
   cartAnnouncement: string;
   cartCount: number;
   handleAddToCart: (product: Product, quantity?: number) => void;
@@ -20,6 +21,8 @@ interface CartContextType {
   handleClearCart: () => void;
   handleBuyNow: (product: Product) => void;
   setIsCartOpen: (isOpen: boolean) => void;
+  setIsCheckoutOpen: (isOpen: boolean) => void;
+  openCheckout: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -46,7 +49,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   });
   
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [cartAnnouncement, setCartAnnouncement] = useState('');
+
+  const openCheckout = () => {
+    setIsCartOpen(false);
+    setIsCheckoutOpen(true);
+  };
 
   // Sync cart across tabs
   useEffect(() => {
@@ -163,9 +172,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (existing) return prev;
       return [...prev, { product, quantity: 1 }];
     });
-    setIsCartOpen(true);
+    openCheckout();
   };
-  
+
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -173,6 +182,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       value={{
         cartItems,
         isCartOpen,
+        isCheckoutOpen,
         cartAnnouncement,
         cartCount,
         handleAddToCart,
@@ -181,6 +191,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         handleClearCart,
         handleBuyNow,
         setIsCartOpen,
+        setIsCheckoutOpen,
+        openCheckout,
       }}
     >
       {children}

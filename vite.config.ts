@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/SS_pharmacy/',
+  base: process.env.VERCEL ? '/' : (process.env.VITE_BASE_URL || '/'),
   server: {
     allowedHosts: true
   },
@@ -25,18 +25,21 @@ export default defineConfig({
     })
   ],
   build: {
-    chunkSizeWarningLimit: 250, // Flag chunk sizes over 250kB
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
-              return 'vendor-react';
+            if (id.includes('react-dom')) {
+              return 'vendor-react-dom';
+            }
+            if (id.includes('react') || id.includes('scheduler')) {
+              return 'vendor-react-core';
             }
             if (id.includes('react-router-dom') || id.includes('react-router') || id.includes('@remix-run')) {
               return 'vendor-router';
             }
-            if (id.includes('lucide-react')) {
+            if (id.includes('lucide-react') || id.includes('@phosphor-icons')) {
               return 'vendor-icons';
             }
             if (id.includes('workbox')) {

@@ -82,7 +82,7 @@ export default function Manufacturing() {
       </Section>
 
       {/* 2. Process Grid: Alternating Staggered Layout */}
-      <Section className="pb-16 pt-4">
+      <Section className="pt-6 md:pt-8 pb-12 md:pb-16">
         <Container>
           <div className="manufacturing-staggered-list mt-8">
             {standards.map((std, i) => (
@@ -138,7 +138,7 @@ export default function Manufacturing() {
       </Section>
 
       {/* 3. Dedicated Certificates Carousel Section */}
-      <Section className="certificates-carousel-section border-t border-hairline py-20 bg-surface">
+      <Section className="certificates-carousel-section border-t border-hairline py-12 md:py-16 lg:py-20 bg-surface">
         <Container>
           <div className="mb-10 text-center">
             <span className="eyebrow-badge">Certifications</span>

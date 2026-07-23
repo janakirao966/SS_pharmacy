@@ -29,7 +29,7 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
 
   if (!product) {
     return (
-      <Section className="pt-page-header pb-24">
+      <Section className="pt-page-header pb-12 md:pb-16 lg:pb-24">
         <Container>
           <div className="text-center">
             <h3>Formulation Not Found</h3>
@@ -301,7 +301,7 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
       </Section>
 
       {/* 3. Recommended Products Section */}
-      <Section className="border-t border-hairline pt-16 pb-24 bg-[#F8F7F4]">
+      <Section className="border-t border-hairline pt-10 md:pt-16 pb-12 md:pb-16 lg:pb-24 bg-[#F8F7F4]">
         <Container>
           <SectionHeader
             eyebrow="Recommendations"

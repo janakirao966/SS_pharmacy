@@ -193,6 +193,7 @@ export default function Footer({ setActiveTab: _setActiveTab }: FooterProps) {
             &copy; {currentYear} S.S. PHARMACY. All rights reserved. | Mfg. Lic. No. R-1970/Ayur
           </p>
           <div className="footer-bottom-links">
+            <Link to="/track-order" onClick={handleScrollTop}>Track Order</Link>
             <Link to="/terms" onClick={handleScrollTop}>Terms &amp; Conditions</Link>
             <Link to="/privacy" onClick={handleScrollTop}>Privacy Policy</Link>
             <Link to="/accessibility" onClick={handleScrollTop}>Accessibility Statement</Link>

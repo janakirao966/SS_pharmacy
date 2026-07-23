@@ -96,7 +96,7 @@ export default function Gallery() {
       </Section>
 
       {/* 2. Gallery Grid */}
-      <Section className="pb-24 pt-4">
+      <Section className="pt-6 md:pt-8 pb-12 md:pb-16 lg:pb-24">
         <Container>
           <Grid cols={3} gap="md" className="gallery-layout-grid-container">
             {filteredItems.map((item, index) => (

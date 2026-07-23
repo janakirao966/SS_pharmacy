@@ -90,7 +90,7 @@ export default function FAQ() {
       </Section>
 
       {/* 2. FAQ Accordion Grid */}
-      <Section className="pb-24 pt-4">
+      <Section className="pt-6 md:pt-8 pb-12 md:pb-16 lg:pb-24">
         <Container>
           {filteredFaqs.length === 0 ? (
             <div className="text-center py-12">

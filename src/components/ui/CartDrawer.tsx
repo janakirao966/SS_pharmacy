@@ -24,7 +24,8 @@ export default function CartDrawer() {
     handleRemoveFromCart: onRemove,
     handleUpdateCartQuantity: onUpdateQuantity,
     handleClearCart: onClear,
-    handleAddToCart: onAddToCart
+    handleAddToCart: onAddToCart,
+    openCheckout
   } = useCart();
 
   const onClose = useCallback(() => setIsCartOpen(false), [setIsCartOpen]);
@@ -717,10 +718,16 @@ export default function CartDrawer() {
               ) : (
                 <button
                   type="button"
-                  onClick={handleNextStep}
+                  onClick={() => {
+                    if (step === 'cart') {
+                      openCheckout();
+                    } else {
+                      handleNextStep();
+                    }
+                  }}
                   className="btn-pill btn-pill-primary flex-1 justify-center space-x-2"
                 >
-                  <span>Proceed to {step === 'cart' ? 'Delivery' : 'Payment'}</span>
+                  <span>Proceed to Checkout</span>
                   <ArrowRight size={14} />
                 </button>
               )}

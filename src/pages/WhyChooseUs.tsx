@@ -64,7 +64,7 @@ export default function WhyChooseUs() {
       </Section>
 
       {/* 2. Key Pillars Grid */}
-      <Section className="pb-16 pt-4">
+      <Section className="pt-6 md:pt-8 pb-12 md:pb-16">
         <Container>
           <div className="wcu-pillars-grid">
             {valueProps.map((prop, idx) => (

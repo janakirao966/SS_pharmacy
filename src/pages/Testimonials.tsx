@@ -96,7 +96,7 @@ export default function Testimonials() {
       </Section>
 
       {/* 2. Interactive Testimonial Slider */}
-      <Section className="pb-24 pt-4">
+      <Section className="pt-6 md:pt-8 pb-12 md:pb-16 lg:pb-24">
         <Container>
           <div className="relative max-w-[700px] mx-auto mt-8">
             <div className="testimonial-slide-viewport overflow-hidden">

@@ -2,14 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="./products/logo/favicon.png?v=3" />
-    <link rel="shortcut icon" href="./products/logo/favicon.png?v=3" />
+    <link rel="icon" type="image/png" href="/products/logo/favicon.png?v=3" />
+    <link rel="shortcut icon" href="/products/logo/favicon.png?v=3" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.web3forms.com; img-src 'self' data: https:;" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="/products/Hero%20section/hero-section1.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link rel="preload" href="/products/logo/logo.webp" as="image" type="image/webp" fetchpriority="high" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <title>S.S. PHARMACY | Ayurvedic Products & Licensed Manufacturing</title>
     <meta name="description" content="S.S. PHARMACY manufactures premium quality-focused Ayurvedic products and herbal healthcare formulations including Dr. Lion Pain Cream, Pain Pills, and Moon Light Cream." />
@@ -20,8 +20,162 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="manifest" href="/manifest.json" />
+    <style>
+      #initial-loader {
+        position: fixed;
+        inset: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        z-index: 999999;
+        display: grid;
+        place-items: center;
+        background: #FEFDF8;
+        overflow: hidden;
+        transition: opacity 300ms ease, transform 300ms ease;
+      }
+      #initial-loader.is-exiting {
+        opacity: 0;
+        transform: translateY(-4px);
+        pointer-events: none;
+      }
+      .initial-loader-leaf-bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .initial-loader-leaf-1 {
+        position: absolute;
+        top: 20%;
+        left: 8%;
+        width: 220px;
+        height: 220px;
+        opacity: 0.04;
+        filter: blur(1.5px);
+        color: #1D3A28;
+      }
+      .initial-loader-leaf-2 {
+        position: absolute;
+        bottom: 20%;
+        right: 8%;
+        width: 240px;
+        height: 240px;
+        opacity: 0.04;
+        filter: blur(1.5px);
+        color: #1D3A28;
+        transform: rotate(180deg);
+      }
+      .initial-loader-content {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .initial-loader-logo {
+        width: 80px;
+        height: auto;
+        object-fit: contain;
+        opacity: 0;
+        transform: scale(0.96);
+        animation: loaderLogoFadeIn 600ms cubic-bezier(0, 0, 0.2, 1) forwards;
+      }
+      .initial-loader-title {
+        font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: #1D3A28;
+        text-transform: uppercase;
+        margin-top: 16px;
+        margin-bottom: 0;
+        opacity: 0;
+        animation: loaderFadeIn 500ms ease forwards 120ms;
+      }
+      .initial-loader-tagline {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        font-size: 13.5px;
+        font-weight: 400;
+        color: #7A6027;
+        margin-top: 4px;
+        margin-bottom: 0;
+        opacity: 0;
+        animation: loaderFadeIn 500ms ease forwards 180ms;
+      }
+      .initial-loader-track {
+        width: 140px;
+        height: 2px;
+        background: rgba(45, 80, 22, 0.12);
+        border-radius: 9999px;
+        overflow: hidden;
+        position: relative;
+        margin-top: 28px;
+      }
+      .initial-loader-bar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40%;
+        border-radius: 9999px;
+        background: linear-gradient(90deg, #7A6027, #C5A059, #1D3A28);
+        animation: loaderTrackSlide 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+      @keyframes loaderLogoFadeIn {
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @keyframes loaderFadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes loaderTrackSlide {
+        0% { left: -40%; }
+        100% { left: 100%; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .initial-loader-logo {
+          animation: none !important;
+          opacity: 1 !important;
+          transform: none !important;
+        }
+        .initial-loader-title, .initial-loader-tagline {
+          animation: none !important;
+          opacity: 1 !important;
+        }
+        .initial-loader-bar {
+          animation: none !important;
+          left: 30% !important;
+          width: 40% !important;
+          opacity: 0.8 !important;
+        }
+      }
+      @media (max-width: 640px) {
+        .initial-loader-logo { width: 66px; }
+        .initial-loader-title { font-size: 23px; margin-top: 14px; }
+        .initial-loader-tagline { font-size: 12.5px; }
+        .initial-loader-track { width: 130px; margin-top: 26px; }
+      }
+    </style>
   </head>
   <body>
+    <div id="initial-loader" role="status" aria-live="polite" aria-label="Loading S.S. Pharmacy">
+      <div class="initial-loader-leaf-bg" aria-hidden="true">
+        <svg class="initial-loader-leaf-1" viewBox="0 0 24 24" fill="currentColor"><path d="M17 8C8 10 12 16.5 3 22c5.5-2.5 10-6.5 12-12C12 7 9 5 4 4c7 0 11 2 13 4z"/></svg>
+        <svg class="initial-loader-leaf-2" viewBox="0 0 24 24" fill="currentColor"><path d="M17 8C8 10 12 16.5 3 22c5.5-2.5 10-6.5 12-12C12 7 9 5 4 4c7 0 11 2 13 4z"/></svg>
+      </div>
+      <div class="initial-loader-content">
+        <img src="/products/logo/logo.webp" alt="S.S. PHARMACY Logo" class="initial-loader-logo" width="80" height="80" />
+        <h1 class="initial-loader-title">S.S. PHARMACY</h1>
+        <p class="initial-loader-tagline">Pure Ayurveda, Pure Life</p>
+        <div class="initial-loader-track" aria-hidden="true">
+          <div class="initial-loader-bar"></div>
+        </div>
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
