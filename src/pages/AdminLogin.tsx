@@ -38,7 +38,8 @@ export default function AdminLogin() {
       });
 
       if (authError) {
-        setError('Invalid admin credentials. Please check your email and password.');
+        console.error('Supabase Auth Error details:', authError);
+        setError(authError.message || 'Invalid admin credentials. Please check your email and password.');
       } else if (data.session) {
         const { data: profile } = await supabase
           .from('profiles')
