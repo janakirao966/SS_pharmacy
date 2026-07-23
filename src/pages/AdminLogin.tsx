@@ -15,10 +15,13 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const adminPasscode = import.meta.env.VITE_ADMIN_PASSCODE || 'sspharmacy2026';
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      setError('Please enter both your admin email and password.');
+      return;
+    }
 
     if (honeypot) {
       console.warn('Bot attempt blocked via honeypot field.');
@@ -29,20 +32,13 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      if (password === adminPasscode || password === 'admin123') {
-        sessionStorage.setItem('ssp-admin-auth', 'true');
-        showToast('Authorized: Access granted to Admin Control Center', 'success');
-        navigate('/admin/orders');
-        return;
-      }
-
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
       if (authError) {
-        setError('Invalid admin credentials or passcode.');
+        setError('Invalid admin credentials. Please check your email and password.');
       } else if (data.session) {
         const { data: profile } = await supabase
           .from('profiles')
@@ -55,7 +51,7 @@ export default function AdminLogin() {
           showToast('Welcome to S.S. PHARMACY Admin Control Center', 'success');
           navigate('/admin/orders');
         } else {
-          setError('Access Denied: Account does not have administrator permissions.');
+          setError('Access Denied: Your account does not have administrator privileges.');
           await supabase.auth.signOut();
         }
       }
@@ -149,7 +145,7 @@ export default function AdminLogin() {
 
               {/* Admin Password Field */}
               <div className="admin-field-group">
-                <label className="admin-field-label">Password / Passcode *</label>
+                <label className="admin-field-label">Password *</label>
                 <div className="admin-input-wrapper">
                   <div className="admin-input-icon">
                     <Lock size={16} />
