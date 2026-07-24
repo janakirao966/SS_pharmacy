@@ -67,43 +67,45 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
       <section className="feature-highlights-section">
         <Container>
           <div className="feature-highlights-panel">
-            <div className="feature-highlight-card">
-              <div className="feature-highlight-icon">
-                <Plant size={22} weight="duotone" />
+            <div className="feature-highlights-grid">
+              <div className="feature-highlight-item">
+                <div className="feature-highlight-icon">
+                  <Leaf size={22} weight="duotone" />
+                </div>
+                <div className="feature-highlight-info">
+                  <h4 className="feature-highlight-title">Natural Ingredients</h4>
+                  <p className="feature-highlight-description">Carefully selected herbs</p>
+                </div>
               </div>
-              <div className="feature-highlight-info">
-                <h4>Pure Ayurveda</h4>
-                <p>Authentic &amp; Natural</p>
-              </div>
-            </div>
 
-            <div className="feature-highlight-card">
-              <div className="feature-highlight-icon">
-                <Leaf size={22} weight="duotone" />
+              <div className="feature-highlight-item">
+                <div className="feature-highlight-icon">
+                  <Certificate size={22} weight="duotone" />
+                </div>
+                <div className="feature-highlight-info">
+                  <h4 className="feature-highlight-title">Ayurvedic Expertise</h4>
+                  <p className="feature-highlight-description">Research &amp; tradition</p>
+                </div>
               </div>
-              <div className="feature-highlight-info">
-                <h4>Natural Ingredients</h4>
-                <p>Handpicked &amp; Safe</p>
-              </div>
-            </div>
 
-            <div className="feature-highlight-card">
-              <div className="feature-highlight-icon">
-                <Flask size={22} weight="duotone" />
+              <div className="feature-highlight-item">
+                <div className="feature-highlight-icon">
+                  <ShieldCheck size={22} weight="duotone" />
+                </div>
+                <div className="feature-highlight-info">
+                  <h4 className="feature-highlight-title">GMP Certified</h4>
+                  <p className="feature-highlight-description">GMP compliant facility</p>
+                </div>
               </div>
-              <div className="feature-highlight-info">
-                <h4>Clinically Trusted</h4>
-                <p>Backed by Science</p>
-              </div>
-            </div>
 
-            <div className="feature-highlight-card">
-              <div className="feature-highlight-icon">
-                <ShieldCheck size={22} weight="duotone" />
-              </div>
-              <div className="feature-highlight-info">
-                <h4>Safe for All Skin Types</h4>
-                <p>Gentle &amp; Effective</p>
+              <div className="feature-highlight-item">
+                <div className="feature-highlight-icon">
+                  <Flask size={22} weight="duotone" />
+                </div>
+                <div className="feature-highlight-info">
+                  <h4 className="feature-highlight-title">No Harmful Chemicals</h4>
+                  <p className="feature-highlight-description">Zero steroids or toxins</p>
+                </div>
               </div>
             </div>
           </div>
