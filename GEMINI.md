@@ -10,7 +10,7 @@ S.S. PHARMACY official online presence — a premium informational and lead-gene
 ### Constraints
 
 - **Tech Stack**: React (v19) + Vite (v8) + TypeScript
-- **Backend Stack**: Static site with serverless form delivery (Web3Forms / EmailJS)
+- **Backend Stack**: Static site with Supabase integration
 - **Performance**: LCP < 2.0s, TTI < 3.0s, bundle < 150KB
 - **Security**: HTTPS-only, strict input validation, compliance-checked medical claims
 - **UX Boundaries**: Mobile-first, custom spring-physics transitions, WCAG 2.2 AA accessibility
@@ -25,7 +25,7 @@ S.S. PHARMACY official online presence — a premium informational and lead-gene
 | Vite | 8.x | Build system & Dev server |
 | Vanilla CSS | N/A | Bespoke CSS variables & design system |
 | React Router | 7.x | URL Routing for Pages (SEO optimization) |
-| Web3Forms | N/A | Serverless form processing & email delivery |
+| Supabase | N/A | Backend database, authentication, and RLS |
 <!-- GSD:stack-end -->
 
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
@@ -43,7 +43,7 @@ Architecture not yet mapped. Follow existing patterns found in the codebase.
 <!-- GSD:skills-start source:skills/ -->
 ## Project Skills
 
-Retained core skills are pre-installed in `.agents/skills/`. See [SKILLS_REPORT.md](./SKILLS_REPORT.md) for the 14 active skills inventory.
+Retained core skills are pre-installed in `.agents/skills/`. See [SKILLS_REPORT.md](./SKILLS_REPORT.md) for the 10 active skills inventory.
 <!-- GSD:skills-end -->
 
 <!-- GSD:workflow-start source:GSD defaults -->
