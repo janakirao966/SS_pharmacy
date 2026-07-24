@@ -26,8 +26,8 @@ const baseUrl = import.meta.env.BASE_URL;
 const heroSlides: SlideData[] = [
   {
     id: 'moon-cream',
-    desktopImage: baseUrl + 'products/Hero section/hero-moon-desktop.webp',
-    mobileImage: baseUrl + 'products/Hero section/hero-moon-mobile.webp',
+    desktopImage: baseUrl + 'products/Hero%20section/hero-moon-desktop.webp',
+    mobileImage: baseUrl + 'products/Hero%20section/hero-moon-mobile.webp',
     desktopPosition: 'center right',
     mobilePosition: 'bottom center',
     alt: 'Moon Light Cream – Pure Ayurvedic Skin Care',
@@ -40,8 +40,8 @@ const heroSlides: SlideData[] = [
   },
   {
     id: 'pain-cream',
-    desktopImage: baseUrl + 'products/Hero section/hero-pain-cream-desktop.webp',
-    mobileImage: baseUrl + 'products/Hero section/hero-pain-cream-mobile.webp',
+    desktopImage: baseUrl + 'products/Hero%20section/hero-pain-cream-desktop.webp',
+    mobileImage: baseUrl + 'products/Hero%20section/hero-pain-cream-mobile.webp',
     desktopPosition: 'center right',
     mobilePosition: 'bottom center',
     alt: 'Dr. Lion Pain Relief Cream – S.S. Pharmacy',
@@ -54,8 +54,8 @@ const heroSlides: SlideData[] = [
   },
   {
     id: 'brand-main',
-    desktopImage: baseUrl + 'products/Hero section/hero-main-desktop.webp',
-    mobileImage: baseUrl + 'products/Hero section/hero-main-mobile.webp',
+    desktopImage: baseUrl + 'products/Hero%20section/hero-main-desktop.webp',
+    mobileImage: baseUrl + 'products/Hero%20section/hero-main-mobile.webp',
     desktopPosition: 'center right',
     mobilePosition: 'bottom center',
     alt: 'Ayurvedic Solutions for Modern Wellness – S.S. Pharmacy',
@@ -68,8 +68,8 @@ const heroSlides: SlideData[] = [
   },
   {
     id: 'pain-pills',
-    desktopImage: baseUrl + 'products/Hero section/hero-pain-pills-desktop.webp',
-    mobileImage: baseUrl + 'products/Hero section/hero-pain-pills-mobile.webp',
+    desktopImage: baseUrl + 'products/Hero%20section/hero-pain-pills-desktop.webp',
+    mobileImage: baseUrl + 'products/Hero%20section/hero-pain-pills-mobile.webp',
     desktopPosition: 'center right',
     mobilePosition: 'bottom center',
     alt: 'Dr. Lion Pain Pills – Traditional Herbal Remedy',
@@ -212,8 +212,9 @@ export default function HeroCarousel({ setActiveTab, setSelectedProductId }: Her
                   decoding={i === 0 ? "sync" : "async"}
                   className="hero-carousel-image"
                   style={{
-                    objectPosition: slide.desktopPosition || 'center right'
-                  }}
+                    '--slide-desktop-pos': slide.desktopPosition || 'center right',
+                    '--slide-mobile-pos': slide.mobilePosition || 'bottom center'
+                  } as React.CSSProperties}
                 />
               </picture>
 

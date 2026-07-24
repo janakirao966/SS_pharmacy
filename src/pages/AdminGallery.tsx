@@ -27,7 +27,7 @@ export default function AdminGallery() {
     },
     {
       id: 3,
-      src: `${import.meta.env.BASE_URL}products/Hero section/home_page_image.webp`,
+      src: `${import.meta.env.BASE_URL}products/Hero%20section/home_page_image.webp`,
       title: 'Licensed Manufacturing Facility',
       category: 'Facility',
       status: 'active'

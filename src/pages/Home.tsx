@@ -410,9 +410,9 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
           <Container>
             <div className="home-showcase-banner">
               <picture className="showcase-picture">
-                <source media="(max-width: 767px)" srcSet={`${import.meta.env.BASE_URL}products/Hero section/madebynature-mobile.webp`} />
+                <source media="(max-width: 767px)" srcSet={`${import.meta.env.BASE_URL}products/Hero%20section/madebynature-mobile.webp`} />
                 <img
-                  src={`${import.meta.env.BASE_URL}products/Hero section/madebynature.webp`}
+                  src={`${import.meta.env.BASE_URL}products/Hero%20section/madebynature.webp`}
                   alt="S.S. PHARMACY Herbal Showcase"
                   className="showcase-bg-image"
                   width={1600}

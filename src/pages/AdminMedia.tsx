@@ -38,7 +38,7 @@ export default function AdminMedia() {
     {
       id: 4,
       filename: 'home_page_image.webp',
-      src: `${import.meta.env.BASE_URL}products/Hero section/home_page_image.webp`,
+      src: `${import.meta.env.BASE_URL}products/Hero%20section/home_page_image.webp`,
       dimensions: '1920 x 1080',
       size: '184 KB',
       category: 'Hero Slide'
