@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { CaretLeft, CaretRight, ArrowRight } from '@phosphor-icons/react';
+import { CaretLeft, CaretRight, ArrowRight, Leaf } from '@phosphor-icons/react';
 
 interface SlideData {
   id: string;
@@ -13,6 +13,9 @@ interface SlideData {
   titleLine2?: string;
   subtitle: string;
   description: string;
+  mobileTitle?: string;
+  mobileTitleLine2?: string;
+  mobileDescription?: string;
   productId: string;
 }
 
@@ -29,13 +32,16 @@ const heroSlides: SlideData[] = [
     desktopImage: baseUrl + 'products/Hero%20section/hero-moon-desktop.webp',
     mobileImage: baseUrl + 'products/Hero%20section/hero-moon-mobile.webp',
     desktopPosition: 'center right',
-    mobilePosition: 'bottom center',
+    mobilePosition: 'bottom right',
     alt: 'Moon Light Cream – Pure Ayurvedic Skin Care',
     eyebrow: 'TRADITIONAL HEALING • MODERN WELLNESS',
     title: 'Moon Light',
     titleLine2: 'Cream',
     subtitle: 'Natural Care for Radiant Skin',
     description: 'Pure Ayurvedic herbal skincare remedy formulated with Manjishta, Chandana, and Kumkuma for pimples, dark spots, tan removal, and natural glow.',
+    mobileTitle: 'Pure Ayurvedic',
+    mobileTitleLine2: 'Skin Care',
+    mobileDescription: 'Natural care for pimples, dark spots, and radiant skin.',
     productId: 'moon-light-cream'
   },
   {
@@ -43,13 +49,16 @@ const heroSlides: SlideData[] = [
     desktopImage: baseUrl + 'products/Hero%20section/hero-pain-cream-desktop.webp',
     mobileImage: baseUrl + 'products/Hero%20section/hero-pain-cream-mobile.webp',
     desktopPosition: 'center right',
-    mobilePosition: 'bottom center',
+    mobilePosition: 'bottom right',
     alt: 'Dr. Lion Pain Relief Cream – S.S. Pharmacy',
     eyebrow: 'TRADITIONAL HEALING • MODERN WELLNESS',
     title: 'Dr. Lion',
     titleLine2: 'Pain Cream',
     subtitle: 'Soothing Relief for Every Move',
     description: 'An Ayurvedic pain relief cream formulated with powerful natural ingredients that help relieve joint pain, muscle pain, back pain, headache and body discomfort.',
+    mobileTitle: 'Ayurvedic Solutions for',
+    mobileTitleLine2: 'Modern Wellness',
+    mobileDescription: 'Pure ingredients. Traditional wisdom. Relieve joint and muscle pain.',
     productId: 'dr-lion-pain-cream'
   },
   {
@@ -57,13 +66,16 @@ const heroSlides: SlideData[] = [
     desktopImage: baseUrl + 'products/Hero%20section/hero-main-desktop.webp',
     mobileImage: baseUrl + 'products/Hero%20section/hero-main-mobile.webp',
     desktopPosition: 'center right',
-    mobilePosition: 'bottom center',
+    mobilePosition: 'bottom right',
     alt: 'Ayurvedic Solutions for Modern Wellness – S.S. Pharmacy',
     eyebrow: 'TRADITIONAL HEALING • MODERN WELLNESS',
     title: 'Ayurvedic Solutions for',
     titleLine2: 'Modern Wellness',
     description: 'S.S. Pharmacy manufactures licensed, quality-focused Ayurvedic medicines and herbal healthcare formulations designed to support musculoskeletal comfort and healthy-looking skin.',
     subtitle: 'Pure Ayurveda, Pure Life',
+    mobileTitle: 'Ayurvedic Solutions for',
+    mobileTitleLine2: 'Modern Wellness',
+    mobileDescription: 'Licensed, quality-focused herbal healthcare formulations for your family.',
     productId: 'all'
   },
   {
@@ -71,13 +83,16 @@ const heroSlides: SlideData[] = [
     desktopImage: baseUrl + 'products/Hero%20section/hero-pain-pills-desktop.webp',
     mobileImage: baseUrl + 'products/Hero%20section/hero-pain-pills-mobile.webp',
     desktopPosition: 'center right',
-    mobilePosition: 'bottom center',
+    mobilePosition: 'bottom right',
     alt: 'Dr. Lion Pain Pills – Traditional Herbal Remedy',
     eyebrow: 'TRADITIONAL HEALING • MODERN WELLNESS',
     title: 'Dr. Lion',
     titleLine2: 'Pain Pills',
     subtitle: 'Relief from Within, Strength for Life',
     description: 'Traditional Ayurvedic proprietary medicine formulated with purified herbal extracts for deep joint mobility, muscular comfort, and natural strength.',
+    mobileTitle: 'Traditional Herbal',
+    mobileTitleLine2: 'Pain Relief',
+    mobileDescription: 'Ayurvedic proprietary medicine for deep joint mobility and strength.',
     productId: 'dr-lion-pain-pills'
   }
 ];
@@ -223,30 +238,49 @@ export default function HeroCarousel({ setActiveTab, setSelectedProductId }: Her
 
               {/* Dynamic HTML Content Overlay */}
               <div className="hero-content-wrapper">
-                <div className={`hero-text-overlay ${isActive ? 'text-animated' : ''}`}>
-                  {/* Eyebrow */}
-                  <div className="hero-eyebrow-wrapper">
-                    <span className="hero-eyebrow-line" aria-hidden="true" />
-                    <span className="hero-eyebrow-text">{slide.eyebrow}</span>
-                    <span className="hero-eyebrow-line" aria-hidden="true" />
+                <div 
+                  className={`hero-text-overlay ${isActive ? 'text-animated' : ''}`}
+                  style={{
+                    '--slide-text-width': slide.id === 'brand-main' ? '65%' : '58%'
+                  } as React.CSSProperties}
+                >
+                  {/* Desktop Content (Original) */}
+                  <div className="desktop-content">
+                    <div className="hero-eyebrow-wrapper">
+                      <span className="hero-eyebrow-line" aria-hidden="true" />
+                      <span className="hero-eyebrow-text">{slide.eyebrow}</span>
+                      <span className="hero-eyebrow-line" aria-hidden="true" />
+                    </div>
+                    <h1 className="hero-title">
+                      {slide.title}
+                      {slide.titleLine2 && (
+                        <>
+                          <br />
+                          <span className="hero-title-line2">{slide.titleLine2}</span>
+                        </>
+                      )}
+                    </h1>
+                    <h2 className="hero-subtitle">{slide.subtitle}</h2>
+                    <p className="hero-description">{slide.description}</p>
                   </div>
 
-                  {/* Main Title */}
-                  <h1 className="hero-title">
-                    {slide.title}
-                    {slide.titleLine2 && (
-                      <>
-                        <br />
-                        <span className="hero-title-line2">{slide.titleLine2}</span>
-                      </>
-                    )}
-                  </h1>
-
-                  {/* Subtitle (Playfair Display Italic) */}
-                  <h2 className="hero-subtitle">{slide.subtitle}</h2>
-
-                  {/* Description */}
-                  <p className="hero-description">{slide.description}</p>
+                  {/* Mobile Content (New Screenshot Match) */}
+                  <div className="mobile-content">
+                    <h1 className="hero-title">
+                      {slide.mobileTitle || slide.title}
+                      {(slide.mobileTitleLine2 || slide.titleLine2) && (
+                        <>
+                          <br />
+                          <span className="hero-title-line2 hero-title-accent">{slide.mobileTitleLine2 || slide.titleLine2}</span>
+                        </>
+                      )}
+                    </h1>
+                    <div className="hero-icon-divider">
+                      <Leaf size={24} weight="duotone" className="icon-accent" />
+                      <span className="divider-line" aria-hidden="true" />
+                    </div>
+                    <p className="hero-description">{slide.mobileDescription || slide.description}</p>
+                  </div>
 
                   {/* Dual CTA Action Buttons */}
                   <div className="hero-cta-group">
