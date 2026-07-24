@@ -23,9 +23,25 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Distributor = lazy(() => import('./pages/Distributor'));
 const TrackOrder = lazy(() => import('./pages/TrackOrder'));
 const AdminOrders = lazy(() => import('./pages/AdminOrders'));
+const AdminOrdersDetail = lazy(() => import('./pages/AdminOrdersDetail'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminProducts = lazy(() => import('./pages/AdminProducts'));
+const AdminProductForm = lazy(() => import('./pages/AdminProductForm'));
+const AdminEnquiries = lazy(() => import('./pages/AdminEnquiries'));
+const AdminEnquiryDetail = lazy(() => import('./pages/AdminEnquiryDetail'));
+const AdminDistributors = lazy(() => import('./pages/AdminDistributors'));
+const AdminDistributorsDetail = lazy(() => import('./pages/AdminDistributorsDetail'));
+const AdminContent = lazy(() => import('./pages/AdminContent'));
+const AdminTestimonials = lazy(() => import('./pages/AdminTestimonials'));
+const AdminGallery = lazy(() => import('./pages/AdminGallery'));
+const AdminMedia = lazy(() => import('./pages/AdminMedia'));
+const AdminSettings = lazy(() => import('./pages/AdminSettings'));
+const AdminProfile = lazy(() => import('./pages/AdminProfile'));
+const AdminSecurity = lazy(() => import('./pages/AdminSecurity'));
 const CustomerAccount = lazy(() => import('./pages/CustomerAccount'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+import { ProtectedRoute } from './components/admin/ProtectedRoute';
 import CheckoutModal from './components/ui/CheckoutModal';
 import OrderConfirmationModal from './components/ui/OrderConfirmationModal';
 import AuthModal from './components/ui/AuthModal';
@@ -191,8 +207,27 @@ export default function App() {
               <Route path="/track-order" element={<ErrorBoundary><TrackOrder /></ErrorBoundary>} />
               <Route path="/account" element={<ErrorBoundary><CustomerAccount /></ErrorBoundary>} />
               <Route path="/admin/login" element={<ErrorBoundary><AdminLogin /></ErrorBoundary>} />
-              <Route path="/admin/orders" element={<ErrorBoundary><AdminOrders /></ErrorBoundary>} />
-              <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
+              
+              {/* Protected Administrative Routes Namespace */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+                <Route path="/admin/orders" element={<ErrorBoundary><AdminOrders /></ErrorBoundary>} />
+                <Route path="/admin/orders/:id" element={<ErrorBoundary><AdminOrdersDetail /></ErrorBoundary>} />
+                <Route path="/admin/products" element={<ErrorBoundary><AdminProducts /></ErrorBoundary>} />
+                <Route path="/admin/products/new" element={<ErrorBoundary><AdminProductForm /></ErrorBoundary>} />
+                <Route path="/admin/products/:id" element={<ErrorBoundary><AdminProductForm /></ErrorBoundary>} />
+                <Route path="/admin/enquiries" element={<ErrorBoundary><AdminEnquiries /></ErrorBoundary>} />
+                <Route path="/admin/enquiries/:id" element={<ErrorBoundary><AdminEnquiryDetail /></ErrorBoundary>} />
+                <Route path="/admin/distributors" element={<ErrorBoundary><AdminDistributors /></ErrorBoundary>} />
+                <Route path="/admin/distributors/:id" element={<ErrorBoundary><AdminDistributorsDetail /></ErrorBoundary>} />
+                <Route path="/admin/content" element={<ErrorBoundary><AdminContent /></ErrorBoundary>} />
+                <Route path="/admin/testimonials" element={<ErrorBoundary><AdminTestimonials /></ErrorBoundary>} />
+                <Route path="/admin/gallery" element={<ErrorBoundary><AdminGallery /></ErrorBoundary>} />
+                <Route path="/admin/media" element={<ErrorBoundary><AdminMedia /></ErrorBoundary>} />
+                <Route path="/admin/settings" element={<ErrorBoundary><AdminSettings /></ErrorBoundary>} />
+                <Route path="/admin/profile" element={<ErrorBoundary><AdminProfile /></ErrorBoundary>} />
+                <Route path="/admin/security" element={<ErrorBoundary><AdminSecurity /></ErrorBoundary>} />
+              </Route>
               <Route path="/404" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />
               <Route path="*" element={<Navigate to="/404" replace />} />
             </Routes>

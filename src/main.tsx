@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './styles/main.css'
 import { ToastProvider } from './context/ToastContext.tsx'
 import { CartProvider } from './context/CartContext.tsx'
+import { AuthProvider } from './context/AuthContext.tsx'
 import App from './App.tsx'
 import AnalyticsProvider from './components/AnalyticsProvider.tsx'
 
@@ -17,9 +18,11 @@ createRoot(rootElement).render(
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AnalyticsProvider>
         <ToastProvider>
-          <CartProvider>
-            <App />
-          </CartProvider>
+          <AuthProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </AuthProvider>
         </ToastProvider>
       </AnalyticsProvider>
     </BrowserRouter>

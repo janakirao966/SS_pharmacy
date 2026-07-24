@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff, Loader2 } from 'lucide-react';
 import SEO from '../components/ui/SEO';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { isAdmin, loading: authLoading } = useAuth();
+
+  // Redirect if already authenticated as admin
+  useEffect(() => {
+    if (!authLoading && isAdmin) {
+      navigate('/admin', { replace: true });
+    }
+  }, [isAdmin, authLoading, navigate]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [honeypot, setHoneypot] = useState(''); // Anti-bot honeypot field
@@ -50,7 +59,7 @@ export default function AdminLogin() {
         if (profile?.is_admin) {
           sessionStorage.setItem('ssp-admin-auth', 'true');
           showToast('Welcome to S.S. PHARMACY Admin Control Center', 'success');
-          navigate('/admin/orders');
+          navigate('/admin');
         } else {
           setError('Access Denied: Your account does not have administrator privileges.');
           await supabase.auth.signOut();
