@@ -39,6 +39,11 @@ interface DashboardStats {
   leadsCount: number;
   attentionItems: {
     pendingOrders: number;
+    confirmedOrders: number;
+    processingOrders: number;
+    packedOrders: number;
+    shippedOrders: number;
+    outForDeliveryOrders: number;
     unreadEnquiries: number;
     pendingDistributors: number;
   };
@@ -55,7 +60,16 @@ export default function AdminDashboard() {
     aov: 0,
     enquiriesCount: 0,
     leadsCount: 0,
-    attentionItems: { pendingOrders: 0, unreadEnquiries: 0, pendingDistributors: 0 }
+    attentionItems: { 
+      pendingOrders: 0, 
+      confirmedOrders: 0,
+      processingOrders: 0,
+      packedOrders: 0,
+      shippedOrders: 0,
+      outForDeliveryOrders: 0,
+      unreadEnquiries: 0, 
+      pendingDistributors: 0 
+    }
   });
 
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
@@ -130,6 +144,12 @@ export default function AdminDashboard() {
 
       // 4. Process Attention Required totals (non-fabricated, actual database checks)
       const pendingOrdersCount = activeOrders.filter(o => o.order_status === 'new').length;
+      const confirmedOrdersCount = activeOrders.filter(o => o.order_status === 'confirmed').length;
+      const processingOrdersCount = activeOrders.filter(o => o.order_status === 'processing').length;
+      const packedOrdersCount = activeOrders.filter(o => o.order_status === 'packed').length;
+      const shippedOrdersCount = activeOrders.filter(o => o.order_status === 'shipped').length;
+      const outForDeliveryOrdersCount = activeOrders.filter(o => o.order_status === 'out_for_delivery').length;
+
       const unreadEnquiriesCount = enquiries.filter(e => e.status === 'new').length;
       const pendingDistributorsCount = distributorLeads.filter(d => d.status === 'new' || d.status === 'under_review').length;
 
@@ -141,6 +161,11 @@ export default function AdminDashboard() {
         leadsCount: distributorLeads.length,
         attentionItems: {
           pendingOrders: pendingOrdersCount,
+          confirmedOrders: confirmedOrdersCount,
+          processingOrders: processingOrdersCount,
+          packedOrders: packedOrdersCount,
+          shippedOrders: shippedOrdersCount,
+          outForDeliveryOrders: outForDeliveryOrdersCount,
           unreadEnquiries: unreadEnquiriesCount,
           pendingDistributors: pendingDistributorsCount
         }
@@ -162,6 +187,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateFilter]);
 
   if (loading) {
@@ -294,39 +320,56 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Attention Required Card */}
           <AdminCard className="lg:col-span-2 flex flex-col" topAccent={true} accentColor="#B91C1C">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">Needs Attention</h3>
-            <div className="divide-y divide-slate-100 flex-1">
-              {stats.attentionItems.pendingOrders > 0 && (
-                <AdminAttentionItem
-                  label={`${stats.attentionItems.pendingOrders} orders awaiting confirmation`}
-                  actionUrl="/admin/orders?status=new"
-                  badgeText="New"
-                  badgeType="warning"
-                />
-              )}
-              {stats.attentionItems.unreadEnquiries > 0 && (
-                <AdminAttentionItem
-                  label={`${stats.attentionItems.unreadEnquiries} unread enquiries waiting for review`}
-                  actionUrl="/admin/enquiries?status=new"
-                  badgeText="Unread"
-                  badgeType="info"
-                />
-              )}
-              {stats.attentionItems.pendingDistributors > 0 && (
-                <AdminAttentionItem
-                  label={`${stats.attentionItems.pendingDistributors} distributor applications pending approval`}
-                  actionUrl="/admin/distributors?status=new"
-                  badgeText="Under Review"
-                  badgeType="warning"
-                />
-              )}
-              {stats.attentionItems.pendingOrders === 0 && 
-               stats.attentionItems.unreadEnquiries === 0 && 
-               stats.attentionItems.pendingDistributors === 0 && (
-                <div className="py-8 text-center text-slate-400 text-xs font-semibold">
-                  ✓ Everything has been processed. No attention required.
-                </div>
-              )}
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">Operational Status</h3>
+            <div className="divide-y divide-slate-100 flex-1 grid grid-cols-1 gap-2 p-4">
+              <AdminAttentionItem
+                label={`${stats.attentionItems.pendingOrders} New Orders`}
+                actionUrl="/admin/orders"
+                badgeText={stats.attentionItems.pendingOrders.toString()}
+                badgeType="danger"
+              />
+              <AdminAttentionItem
+                label={`${stats.attentionItems.confirmedOrders} Confirmed Orders`}
+                actionUrl="/admin/orders"
+                badgeText={stats.attentionItems.confirmedOrders.toString()}
+                badgeType="warning"
+              />
+              <AdminAttentionItem
+                label={`${stats.attentionItems.processingOrders} Processing`}
+                actionUrl="/admin/orders"
+                badgeText={stats.attentionItems.processingOrders.toString()}
+                badgeType="warning"
+              />
+              <AdminAttentionItem
+                label={`${stats.attentionItems.packedOrders} Packed`}
+                actionUrl="/admin/orders"
+                badgeText={stats.attentionItems.packedOrders.toString()}
+                badgeType="success"
+              />
+              <AdminAttentionItem
+                label={`${stats.attentionItems.shippedOrders} Shipped`}
+                actionUrl="/admin/orders"
+                badgeText={stats.attentionItems.shippedOrders.toString()}
+                badgeType="success"
+              />
+              <AdminAttentionItem
+                label={`${stats.attentionItems.outForDeliveryOrders} Out for Delivery`}
+                actionUrl="/admin/orders"
+                badgeText={stats.attentionItems.outForDeliveryOrders.toString()}
+                badgeType="info"
+              />
+              <AdminAttentionItem
+                label={`${stats.attentionItems.unreadEnquiries} Unread Enquiries`}
+                actionUrl="/admin/enquiries"
+                badgeText={stats.attentionItems.unreadEnquiries.toString()}
+                badgeType="warning"
+              />
+              <AdminAttentionItem
+                label={`${stats.attentionItems.pendingDistributors} Pending Partners`}
+                actionUrl="/admin/distributors"
+                badgeText={stats.attentionItems.pendingDistributors.toString()}
+                badgeType="warning"
+              />
             </div>
           </AdminCard>
 

@@ -163,22 +163,19 @@ export default function Contact() {
     setSubmitStatus('idle');
 
     try {
-      const { error: dbError } = await supabase
-        .from('distributor_applications')
-        .insert([{
-          company_name: formData.product ? `Enquiry: ${formData.product}` : 'General Contact Enquiry',
-          contact_person: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          city: formData.location || 'Not Specified',
-          state: 'Andhra Pradesh',
-          notes: formData.message,
-          status: 'new'
-        }]);
+      const { data, error: dbError } = await supabase.rpc('create_support_ticket', {
+        p_customer_name: formData.name.trim(),
+        p_customer_email: formData.email.trim(),
+        p_customer_phone: formData.phone.trim(),
+        p_category: 'GENERAL',
+        p_subject: formData.product ? `Enquiry regarding ${formData.product}` : 'General Contact Enquiry',
+        p_description: formData.message.trim(),
+        p_source: 'contact_form'
+      });
 
-      if (!dbError) {
+      if (!dbError && data?.success) {
         setSubmitStatus('success');
-        showToast('Enquiry submitted successfully! Our team will contact you soon.', 'success');
+        showToast(`Enquiry submitted! Ticket #${data.ticket_number} created.`, 'success');
         setFormData({
           name: '',
           phone: '',
@@ -193,7 +190,7 @@ export default function Contact() {
       } else {
         console.error('Supabase contact submission error:', dbError);
         setSubmitStatus('error');
-        showToast('Failed to submit enquiry to database. Please try again.', 'error');
+        showToast('Failed to submit enquiry. Please try again.', 'error');
       }
     } catch (err) {
       console.error('Error submitting contact enquiry:', err);

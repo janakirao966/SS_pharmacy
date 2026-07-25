@@ -3,13 +3,13 @@ import { Search, PackageCheck, Truck, Clock, CheckCircle2, AlertCircle } from 'l
 import SectionHeader from '../components/ui/SectionHeader';
 import Button from '../components/ui/Button';
 import SEO from '../components/ui/SEO';
-import { supabase, type DatabaseOrder } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export default function TrackOrder() {
   const [orderNumber, setOrderNumber] = useState('');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
-  const [order, setOrder] = useState<DatabaseOrder | null>(null);
+  const [order, setOrder] = useState<any>(null);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,17 +26,16 @@ export default function TrackOrder() {
     setLoading(true);
 
     try {
-      const { data, error: dbError } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('order_number', orderNumber.trim())
-        .single();
+      const { data, error: dbError } = await supabase.rpc('track_guest_order', {
+        p_order_number: orderNumber.trim(),
+        p_customer_phone: phone.trim()
+      });
 
       if (dbError || !data) {
         setError('No order found matching this Order Number and Phone Number.');
         setOrder(null);
       } else {
-        setOrder(data as DatabaseOrder);
+        setOrder(data);
       }
     } catch (err) {
       console.error('Track Order Query Error:', err);
@@ -52,9 +51,11 @@ export default function TrackOrder() {
       case 'new':
       case 'confirmed':
         return 1;
-      case 'preparing':
+      case 'processing':
+      case 'packed':
         return 2;
       case 'shipped':
+      case 'out_for_delivery':
         return 3;
       case 'delivered':
         return 4;
@@ -154,7 +155,7 @@ export default function TrackOrder() {
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto text-xs ${getStatusStep(order.order_status) >= 2 ? 'bg-[#1D3A28] text-white' : 'bg-slate-200'}`}>
                     <Clock size={16} />
                   </div>
-                  <span className="text-[10px] block">Preparing</span>
+                  <span className="text-[10px] block">Processing</span>
                 </div>
 
                 <div className={`space-y-1 ${getStatusStep(order.order_status) >= 3 ? 'text-[#2D5016] font-bold' : 'text-slate-400'}`}>
@@ -174,14 +175,10 @@ export default function TrackOrder() {
             </div>
 
             {/* Details Grid */}
-            <div className="bg-white p-4 rounded-xl border border-slate-200 text-xs space-y-2">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 text-xs space-y-2 text-left">
               <div className="flex justify-between">
-                <span className="text-slate-500">Customer Name:</span>
-                <span className="font-semibold text-slate-800">{order.customer_name}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Payment Method:</span>
-                <span className="font-semibold text-slate-800 uppercase">{order.payment_method}</span>
+                <span className="text-slate-500">Destination:</span>
+                <span className="font-semibold text-slate-800 text-right">{order.destination}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Payment Status:</span>
@@ -189,11 +186,43 @@ export default function TrackOrder() {
                   {order.payment_status}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Total Amount:</span>
-                <span className="font-bold text-[#1D3A28] text-sm">₹{order.total_amount}</span>
-              </div>
             </div>
+
+            {/* Guest Shipment Section */}
+            {order.shipment && (
+              <div className="bg-[#FAF8F5] p-4 rounded-xl border border-[#C5A059]/20 text-xs space-y-2 text-left">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <span className="text-[10px] font-bold text-[#8A6B29] uppercase tracking-wider">Package & Tracking Information</span>
+                  <span className="text-[10px] font-bold uppercase text-[#2D5016] bg-[#2D5016]/10 px-2 py-0.5 rounded">
+                    {order.shipment.shipment_status.replace('_', ' ')}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-slate-700">
+                  <div>
+                    <span className="text-[10px] font-semibold text-slate-400 block">Courier</span>
+                    <span className="font-bold text-[#1D3A28]">{order.shipment.carrier}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-semibold text-slate-400 block">Tracking Number</span>
+                    <span className="font-mono font-bold text-slate-800">{order.shipment.tracking_number}</span>
+                  </div>
+                </div>
+
+                {order.shipment.tracking_url && order.shipment.tracking_url.startsWith('https://') && (
+                  <div className="pt-2">
+                    <a
+                      href={order.shipment.tracking_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full bg-[#1D3A28] hover:bg-[#2D5016] text-white py-2 px-3 rounded-lg font-bold text-xs inline-flex items-center justify-center gap-1.5 transition-colors text-decoration-none"
+                    >
+                      <span>Track Package Live</span>
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

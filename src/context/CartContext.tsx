@@ -1,5 +1,6 @@
 /* oxlint-disable react/only-export-components */
 import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Product } from '../data/products';
 import { useToast } from './ToastContext';
 import { trackEvent } from '../utils/analytics';
@@ -12,7 +13,6 @@ export interface CartItem {
 interface CartContextType {
   cartItems: CartItem[];
   isCartOpen: boolean;
-  isCheckoutOpen: boolean;
   cartAnnouncement: string;
   cartCount: number;
   handleAddToCart: (product: Product, quantity?: number) => void;
@@ -21,13 +21,13 @@ interface CartContextType {
   handleClearCart: () => void;
   handleBuyNow: (product: Product) => void;
   setIsCartOpen: (isOpen: boolean) => void;
-  setIsCheckoutOpen: (isOpen: boolean) => void;
   openCheckout: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const isUserAction = useRef(false);
   
@@ -49,12 +49,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   });
   
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [cartAnnouncement, setCartAnnouncement] = useState('');
 
   const openCheckout = () => {
     setIsCartOpen(false);
-    setIsCheckoutOpen(true);
+    navigate('/checkout');
   };
 
   // Sync cart across tabs
@@ -182,7 +181,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       value={{
         cartItems,
         isCartOpen,
-        isCheckoutOpen,
         cartAnnouncement,
         cartCount,
         handleAddToCart,
@@ -191,7 +189,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         handleClearCart,
         handleBuyNow,
         setIsCartOpen,
-        setIsCheckoutOpen,
         openCheckout,
       }}
     >

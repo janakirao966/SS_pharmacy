@@ -18,7 +18,15 @@ import {
   UserCircle, 
   SignOut,
   CaretLeft,
-  CaretRight
+  CaretRight,
+  Receipt,
+  ShieldWarning,
+  Headset,
+  Calendar,
+  Warning,
+  Buildings,
+  ShoppingCart,
+  TrendUp
 } from '@phosphor-icons/react';
 
 interface AdminSidebarProps {
@@ -117,6 +125,102 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
               pathname={pathname} 
               onClick={navClick} 
             />
+            <NavItem 
+              href="/admin/inventory" 
+              icon={<Package size={18} />} 
+              label="Inventory" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/inventory/batches" 
+              icon={<Package size={18} />} 
+              label="Batch Stock" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/expiry" 
+              icon={<Calendar size={18} />} 
+              label="Expiry Center" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/recalls" 
+              icon={<Warning size={18} />} 
+              label="Product Recalls" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/suppliers" 
+              icon={<Buildings size={18} />} 
+              label="Suppliers" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/analytics" 
+              icon={<TrendUp size={18} />} 
+              label="Analytics BI" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/analytics/gst" 
+              icon={<Receipt size={18} />} 
+              label="GST Register" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/security" 
+              icon={<ShieldWarning size={18} />} 
+              label="Security Operations" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/procurement" 
+              icon={<ShoppingCart size={18} />} 
+              label="Procurement" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/returns" 
+              icon={<Package size={18} />} 
+              label="Returns" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/support" 
+              icon={<Headset size={18} />} 
+              label="Support Desk" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/invoices" 
+              icon={<Receipt size={18} />} 
+              label="Invoices" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
           </div>
 
           {/* CUSTOMERS SECTION */}
@@ -180,6 +284,14 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
           {/* SYSTEM SECTION */}
           <div className="admin-nav-group">
             {!isCollapsed && <p className="admin-nav-group-title">System</p>}
+            <NavItem 
+              href="/admin/operations" 
+              icon={<ShieldWarning size={18} />} 
+              label="Operations" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
             <NavItem 
               href="/admin/settings" 
               icon={<GearSix size={18} />} 

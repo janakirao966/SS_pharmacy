@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { CartProvider, useCart } from './CartContext';
 import { ToastProvider } from './ToastContext';
@@ -38,11 +39,13 @@ describe('CartContext', () => {
 
   it('provides initial state', () => {
     render(
-      <ToastProvider>
-        <CartProvider>
-          <TestComponent />
-        </CartProvider>
-      </ToastProvider>
+      <MemoryRouter>
+        <ToastProvider>
+          <CartProvider>
+            <TestComponent />
+          </CartProvider>
+        </ToastProvider>
+      </MemoryRouter>
     );
     
     expect(screen.getByTestId('cart-total')).toHaveTextContent('0');
@@ -52,11 +55,13 @@ describe('CartContext', () => {
   it('adds items to the cart and updates total', async () => {
     const user = userEvent.setup();
     render(
-      <ToastProvider>
-        <CartProvider>
-          <TestComponent />
-        </CartProvider>
-      </ToastProvider>
+      <MemoryRouter>
+        <ToastProvider>
+          <CartProvider>
+            <TestComponent />
+          </CartProvider>
+        </ToastProvider>
+      </MemoryRouter>
     );
 
     await user.click(screen.getByText('Add Product 1'));
@@ -72,11 +77,13 @@ describe('CartContext', () => {
   it('removes items from the cart', async () => {
     const user = userEvent.setup();
     render(
-      <ToastProvider>
-        <CartProvider>
-          <TestComponent />
-        </CartProvider>
-      </ToastProvider>
+      <MemoryRouter>
+        <ToastProvider>
+          <CartProvider>
+            <TestComponent />
+          </CartProvider>
+        </ToastProvider>
+      </MemoryRouter>
     );
 
     await user.click(screen.getByText('Add Product 1'));
@@ -90,11 +97,13 @@ describe('CartContext', () => {
   it('toggles cart drawer visibility', async () => {
     const user = userEvent.setup();
     render(
-      <ToastProvider>
-        <CartProvider>
-          <TestComponent />
-        </CartProvider>
-      </ToastProvider>
+      <MemoryRouter>
+        <ToastProvider>
+          <CartProvider>
+            <TestComponent />
+          </CartProvider>
+        </ToastProvider>
+      </MemoryRouter>
     );
 
     expect(screen.getByTestId('is-open')).toHaveTextContent('false');

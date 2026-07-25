@@ -56,6 +56,7 @@ export default function AdminDistributors() {
 
   useEffect(() => {
     fetchLeads();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter logic

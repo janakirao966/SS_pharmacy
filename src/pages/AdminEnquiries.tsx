@@ -57,6 +57,7 @@ export default function AdminEnquiries() {
 
   useEffect(() => {
     fetchEnquiries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter logic

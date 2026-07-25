@@ -50,6 +50,7 @@ export default function AdminOrders() {
 
   useEffect(() => {
     fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter logic
@@ -80,8 +81,10 @@ export default function AdminOrders() {
     { label: 'All Statuses', value: 'all' },
     { label: 'New', value: 'new' },
     { label: 'Confirmed', value: 'confirmed' },
-    { label: 'Preparing', value: 'preparing' },
+    { label: 'Processing', value: 'processing' },
+    { label: 'Packed', value: 'packed' },
     { label: 'Shipped', value: 'shipped' },
+    { label: 'Out for Delivery', value: 'out_for_delivery' },
     { label: 'Delivered', value: 'delivered' },
     { label: 'Cancelled', value: 'cancelled' }
   ];

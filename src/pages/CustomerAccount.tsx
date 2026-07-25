@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import { User, PackageCheck, Clock, Truck, CheckCircle2, ShoppingBag, LogOut } from 'lucide-react';
+import { User, LogOut, ShoppingBag, PackageCheck, Clock, Truck, CheckCircle2, Receipt } from 'lucide-react';
 import Button from '../components/ui/Button';
 import SEO from '../components/ui/SEO';
-import { supabase, type DatabaseOrder } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 
 export default function CustomerAccount() {
   const { showToast } = useToast();
   const [user, setUser] = useState<any>(null);
-  const [orders, setOrders] = useState<DatabaseOrder[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,12 +33,12 @@ export default function CustomerAccount() {
     try {
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select('*, order_items(*), shipments(*), refunds(*), invoices(*)')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
       if (!error && data) {
-        setOrders(data as DatabaseOrder[]);
+        setOrders(data as any[]);
       }
     } catch (err) {
       console.error('Fetch customer orders error:', err);
@@ -58,9 +58,11 @@ export default function CustomerAccount() {
       case 'new':
       case 'confirmed':
         return 1;
-      case 'preparing':
+      case 'processing':
+      case 'packed':
         return 2;
       case 'shipped':
+      case 'out_for_delivery':
         return 3;
       case 'delivered':
         return 4;
@@ -159,6 +161,113 @@ export default function CustomerAccount() {
                     </div>
                   </div>
 
+                  {/* Order Items */}
+                  {order.order_items && order.order_items.length > 0 && (
+                    <div className="py-2.5 text-xs border-b border-slate-100 space-y-1 text-left">
+                      <span className="text-[10px] font-bold text-[#8A6B29] uppercase tracking-wider block mb-1">Products</span>
+                      {order.order_items.map((item: any) => (
+                        <div key={item.id} className="flex justify-between text-slate-700">
+                          <span>{item.product_name} <span className="text-slate-400">× {item.quantity}</span></span>
+                          <span className="font-semibold">₹{item.total_price}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Refund Status Card (if refund exists) */}
+                  {order.refunds && (Array.isArray(order.refunds) ? order.refunds[0] : order.refunds) && (
+                    (() => {
+                      const rf = Array.isArray(order.refunds) ? order.refunds[0] : order.refunds;
+                      return (
+                        <div className="bg-orange-50/60 p-3 rounded-xl border border-orange-200 text-xs space-y-1 text-left">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold text-orange-800 uppercase tracking-wider">Payment Refund Status</span>
+                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
+                              rf.status === 'processed' ? 'bg-green-100 text-green-800' :
+                              rf.status === 'failed' ? 'bg-red-100 text-red-800' :
+                              'bg-orange-150 text-orange-800'
+                            }`}>
+                              {rf.status === 'processed' ? 'Refund Issued' : rf.status === 'processing' ? 'Refund Processing' : 'Refund Requested'}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-600 mb-0">
+                            {rf.status === 'processed' 
+                              ? `₹${rf.amount} full refund has been credited via Razorpay.` 
+                              : `₹${rf.amount} full refund request is currently being processed.`}
+                          </p>
+                        </div>
+                      );
+                    })()
+                  )}
+
+                  {/* Shipping & Tracking Section */}
+                  {order.shipments && (Array.isArray(order.shipments) ? order.shipments[0] : order.shipments) && (
+                    (() => {
+                      const sh = Array.isArray(order.shipments) ? order.shipments[0] : order.shipments;
+                      return (
+                        <div className="bg-[#FAF8F5] p-3.5 rounded-xl border border-[#C5A059]/20 text-xs space-y-2 text-left">
+                          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <span className="text-[10px] font-bold text-[#8A6B29] uppercase tracking-wider">Dispatched Package Info</span>
+                            <span className="text-[10px] font-bold uppercase text-[#2D5016] bg-[#2D5016]/10 px-2 py-0.5 rounded">
+                              {sh.shipment_status.replace('_', ' ')}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 text-slate-700">
+                            <div>
+                              <span className="text-[10px] font-semibold text-slate-400 block">Courier</span>
+                              <span className="font-bold text-[#1D3A28]">{sh.carrier}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] font-semibold text-slate-400 block">Tracking Number</span>
+                              <span className="font-mono font-bold text-slate-800">{sh.tracking_number}</span>
+                            </div>
+                          </div>
+
+                          {sh.tracking_url && sh.tracking_url.startsWith('https://') && (
+                            <div className="pt-1">
+                              <a
+                                href={sh.tracking_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full bg-[#1D3A28] hover:bg-[#2D5016] text-white py-1.5 px-3 rounded-lg font-bold text-[11px] inline-flex items-center justify-center gap-1.5 transition-colors text-decoration-none"
+                              >
+                                <span>Track Package Live</span>
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()
+                  )}
+
+                  {/* Tax Invoice Section */}
+                  {order.invoices && (Array.isArray(order.invoices) ? order.invoices[0] : order.invoices) && (
+                    (() => {
+                      const inv = Array.isArray(order.invoices) ? order.invoices[0] : order.invoices;
+                      return (
+                        <div className="bg-[#FAF8F5] p-3 rounded-xl border border-[#C5A059]/30 text-xs flex items-center justify-between">
+                          <div>
+                            <span className="text-[10px] font-bold text-[#8A6B29] uppercase tracking-wider block">Official Tax Document</span>
+                            <span className="font-mono font-bold text-slate-800">{inv.invoice_number} ({inv.invoice_type.replace('_', ' ')})</span>
+                          </div>
+                          {inv.pdf_storage_path && (
+                            <button
+                              onClick={async () => {
+                                const { data } = await supabase.storage.from('invoices').createSignedUrl(inv.pdf_storage_path, 60);
+                                if (data?.signedUrl) window.open(data.signedUrl, '_blank');
+                              }}
+                              className="bg-[#2D5016] hover:bg-[#1D3A28] text-white px-3 py-1.5 text-xs font-bold rounded-lg transition-colors inline-flex items-center gap-1"
+                            >
+                              <Receipt size={14} />
+                              <span>Download Invoice</span>
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })()
+                  )}
+
                   {/* Live Progress Stepper */}
                   <div>
                     <span className="text-[10px] font-bold text-[#8A6B29] uppercase tracking-wider block mb-3">Live Order Progress</span>
@@ -174,7 +283,7 @@ export default function CustomerAccount() {
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto text-xs ${getStatusStep(order.order_status) >= 2 ? 'bg-[#1D3A28] text-white' : 'bg-slate-200'}`}>
                           <Clock size={16} />
                         </div>
-                        <span className="text-[10px] block">Preparing</span>
+                        <span className="text-[10px] block">Processing</span>
                       </div>
 
                       <div className={`space-y-1 ${getStatusStep(order.order_status) >= 3 ? 'text-[#2D5016] font-bold' : 'text-slate-400'}`}>

@@ -62,6 +62,7 @@ export default function AdminProductForm() {
       showToast('Formulation not found in local preview list.', 'error');
       navigate('/admin/products');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isEditMode]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

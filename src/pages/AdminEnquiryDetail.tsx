@@ -45,6 +45,7 @@ export default function AdminEnquiryDetail() {
 
   useEffect(() => {
     fetchEnquiryDetail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleStatusChangeAttempt = (status: string) => {

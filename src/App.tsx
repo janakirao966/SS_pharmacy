@@ -24,6 +24,26 @@ const Distributor = lazy(() => import('./pages/Distributor'));
 const TrackOrder = lazy(() => import('./pages/TrackOrder'));
 const AdminOrders = lazy(() => import('./pages/AdminOrders'));
 const AdminOrdersDetail = lazy(() => import('./pages/AdminOrdersDetail'));
+const AdminInvoices = lazy(() => import('./pages/AdminInvoices'));
+const AdminInventory = lazy(() => import('./pages/AdminInventory'));
+const AdminInventoryDetail = lazy(() => import('./pages/AdminInventoryDetail'));
+const AdminReturns = lazy(() => import('./pages/AdminReturns'));
+const AdminReturnDetail = lazy(() => import('./pages/AdminReturnDetail'));
+const AdminOperations = lazy(() => import('./pages/AdminOperations'));
+const AdminExceptionDetail = lazy(() => import('./pages/AdminExceptionDetail'));
+const AdminSupport = lazy(() => import('./pages/AdminSupport'));
+const AdminSupportDetail = lazy(() => import('./pages/AdminSupportDetail'));
+const AdminSuppliers = lazy(() => import('./pages/AdminSuppliers'));
+const AdminProcurement = lazy(() => import('./pages/AdminProcurement'));
+const AdminInventoryBatches = lazy(() => import('./pages/AdminInventoryBatches'));
+const AdminExpiry = lazy(() => import('./pages/AdminExpiry'));
+const AdminRecalls = lazy(() => import('./pages/AdminRecalls'));
+const AdminAnalytics = lazy(() => import('./pages/AdminAnalytics'));
+const AdminGSTReport = lazy(() => import('./pages/AdminGSTReport'));
+const AdminSecurityCenter = lazy(() => import('./pages/AdminSecurityCenter'));
+const CustomerSupport = lazy(() => import('./pages/CustomerSupport'));
+const CustomerSupportNew = lazy(() => import('./pages/CustomerSupportNew'));
+const CustomerSupportDetail = lazy(() => import('./pages/CustomerSupportDetail'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const AdminProducts = lazy(() => import('./pages/AdminProducts'));
@@ -40,12 +60,11 @@ const AdminSettings = lazy(() => import('./pages/AdminSettings'));
 const AdminProfile = lazy(() => import('./pages/AdminProfile'));
 const AdminSecurity = lazy(() => import('./pages/AdminSecurity'));
 const CustomerAccount = lazy(() => import('./pages/CustomerAccount'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const OrderSuccess = lazy(() => import('./pages/OrderSuccess'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
-import CheckoutModal from './components/ui/CheckoutModal';
-import OrderConfirmationModal from './components/ui/OrderConfirmationModal';
 import AuthModal from './components/ui/AuthModal';
-import type { DatabaseOrder } from './lib/supabase';
 
 function ProductDetailWrapper() {
   const { id } = useParams<{ id: string }>();
@@ -65,9 +84,8 @@ export default function App() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<string>('home');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [confirmedOrder, setConfirmedOrder] = useState<Partial<DatabaseOrder> | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const { isCartOpen, isCheckoutOpen, cartAnnouncement, setIsCartOpen, setIsCheckoutOpen } = useCart();
+  const { isCartOpen, cartAnnouncement, setIsCartOpen } = useCart();
 
   // Global keyboard shortcuts: Ctrl/Cmd + K (Search), Ctrl/Cmd + B (Cart Toggle)
   useEffect(() => {
@@ -108,7 +126,7 @@ export default function App() {
       document.title = `${formattedTitle} | S.S. PHARMACY`;
     }
     trackPageView(location.pathname);
-  }, [location.pathname]);
+  }, [location.pathname, activeTab]);
 
   // Sync state variable activeTab with URL location to preserve highlighted Navbar state
   useEffect(() => {
@@ -206,13 +224,35 @@ export default function App() {
               <Route path="/distributor" element={<ErrorBoundary><Distributor /></ErrorBoundary>} />
               <Route path="/track-order" element={<ErrorBoundary><TrackOrder /></ErrorBoundary>} />
               <Route path="/account" element={<ErrorBoundary><CustomerAccount /></ErrorBoundary>} />
+              <Route path="/checkout" element={<ErrorBoundary><Checkout /></ErrorBoundary>} />
+              <Route path="/order-success/:orderNumber" element={<ErrorBoundary><OrderSuccess /></ErrorBoundary>} />
               <Route path="/admin/login" element={<ErrorBoundary><AdminLogin /></ErrorBoundary>} />
               
-              {/* Protected Administrative Routes Namespace */}
+// Protected Administrative Routes Namespace
               <Route element={<ProtectedRoute />}>
                 <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
                 <Route path="/admin/orders" element={<ErrorBoundary><AdminOrders /></ErrorBoundary>} />
                 <Route path="/admin/orders/:id" element={<ErrorBoundary><AdminOrdersDetail /></ErrorBoundary>} />
+                <Route path="/admin/invoices" element={<ErrorBoundary><AdminInvoices /></ErrorBoundary>} />
+                <Route path="/admin/inventory" element={<ErrorBoundary><AdminInventory /></ErrorBoundary>} />
+                <Route path="/admin/inventory/:productId" element={<ErrorBoundary><AdminInventoryDetail /></ErrorBoundary>} />
+                <Route path="/admin/returns" element={<ErrorBoundary><AdminReturns /></ErrorBoundary>} />
+                <Route path="/admin/returns/:returnId" element={<ErrorBoundary><AdminReturnDetail /></ErrorBoundary>} />
+                <Route path="/admin/operations" element={<ErrorBoundary><AdminOperations /></ErrorBoundary>} />
+                <Route path="/admin/operations/exceptions/:id" element={<ErrorBoundary><AdminExceptionDetail /></ErrorBoundary>} />
+                <Route path="/admin/support" element={<ErrorBoundary><AdminSupport /></ErrorBoundary>} />
+                <Route path="/admin/support/:ticketNumber" element={<ErrorBoundary><AdminSupportDetail /></ErrorBoundary>} />
+                <Route path="/admin/suppliers" element={<ErrorBoundary><AdminSuppliers /></ErrorBoundary>} />
+                <Route path="/admin/procurement" element={<ErrorBoundary><AdminProcurement /></ErrorBoundary>} />
+                <Route path="/admin/inventory/batches" element={<ErrorBoundary><AdminInventoryBatches /></ErrorBoundary>} />
+                <Route path="/admin/expiry" element={<ErrorBoundary><AdminExpiry /></ErrorBoundary>} />
+                <Route path="/admin/recalls" element={<ErrorBoundary><AdminRecalls /></ErrorBoundary>} />
+                <Route path="/admin/analytics" element={<ErrorBoundary><AdminAnalytics /></ErrorBoundary>} />
+                <Route path="/admin/analytics/gst" element={<ErrorBoundary><AdminGSTReport /></ErrorBoundary>} />
+                <Route path="/admin/security" element={<ErrorBoundary><AdminSecurityCenter /></ErrorBoundary>} />
+                <Route path="/account/support" element={<ErrorBoundary><CustomerSupport /></ErrorBoundary>} />
+                <Route path="/account/support/new" element={<ErrorBoundary><CustomerSupportNew /></ErrorBoundary>} />
+                <Route path="/account/support/:ticketNumber" element={<ErrorBoundary><CustomerSupportDetail /></ErrorBoundary>} />
                 <Route path="/admin/products" element={<ErrorBoundary><AdminProducts /></ErrorBoundary>} />
                 <Route path="/admin/products/new" element={<ErrorBoundary><AdminProductForm /></ErrorBoundary>} />
                 <Route path="/admin/products/:id" element={<ErrorBoundary><AdminProductForm /></ErrorBoundary>} />
@@ -234,18 +274,7 @@ export default function App() {
           </div>
         </Suspense>
 
-        {/* Global Checkout Modal */}
-        <CheckoutModal
-          isOpen={isCheckoutOpen}
-          onClose={() => setIsCheckoutOpen(false)}
-          onOrderSuccess={(order) => setConfirmedOrder(order)}
-        />
 
-        {/* Global Order Confirmation Receipt */}
-        <OrderConfirmationModal
-          order={confirmedOrder}
-          onClose={() => setConfirmedOrder(null)}
-        />
 
         {/* Customer Sign In / Sign Up Modal */}
         <AuthModal
