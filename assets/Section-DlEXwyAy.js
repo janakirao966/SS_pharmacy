@@ -1,1 +1,0 @@
-import{pt as e}from"./vendor-react-core-g_V_7C_U.js";var t=e();function n({children:e,className:n=``,id:r}){return(0,t.jsx)(`section`,{id:r,className:`section-spacing ${n}`,children:e})}export{n as t};
