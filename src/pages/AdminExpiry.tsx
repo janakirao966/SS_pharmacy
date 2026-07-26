@@ -2,8 +2,15 @@ import { useState, useEffect } from 'react';
 import { supabase, type DatabaseInventoryBatch } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
-import { Calendar, ShieldWarning, CheckCircle } from '@phosphor-icons/react';
+import { 
+  AdminCard, 
+  AdminSkeleton, 
+  AdminStatusBadge, 
+  AdminDataTable, 
+  AdminMobileRecord, 
+  AdminEmptyState 
+} from '../components/admin/AdminPrimitives';
+import { Warning } from '@phosphor-icons/react';
 
 export default function AdminExpiry() {
   const { showToast } = useToast();
@@ -36,95 +43,111 @@ export default function AdminExpiry() {
   const today = new Date();
   const expiredBatches = batches.filter(b => new Date(b.expiry_date) <= today);
 
+  const columns = [
+    { 
+      header: 'Batch Number', 
+      render: (b: DatabaseInventoryBatch) => <span className="font-mono font-semibold text-[#000000]">{b.batch_number}</span> 
+    },
+    { 
+      header: 'Product ID', 
+      render: (b: DatabaseInventoryBatch) => <span className="font-mono text-xs text-[#71717a]">{b.product_id}</span> 
+    },
+    { 
+      header: 'Expiry Date', 
+      render: (b: DatabaseInventoryBatch) => <span className="font-mono text-xs font-semibold text-[#000000]">{b.expiry_date}</span> 
+    },
+    { 
+      header: 'Countdown', 
+      render: (b: DatabaseInventoryBatch) => {
+        const exp = new Date(b.expiry_date);
+        const diffDays = Math.ceil((exp.getTime() - today.getTime()) / (1000 * 3600 * 24));
+        const isExpired = diffDays <= 0;
+        return (
+          <span className={`font-mono text-xs font-semibold ${isExpired ? 'text-[#dc2626]' : diffDays <= 30 ? 'text-[#dc2626]' : 'text-[#000000]'}`}>
+            {isExpired ? `Expired (${Math.abs(diffDays)}d ago)` : `${diffDays} days remaining`}
+          </span>
+        );
+      } 
+    },
+    { 
+      header: 'On Hand', 
+      render: (b: DatabaseInventoryBatch) => <span className="font-mono font-semibold text-[#000000]">{b.quantity_on_hand}</span>,
+      className: 'text-right' 
+    },
+    { 
+      header: 'FEFO Status', 
+      render: (b: DatabaseInventoryBatch) => {
+        const exp = new Date(b.expiry_date);
+        const isExpired = exp <= today;
+        return <AdminStatusBadge status={isExpired ? 'expired' : b.status} />;
+      } 
+    }
+  ];
+
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-          <div>
-            <h1 className="font-display font-bold text-2xl text-[#1D3A28] flex items-center gap-2">
-              <Calendar size={28} className="text-[#C5A059]" />
-              <span>Pharmaceutical Expiry Management Center</span>
-            </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Monitor near-expiry Ayurvedic inventory (≤90 days) and server-blocked expired batches.
-            </p>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Title Header */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Expiry Monitoring & FEFO Security</span>
+          <p className="text-xs text-[#71717a] margin-0">Monitor near-expiry inventory (≤90 days) and server-blocked expired batches</p>
         </div>
 
-        {/* Expired Stock Alert */}
+        {/* Expired Stock Alert Banner */}
         {expiredBatches.length > 0 && (
-          <div className="p-4 bg-red-100 border-l-4 border-l-red-600 text-red-950 rounded-xl space-y-1 text-xs">
-            <div className="flex items-center gap-2 font-bold text-sm text-red-900">
-              <ShieldWarning size={20} />
-              <span>{expiredBatches.length} EXPIRED BATCH(ES) DETECTED</span>
+          <div className="p-3.5 bg-[#fbfbf5] border border-[#dc2626] rounded-xl flex items-center gap-3">
+            <Warning size={20} className="text-[#dc2626] shrink-0" />
+            <div>
+              <span className="font-semibold text-xs text-[#dc2626] block">
+                {expiredBatches.length} Expired Batch(es) Detected
+              </span>
+              <span className="text-[0.7rem] text-[#71717a]">
+                Expired batches are automatically blocked from server-side FEFO order allocation.
+              </span>
             </div>
-            <p className="m-0">
-              Expired batches are automatically blocked from server-side FEFO checkout allocation.
-            </p>
           </div>
         )}
 
-        {/* Expiry Data Table */}
+        {/* Expiry Data Table Workspace */}
         {loading ? (
           <AdminSkeleton type="table" rows={4} />
         ) : batches.length === 0 ? (
-          <AdminCard>
-            <div className="text-center py-12">
-              <CheckCircle size={48} className="text-slate-300 mx-auto mb-3" />
-              <h3 className="font-bold text-sm text-[#1D3A28]">No Expired or Near-Expiry Inventory</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                All inventory batches meet pharmaceutical shelf-life dispatch standards.
-              </p>
-            </div>
-          </AdminCard>
+          <AdminEmptyState
+            title="No Expired or Near-Expiry Inventory"
+            description="All active inventory batches meet pharmaceutical shelf-life dispatch standards."
+          />
         ) : (
-          <AdminCard className="p-0 overflow-hidden">
-            <div className="admin-table-container overflow-x-auto">
-              <table className="admin-data-table min-w-full text-xs">
-                <thead>
-                  <tr>
-                    <th>Batch Number</th>
-                    <th>Product ID</th>
-                    <th>Expiry Date</th>
-                    <th>Days Remaining</th>
-                    <th>Quantity On Hand</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {batches.map(b => {
-                    const exp = new Date(b.expiry_date);
-                    const diffDays = Math.ceil((exp.getTime() - today.getTime()) / (1000 * 3600 * 24));
-                    const isExpired = diffDays <= 0;
-                    return (
-                      <tr key={b.id} className={isExpired ? 'bg-red-50/50' : ''}>
-                        <td className="font-mono font-bold text-[#1D3A28]">{b.batch_number}</td>
-                        <td className="font-mono">{b.product_id}</td>
-                        <td className="font-mono font-bold">{b.expiry_date}</td>
-                        <td className="font-mono font-bold">
-                          {isExpired ? (
-                            <span className="text-red-700">Expired ({Math.abs(diffDays)}d ago)</span>
-                          ) : (
-                            <span className={diffDays <= 30 ? 'text-red-600' : diffDays <= 60 ? 'text-amber-600' : 'text-slate-700'}>
-                              {diffDays} days
-                            </span>
-                          )}
-                        </td>
-                        <td className="font-mono font-bold">{b.quantity_on_hand}</td>
-                        <td>
-                          <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase ${
-                            isExpired ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                          }`}>
-                            {isExpired ? 'EXPIRED (BLOCKED)' : b.status}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+          <div className="space-y-4">
+            {/* Desktop Table View */}
+            <div className="hidden md:block">
+              <AdminCard className="p-0 overflow-hidden">
+                <AdminDataTable
+                  columns={columns}
+                  data={batches}
+                  keyExtractor={(b) => b.id}
+                />
+              </AdminCard>
             </div>
-          </AdminCard>
+
+            {/* Mobile Stacked Record View */}
+            <div className="md:hidden space-y-3">
+              {batches.map((b) => {
+                const exp = new Date(b.expiry_date);
+                const diffDays = Math.ceil((exp.getTime() - today.getTime()) / (1000 * 3600 * 24));
+                const isExpired = diffDays <= 0;
+
+                return (
+                  <AdminMobileRecord
+                    key={b.id}
+                    title={b.batch_number}
+                    subtitle={b.product_id}
+                    meta={`Exp: ${b.expiry_date} (${isExpired ? `Expired ${Math.abs(diffDays)}d ago` : `${diffDays}d left`}) · Qty: ${b.quantity_on_hand}`}
+                    badge={<AdminStatusBadge status={isExpired ? 'expired' : b.status} />}
+                  />
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
     </AdminLayout>

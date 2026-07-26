@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
 import { 
@@ -51,6 +51,7 @@ interface DashboardStats {
 
 export default function AdminDashboard() {
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateFilter, setDateFilter] = useState<DateFilter>('30days');
@@ -134,7 +135,6 @@ export default function AdminDashboard() {
       const averageValue = paidCount > 0 ? Math.round(revenueVal / paidCount) : 0;
 
       // Separate Enquiries vs. Distributor Leads
-      // Enquiries are where company_name starts with 'Enquiry:' or is 'General Contact Enquiry'
       const enquiries = activeApplications.filter(a => 
         a.company_name.startsWith('Enquiry:') || a.company_name === 'General Contact Enquiry'
       );
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
         !a.company_name.startsWith('Enquiry:') && a.company_name !== 'General Contact Enquiry'
       );
 
-      // 4. Process Attention Required totals (non-fabricated, actual database checks)
+      // 4. Process Attention Required totals
       const pendingOrdersCount = activeOrders.filter(o => o.order_status === 'new').length;
       const confirmedOrdersCount = activeOrders.filter(o => o.order_status === 'confirmed').length;
       const processingOrdersCount = activeOrders.filter(o => o.order_status === 'processing').length;
@@ -193,13 +193,13 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="space-y-8 animate-fadeIn">
-          <div className="flex justify-between items-center pb-4 border-b border-slate-200">
-            <div className="skeleton-pulse w-48 h-8 rounded-lg" />
-            <div className="skeleton-pulse w-32 h-10 rounded-lg" />
+        <div className="space-y-6">
+          <div className="flex justify-between items-center pb-3 border-b border-[#e4e4e7]">
+            <div className="skeleton-pulse w-36 h-6 rounded-md" />
+            <div className="skeleton-pulse w-32 h-9 rounded-md" />
           </div>
           <AdminSkeleton type="kpi" />
-          <AdminSkeleton type="table" rows={4} />
+          <AdminSkeleton type="table" rows={5} />
         </div>
       </AdminLayout>
     );
@@ -210,15 +210,15 @@ export default function AdminDashboard() {
       <AdminLayout>
         <AdminCard className="admin-error-boundary">
           <div className="admin-error-content text-center py-12">
-            <Warning size={48} className="text-[#B91C1C] mx-auto mb-4" />
-            <h2 className="text-lg font-bold text-[#1D3A28] font-display">Operational Failure</h2>
-            <p className="text-sm text-[#B91C1C] mt-2 font-medium">{error}</p>
+            <Warning size={44} className="text-[#dc2626] mx-auto mb-3" />
+            <h2 className="text-base font-bold text-[#000000]">Operational Failure</h2>
+            <p className="text-xs text-[#71717a] mt-1.5 font-medium max-w-md mx-auto">{error}</p>
             <button 
               type="button" 
               onClick={fetchDashboardData} 
-              className="admin-btn-primary mt-6"
+              className="admin-btn-primary mt-5"
             >
-              Retry Sync
+              Retry Operational Sync
             </button>
           </div>
         </AdminCard>
@@ -228,45 +228,47 @@ export default function AdminDashboard() {
 
   // Define table render arrays
   const ordersColumns = [
-    { header: 'Order #', render: (o: any) => <span className="font-mono font-bold text-[#1D3A28]">{o.order_number}</span> },
-    { header: 'Customer', render: (o: any) => <span>{o.customer_name}</span> },
-    { header: 'Method', render: (o: any) => <span className="uppercase text-[10px] font-bold text-slate-500">{o.payment_method.replace('online_razorpay', 'razorpay')}</span> },
-    { header: 'Amount', render: (o: any) => <span className="font-mono font-semibold">₹{o.total_amount}</span> },
+    { header: 'Order #', render: (o: any) => <span className="font-mono font-semibold text-[#000000]">{o.order_number}</span> },
+    { header: 'Customer', render: (o: any) => <span className="font-medium text-[#000000]">{o.customer_name}</span> },
+    { header: 'Method', render: (o: any) => <span className="uppercase text-[0.65rem] font-semibold text-[#71717a]">{o.payment_method.replace('online_razorpay', 'razorpay')}</span> },
+    { header: 'Amount', render: (o: any) => <span className="font-mono font-semibold text-[#000000]">₹{o.total_amount?.toLocaleString('en-IN')}</span> },
     { header: 'Status', render: (o: any) => <AdminStatusBadge status={o.order_status} /> }
   ];
 
   const enquiriesColumns = [
-    { header: 'Person', render: (e: any) => <span className="font-bold text-[#1D3A28]">{e.contact_person}</span> },
-    { header: 'Location', render: (e: any) => <span>{e.city}</span> },
-    { header: 'Contact', render: (e: any) => <span className="text-slate-500 font-mono text-[11px]">{e.phone}</span> },
-    { header: 'Date', render: (e: any) => <span className="text-[10px] font-medium text-slate-400">{new Date(e.created_at).toLocaleDateString('en-IN')}</span> },
+    { header: 'Person', render: (e: any) => <span className="font-semibold text-[#000000]">{e.contact_person}</span> },
+    { header: 'Location', render: (e: any) => <span className="text-[#71717a]">{e.city}</span> },
+    { header: 'Contact', render: (e: any) => <span className="text-[#71717a] font-mono text-[0.75rem]">{e.phone}</span> },
+    { header: 'Date', render: (e: any) => <span className="text-[0.7rem] font-medium text-[#71717a]">{new Date(e.created_at).toLocaleDateString('en-IN')}</span> },
     { header: 'Status', render: (e: any) => <AdminStatusBadge status={e.status} /> }
   ];
 
   const leadsColumns = [
-    { header: 'Company', render: (l: any) => <span className="font-bold text-[#1D3A28]">{l.company_name}</span> },
-    { header: 'Person', render: (l: any) => <span>{l.contact_person}</span> },
-    { header: 'Location', render: (l: any) => <span>{l.city}</span> },
-    { header: 'Expected Vol.', render: (l: any) => <span className="font-medium text-slate-600">{l.expected_monthly_volume || 'N/A'}</span> },
+    { header: 'Company', render: (l: any) => <span className="font-semibold text-[#000000]">{l.company_name}</span> },
+    { header: 'Person', render: (l: any) => <span className="text-[#000000]">{l.contact_person}</span> },
+    { header: 'Location', render: (l: any) => <span className="text-[#71717a]">{l.city}</span> },
+    { header: 'Expected Vol.', render: (l: any) => <span className="font-medium text-[#71717a]">{l.expected_monthly_volume || 'N/A'}</span> },
     { header: 'Status', render: (l: any) => <AdminStatusBadge status={l.status} /> }
   ];
 
   return (
     <AdminLayout>
-      <div className="space-y-8 animate-fadeIn">
-        {/* Header Block & Date Filter */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="space-y-6">
+        {/* Date Filter Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e4e4e7]">
           <div>
-            <h2 className="text-xs text-[#8A6B29] font-bold uppercase tracking-widest">S.S. Pharmacy</h2>
-            <h1 className="text-2xl font-bold font-display text-[#1D3A28] mt-0.5">Control Center Overview</h1>
+            <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Dashboard Overview</span>
+            <p className="text-xs text-[#71717a] margin-0">Operational indicators & transaction logs</p>
           </div>
 
-          <div className="flex items-center gap-2 bg-[#FEFDF8] border border-[#E8E2D5] px-3 py-1.5 rounded-xl">
-            <Calendar size={16} className="text-[#8A6B29]" />
+          <div className="flex items-center gap-2 bg-[#ffffff] border border-[#e4e4e7] px-3 py-1.5 rounded-lg min-h-[36px]">
+            <Calendar size={15} className="text-[#71717a]" />
+            <span className="text-xs text-[#71717a] font-medium">Period:</span>
             <select
               value={dateFilter}
+              aria-label="Filter dashboard by time period"
               onChange={(e) => setDateFilter(e.target.value as DateFilter)}
-              className="text-xs font-bold text-[#1D3A28] bg-transparent border-none focus:outline-none cursor-pointer"
+              className="text-xs font-semibold text-[#000000] bg-transparent border-none focus:outline-none cursor-pointer"
             >
               <option value="today">Today</option>
               <option value="7days">Last 7 Days</option>
@@ -276,57 +278,60 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* 5-KPI PRIMARY SYSTEM */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* 5-KPI PRIMARY GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
           <AdminStatCard
             label="Revenue"
             value={`₹${stats.revenue.toLocaleString('en-IN')}`}
-            subtext="Paid transactions"
-            icon={<Coins size={22} />}
+            subtext="Paid receipts total"
+            icon={<Coins size={18} />}
           />
           <AdminStatCard
             label="Orders"
-            value={stats.ordersCount}
+            value={stats.ordersCount.toString()}
             subtext="Placed orders count"
-            icon={<ShoppingBag size={22} />}
+            icon={<ShoppingBag size={18} />}
             actionUrl="/admin/orders"
             actionLabel="View orders"
           />
           <AdminStatCard
             label="Average Order Value"
             value={`₹${stats.aov.toLocaleString('en-IN')}`}
-            subtext="Per paid receipt"
-            icon={<Receipt size={22} />}
+            subtext="Per paid order"
+            icon={<Receipt size={18} />}
           />
           <AdminStatCard
             label="Enquiries"
-            value={stats.enquiriesCount}
-            subtext="Contact submissions"
-            icon={<ChatCircleText size={22} />}
+            value={stats.enquiriesCount.toString()}
+            subtext="Customer messages"
+            icon={<ChatCircleText size={18} />}
             actionUrl="/admin/enquiries"
-            actionLabel="View messages"
+            actionLabel="View inbox"
           />
           <AdminStatCard
             label="Distributor Leads"
-            value={stats.leadsCount}
-            subtext="Partner applications"
-            icon={<Handshake size={22} />}
+            value={stats.leadsCount.toString()}
+            subtext="B2B partner applications"
+            icon={<Handshake size={18} />}
             actionUrl="/admin/distributors"
-            actionLabel="View applications"
+            actionLabel="View leads"
           />
         </div>
 
         {/* ATTENTION REQUIRED & QUICK ACTIONS */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Attention Required Card */}
-          <AdminCard className="lg:col-span-2 flex flex-col" topAccent={true} accentColor="#B91C1C">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">Operational Status</h3>
-            <div className="divide-y divide-slate-100 flex-1 grid grid-cols-1 gap-2 p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          {/* Operational Status & Attention Card */}
+          <AdminCard className="lg:col-span-2 flex flex-col">
+            <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#f4f4f0]">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Operational Status & Attention</h3>
+              <span className="text-[0.7rem] font-medium text-[#71717a]">Live Queue</span>
+            </div>
+            <div className="divide-y divide-[#f4f4f0] flex-1 grid grid-cols-1 gap-1">
               <AdminAttentionItem
-                label={`${stats.attentionItems.pendingOrders} New Orders`}
+                label={`${stats.attentionItems.pendingOrders} New Pending Orders`}
                 actionUrl="/admin/orders"
                 badgeText={stats.attentionItems.pendingOrders.toString()}
-                badgeType="danger"
+                badgeType={stats.attentionItems.pendingOrders > 0 ? "danger" : "neutral"}
               />
               <AdminAttentionItem
                 label={`${stats.attentionItems.confirmedOrders} Confirmed Orders`}
@@ -335,37 +340,37 @@ export default function AdminDashboard() {
                 badgeType="warning"
               />
               <AdminAttentionItem
-                label={`${stats.attentionItems.processingOrders} Processing`}
+                label={`${stats.attentionItems.processingOrders} Orders In Processing`}
                 actionUrl="/admin/orders"
                 badgeText={stats.attentionItems.processingOrders.toString()}
                 badgeType="warning"
               />
               <AdminAttentionItem
-                label={`${stats.attentionItems.packedOrders} Packed`}
+                label={`${stats.attentionItems.packedOrders} Packed Orders Ready`}
                 actionUrl="/admin/orders"
                 badgeText={stats.attentionItems.packedOrders.toString()}
                 badgeType="success"
               />
               <AdminAttentionItem
-                label={`${stats.attentionItems.shippedOrders} Shipped`}
+                label={`${stats.attentionItems.shippedOrders} Shipped Orders`}
                 actionUrl="/admin/orders"
                 badgeText={stats.attentionItems.shippedOrders.toString()}
                 badgeType="success"
               />
               <AdminAttentionItem
-                label={`${stats.attentionItems.outForDeliveryOrders} Out for Delivery`}
+                label={`${stats.attentionItems.outForDeliveryOrders} Out For Delivery`}
                 actionUrl="/admin/orders"
                 badgeText={stats.attentionItems.outForDeliveryOrders.toString()}
                 badgeType="info"
               />
               <AdminAttentionItem
-                label={`${stats.attentionItems.unreadEnquiries} Unread Enquiries`}
+                label={`${stats.attentionItems.unreadEnquiries} Unread Customer Enquiries`}
                 actionUrl="/admin/enquiries"
                 badgeText={stats.attentionItems.unreadEnquiries.toString()}
                 badgeType="warning"
               />
               <AdminAttentionItem
-                label={`${stats.attentionItems.pendingDistributors} Pending Partners`}
+                label={`${stats.attentionItems.pendingDistributors} Pending Distributor Applications`}
                 actionUrl="/admin/distributors"
                 badgeText={stats.attentionItems.pendingDistributors.toString()}
                 badgeType="warning"
@@ -373,31 +378,34 @@ export default function AdminDashboard() {
             </div>
           </AdminCard>
 
-          {/* Quick Actions Card */}
+          {/* Quick Actions Shortcuts */}
           <AdminCard>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">Quick Actions</h3>
-            <div className="space-y-3">
+            <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#f4f4f0]">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Quick Actions</h3>
+              <span className="text-[0.7rem] text-[#71717a]">Shortcuts</span>
+            </div>
+            <div className="space-y-2.5">
               <AdminQuickAction
                 title="Add New Product"
-                description="Draft product in Catalog"
+                description="Create draft in Catalog"
                 icon={<Plus size={16} weight="bold" />}
                 url="/admin/products/new"
               />
               <AdminQuickAction
-                title="Pending Enquiries"
-                description="Respond to contact logs"
+                title="Customer Enquiries"
+                description="Review pending inbox"
                 icon={<Envelope size={16} />}
                 url="/admin/enquiries"
               />
               <AdminQuickAction
-                title="Review Distributors"
-                description="Assess wholesale applications"
+                title="Distributor Applications"
+                description="Evaluate partner leads"
                 icon={<UserCheck size={16} />}
                 url="/admin/distributors"
               />
               <AdminQuickAction
-                title="Edit Homepage"
-                description="Manage landing slider"
+                title="CMS Site Content"
+                description="Update homepage text & banners"
                 icon={<FileText size={16} />}
                 url="/admin/content"
               />
@@ -405,33 +413,33 @@ export default function AdminDashboard() {
           </AdminCard>
         </div>
 
-        {/* RECENT OPERATIONAL LOGS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Orders Grid */}
+        {/* RECENT OPERATIONAL LOGS TABLES */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {/* Recent Orders Table */}
           <AdminCard>
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#1D3A28]">Recent Orders</h3>
-              <Link to="/admin/orders" className="text-xs font-bold text-[#8A6B29] hover:underline">View All</Link>
+            <div className="flex justify-between items-center mb-3 pb-2 border-b border-[#f4f4f0]">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#000000]">Recent Orders</h3>
+              <Link to="/admin/orders" className="text-xs font-semibold text-[#000000] hover:underline">View All Orders ↗</Link>
             </div>
             
             {/* Desktop Table View */}
             <div className="hidden sm:block">
               {recentOrders.length === 0 ? (
-                <div className="py-8 text-center text-slate-400 text-xs">No orders recorded in this range.</div>
+                <div className="py-8 text-center text-[#71717a] text-xs">No orders recorded in this time range.</div>
               ) : (
                 <AdminDataTable
                   columns={ordersColumns}
                   data={recentOrders}
                   keyExtractor={(o) => o.id}
-                  onRowClick={(o) => window.location.href = `/admin/orders/${o.id}`}
+                  onRowClick={(o) => navigate(`/admin/orders/${o.id}`)}
                 />
               )}
             </div>
 
             {/* Mobile Stacked Record View */}
-            <div className="sm:hidden space-y-3">
+            <div className="sm:hidden space-y-2.5">
               {recentOrders.length === 0 ? (
-                <div className="py-8 text-center text-slate-400 text-xs">No orders recorded in this range.</div>
+                <div className="py-8 text-center text-[#71717a] text-xs">No orders recorded in this time range.</div>
               ) : (
                 recentOrders.map((o) => (
                   <AdminMobileRecord
@@ -447,31 +455,31 @@ export default function AdminDashboard() {
             </div>
           </AdminCard>
 
-          {/* Recent Enquiries Grid */}
+          {/* Recent Enquiries Table */}
           <AdminCard>
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#1D3A28]">Recent Enquiries</h3>
-              <Link to="/admin/enquiries" className="text-xs font-bold text-[#8A6B29] hover:underline">View All</Link>
+            <div className="flex justify-between items-center mb-3 pb-2 border-b border-[#f4f4f0]">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#000000]">Recent Enquiries</h3>
+              <Link to="/admin/enquiries" className="text-xs font-semibold text-[#000000] hover:underline">View Inbox ↗</Link>
             </div>
 
             {/* Desktop Table */}
             <div className="hidden sm:block">
               {recentEnquiries.length === 0 ? (
-                <div className="py-8 text-center text-slate-400 text-xs">No enquiries recorded in this range.</div>
+                <div className="py-8 text-center text-[#71717a] text-xs">No enquiries recorded in this time range.</div>
               ) : (
                 <AdminDataTable
                   columns={enquiriesColumns}
                   data={recentEnquiries}
                   keyExtractor={(e) => e.id}
-                  onRowClick={(e) => window.location.href = `/admin/enquiries/${e.id}`}
+                  onRowClick={(e) => navigate(`/admin/enquiries/${e.id}`)}
                 />
               )}
             </div>
 
             {/* Mobile Cards */}
-            <div className="sm:hidden space-y-3">
+            <div className="sm:hidden space-y-2.5">
               {recentEnquiries.length === 0 ? (
-                <div className="py-8 text-center text-slate-400 text-xs">No enquiries recorded in this range.</div>
+                <div className="py-8 text-center text-[#71717a] text-xs">No enquiries recorded in this time range.</div>
               ) : (
                 recentEnquiries.map((e) => (
                   <AdminMobileRecord
@@ -489,29 +497,29 @@ export default function AdminDashboard() {
 
           {/* Recent Distributor Applications */}
           <AdminCard className="lg:col-span-2">
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#1D3A28]">Recent Distributor Applications</h3>
-              <Link to="/admin/distributors" className="text-xs font-bold text-[#8A6B29] hover:underline">View All</Link>
+            <div className="flex justify-between items-center mb-3 pb-2 border-b border-[#f4f4f0]">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#000000]">Recent Distributor Applications</h3>
+              <Link to="/admin/distributors" className="text-xs font-semibold text-[#000000] hover:underline">View All Leads ↗</Link>
             </div>
 
             {/* Desktop Table */}
             <div className="hidden sm:block">
               {recentLeads.length === 0 ? (
-                <div className="py-8 text-center text-slate-400 text-xs">No B2B applications received in this range.</div>
+                <div className="py-8 text-center text-[#71717a] text-xs">No B2B applications received in this time range.</div>
               ) : (
                 <AdminDataTable
                   columns={leadsColumns}
                   data={recentLeads}
                   keyExtractor={(l) => l.id}
-                  onRowClick={(l) => window.location.href = `/admin/distributors/${l.id}`}
+                  onRowClick={(l) => navigate(`/admin/distributors/${l.id}`)}
                 />
               )}
             </div>
 
             {/* Mobile Cards */}
-            <div className="sm:hidden space-y-3">
+            <div className="sm:hidden space-y-2.5">
               {recentLeads.length === 0 ? (
-                <div className="py-8 text-center text-slate-400 text-xs">No B2B applications received in this range.</div>
+                <div className="py-8 text-center text-[#71717a] text-xs">No B2B applications received in this time range.</div>
               ) : (
                 recentLeads.map((l) => (
                   <AdminMobileRecord

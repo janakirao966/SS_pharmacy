@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminSkeleton, AdminStatusBadge } from '../components/admin/AdminPrimitives';
 import { CaretLeft } from '@phosphor-icons/react';
 
 export default function AdminExceptionDetail() {
@@ -66,7 +66,6 @@ export default function AdminExceptionDetail() {
 
       if (error) throw error;
 
-      // Log admin action to admin_activity_logs
       await supabase.from('admin_activity_logs').insert({
         action: `EXCEPTION_SET_${newStatus.toUpperCase()}`,
         entity_type: 'operational_exception',
@@ -86,7 +85,7 @@ export default function AdminExceptionDetail() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="space-y-6">
+        <div className="space-y-5">
           <AdminSkeleton type="card" />
         </div>
       </AdminLayout>
@@ -95,73 +94,68 @@ export default function AdminExceptionDetail() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-          <Link to="/admin/operations" className="admin-btn-back text-xs">
-            <CaretLeft size={16} weight="bold" />
-            <span>Back to Operations Center</span>
-          </Link>
-          <span className="font-mono text-xs text-slate-500">ID: {exception?.id}</span>
+      <div className="space-y-5 pb-12">
+        {/* Navigation & Header */}
+        <div className="flex items-center justify-between border-b border-[#e4e4e7] pb-3">
+          <div className="flex items-center gap-3">
+            <Link to="/admin/operations" className="admin-btn-icon" aria-label="Back to operations">
+              <CaretLeft size={16} weight="bold" />
+            </Link>
+            <div>
+              <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Operational Exception Detail</span>
+              <h2 className="text-base font-bold text-[#000000] font-mono">{exception?.title}</h2>
+            </div>
+          </div>
+          <span className="font-mono text-xs text-[#71717a]">ID: {exception?.id}</span>
         </div>
 
-        {/* Exception Banner */}
-        <AdminCard className="bg-[#FAF8F5] border-l-4 border-l-red-600 space-y-3">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-3">
+        {/* Master Exception Summary Card */}
+        <AdminCard>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#f4f4f0] pb-3 mb-3">
             <div>
-              <span className="text-[10px] font-bold text-red-800 uppercase tracking-wider block">Operational Incident Investigation</span>
-              <h2 className="font-bold text-xl text-[#1D3A28] font-display m-0">{exception?.title}</h2>
-              <p className="text-xs text-slate-500 m-0">Type: {exception?.exception_type} • Source: {exception?.source}</p>
+              <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider block">Subsystem & Type</span>
+              <h3 className="font-bold text-sm text-[#000000] m-0">{exception?.exception_type}</h3>
+              <p className="text-xs text-[#71717a] m-0">Source: {exception?.source}</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`px-2.5 py-1 text-xs font-bold rounded uppercase ${
-                exception?.severity === 'critical' ? 'bg-red-100 text-red-800 border border-red-300' :
-                exception?.severity === 'high' ? 'bg-amber-100 text-amber-800' :
-                'bg-slate-100 text-slate-800'
-              }`}>
-                {exception?.severity} Severity
-              </span>
-              <span className={`px-2.5 py-1 text-xs font-bold rounded uppercase ${
-                exception?.status === 'open' ? 'bg-red-100 text-red-800' :
-                exception?.status === 'investigating' ? 'bg-amber-100 text-amber-800' :
-                'bg-green-100 text-green-800'
-              }`}>
-                {exception?.status}
-              </span>
+              <AdminStatusBadge status={exception?.severity} />
+              <AdminStatusBadge status={exception?.status} />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
             <div>
-              <span className="text-[10px] text-slate-400 block uppercase">Fingerprint</span>
-              <span className="font-bold text-slate-700 truncate block">{exception?.fingerprint}</span>
+              <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Fingerprint</span>
+              <span className="font-semibold text-[#000000] truncate block">{exception?.fingerprint}</span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 block uppercase">Occurrences</span>
-              <span className="font-bold text-[#1D3A28]">{exception?.occurrence_count}</span>
+              <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Occurrences</span>
+              <span className="font-bold text-[#000000]">{exception?.occurrence_count}</span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 block uppercase">First Detected</span>
-              <span>{new Date(exception?.first_detected_at).toLocaleString('en-IN')}</span>
+              <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">First Detected</span>
+              <span className="text-[#71717a]">{new Date(exception?.first_detected_at).toLocaleString('en-IN')}</span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 block uppercase">Last Detected</span>
-              <span>{new Date(exception?.last_detected_at).toLocaleString('en-IN')}</span>
+              <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Last Detected</span>
+              <span className="text-[#71717a]">{new Date(exception?.last_detected_at).toLocaleString('en-IN')}</span>
             </div>
           </div>
         </AdminCard>
 
-        {/* Detailed Metadata & Description */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* 2-Column Split: Context vs Metadata */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <AdminCard className="space-y-3">
-            <h3 className="font-bold text-sm text-[#1D3A28] m-0">Description & Context</h3>
-            <p className="text-xs text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200 m-0">
+            <div className="border-b border-[#f4f4f0] pb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Description & Context</h3>
+            </div>
+            <p className="text-xs text-[#000000] leading-relaxed bg-[#fbfbf5] p-3 rounded-lg border border-[#e4e4e7] margin-0">
               {exception?.description || 'No detailed text description available.'}
             </p>
             {exception?.orders?.order_number && (
-              <div className="text-xs">
-                <span className="font-bold text-slate-600">Associated Order: </span>
-                <Link to={`/admin/orders/${exception.order_id}`} className="text-[#2D5016] underline font-mono font-bold">
+              <div className="text-xs pt-1">
+                <span className="font-semibold text-[#71717a]">Associated Order: </span>
+                <Link to={`/admin/orders/${exception.order_id}`} className="font-mono font-bold text-[#000000] underline">
                   #{exception.orders.order_number}
                 </Link>
               </div>
@@ -169,57 +163,66 @@ export default function AdminExceptionDetail() {
           </AdminCard>
 
           <AdminCard className="space-y-3">
-            <h3 className="font-bold text-sm text-[#1D3A28] m-0">Sanitized Operational Metadata</h3>
-            <pre className="text-[11px] font-mono bg-slate-900 text-slate-100 p-3 rounded-lg overflow-x-auto m-0">
+            <div className="border-b border-[#f4f4f0] pb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Sanitized Operational Metadata</h3>
+            </div>
+            <pre className="text-[0.7rem] font-mono bg-[#1a1a1a] text-[#ffffff] p-3 rounded-lg overflow-x-auto margin-0">
               {JSON.stringify(exception?.metadata || {}, null, 2)}
             </pre>
           </AdminCard>
         </div>
 
-        {/* Resolution Control Panel */}
-        <AdminCard className="space-y-4">
-          <h3 className="font-bold text-sm text-[#1D3A28] m-0">Incident Management & Resolution</h3>
+        {/* Incident Resolution Panel */}
+        <AdminCard className="space-y-3">
+          <div className="border-b border-[#f4f4f0] pb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Incident Triage & Resolution</h3>
+          </div>
 
           {exception?.status === 'resolved' || exception?.status === 'ignored' ? (
-            <div className="p-3 bg-green-50 rounded-lg border border-green-200 text-xs">
-              <span className="font-bold text-green-900">Resolved at: </span>
-              <span>{new Date(exception.resolved_at).toLocaleString('en-IN')}</span>
-              <p className="text-green-800 m-0 mt-1"><span className="font-bold">Note: </span>{exception.resolution_note}</p>
+            <div className="p-3 bg-[#fbfbf5] rounded-lg border border-[#e4e4e7] text-xs space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-[#000000] uppercase">Status: {exception.status}</span>
+                <span className="font-mono text-[#71717a]">{new Date(exception.resolved_at).toLocaleString('en-IN')}</span>
+              </div>
+              <p className="text-[#71717a] margin-0">Resolution Note: {exception.resolution_note}</p>
             </div>
           ) : (
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Mandatory Resolution Note *</label>
+                <label className="block font-semibold text-[#000000] mb-1">Mandatory Resolution Note *</label>
                 <textarea
                   rows={2}
-                  placeholder="State investigation findings or reason for resolving/ignoring..."
+                  placeholder="State investigation findings or resolution reason..."
                   value={resolutionNote}
                   onChange={(e) => setResolutionNote(e.target.value)}
-                  className="w-full p-2 border border-slate-300 rounded-lg text-xs"
+                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
                 />
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
                 <button
+                  type="button"
                   onClick={() => handleUpdateStatus('investigating')}
                   disabled={isSubmitting}
-                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-2 rounded-lg min-h-[44px]"
+                  className="admin-btn-secondary"
                 >
                   Mark Investigating
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => handleUpdateStatus('resolved')}
                   disabled={isSubmitting}
-                  className="bg-[#2D5016] hover:bg-[#1D3A28] text-white font-bold px-4 py-2 rounded-lg min-h-[44px]"
+                  className="admin-btn-primary"
                 >
                   Mark Resolved
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => handleUpdateStatus('ignored')}
                   disabled={isSubmitting}
-                  className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-3 py-2 rounded-lg min-h-[44px]"
+                  className="admin-btn-outline"
                 >
                   Ignore Exception
                 </button>

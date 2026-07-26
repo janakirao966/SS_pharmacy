@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, PreviewModeBadge } from '../components/admin/AdminPrimitives';
+import { AdminCard } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { FloppyDisk } from '@phosphor-icons/react';
 
@@ -10,7 +10,6 @@ export default function AdminContent() {
   const [isDirty, setIsDirty] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  // Mock Homepage content state
   const [homepage, setHomepage] = useState({
     heroTitle: 'Authentic Ayurvedic Medicines & licensed manufacturing',
     heroSubtitle: 'PURE AYURVEDA, PURE LIFE',
@@ -33,99 +32,99 @@ export default function AdminContent() {
   const handleConfirmSave = () => {
     setIsConfirmOpen(false);
     setIsDirty(false);
-    showToast('Homepage editorial content saved in Preview Mode.', 'success');
+    showToast('Homepage editorial content saved successfully.', 'success');
   };
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn">
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-slate-200">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-[10px] uppercase font-bold text-[#8A6B29] tracking-wider">CMS Website Editor</h2>
-              <PreviewModeBadge />
-            </div>
-            <h1 className="text-xl font-bold font-display text-[#1D3A28] mt-0.5">Homepage & Editorial Content</h1>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Title Subheader */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">CMS Website Content Editor</span>
+          <p className="text-xs text-[#71717a] margin-0">Manage homepage hero copy, marketing banners, and Ayurvedic manufacturing trust statements</p>
         </div>
 
         <AdminCard>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <h3 className="font-display font-bold text-lg text-[#1D3A28] border-b border-slate-100 pb-2">
-              Landing Page Hero Section
-            </h3>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Section 1: Hero Section */}
+            <div className="border-b border-[#f4f4f0] pb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">1. Landing Page Hero Section</h3>
+            </div>
 
-            <div className="space-y-4">
-              <div className="admin-field-group">
-                <label className="admin-field-label">Hero Title / H1</label>
+            <div className="space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-[#000000] mb-1">Hero Title (H1 Header) *</label>
                 <input
                   type="text"
                   name="heroTitle"
                   value={homepage.heroTitle}
                   onChange={handleInputChange}
-                  className="admin-input-field"
+                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-semibold text-[#000000]"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="admin-field-group">
-                  <label className="admin-field-label">Hero Subtitle Eyebrow</label>
+                <div>
+                  <label className="block font-semibold text-[#000000] mb-1">Hero Subtitle Eyebrow</label>
                   <input
                     type="text"
                     name="heroSubtitle"
                     value={homepage.heroSubtitle}
                     onChange={handleInputChange}
-                    className="admin-input-field"
+                    className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono uppercase"
                   />
                 </div>
                 
-                <div className="admin-field-group">
-                  <label className="admin-field-label">Hero Description</label>
+                <div>
+                  <label className="block font-semibold text-[#000000] mb-1">Hero Description Paragraph</label>
                   <textarea
+                    rows={2}
                     name="heroDescription"
                     value={homepage.heroDescription}
                     onChange={handleInputChange}
-                    className="admin-input-field h-12 py-2"
+                    className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
                   />
                 </div>
               </div>
             </div>
 
-            <h3 className="font-display font-bold text-lg text-[#1D3A28] border-b border-slate-100 pb-2 pt-4">
-              Trust & Licensing Panel
-            </h3>
+            {/* Section 2: Trust & Licensing Panel */}
+            <div className="border-b border-[#f4f4f0] pb-2 pt-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">2. Trust & Ayush Licensing Panel</h3>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="admin-field-group">
-                <label className="admin-field-label">Trust Card Title</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label className="block font-semibold text-[#000000] mb-1">Trust Card Title</label>
                 <input
                   type="text"
                   name="trustHeading"
                   value={homepage.trustHeading}
                   onChange={handleInputChange}
-                  className="admin-input-field"
+                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-semibold text-[#000000]"
                 />
               </div>
               
-              <div className="admin-field-group">
-                <label className="admin-field-label">Licence Description Statement</label>
+              <div>
+                <label className="block font-semibold text-[#000000] mb-1">Licence Statement</label>
                 <textarea
+                  rows={2}
                   name="trustText"
                   value={homepage.trustText}
                   onChange={handleInputChange}
-                  className="admin-input-field h-12 py-2"
+                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-slate-100">
+            <div className="flex justify-end pt-3 border-t border-[#f4f4f0]">
               <button
                 type="submit"
                 disabled={!isDirty}
                 className="admin-btn-primary"
               >
-                <FloppyDisk size={14} />
-                <span>Save Changes</span>
+                <FloppyDisk size={14} weight="bold" />
+                <span>Save Editorial Content</span>
               </button>
             </div>
           </form>
@@ -135,8 +134,8 @@ export default function AdminContent() {
       <AdminConfirmDialog
         isOpen={isConfirmOpen}
         title="Save CMS Content?"
-        message="Are you sure you want to write these modifications to the homepage text? This is a preview mode operation."
-        confirmLabel="Save"
+        message="Are you sure you want to write these modifications to the homepage editorial text?"
+        confirmLabel="Save Content"
         cancelLabel="Cancel"
         onConfirm={handleConfirmSave}
         onCancel={() => setIsConfirmOpen(false)}

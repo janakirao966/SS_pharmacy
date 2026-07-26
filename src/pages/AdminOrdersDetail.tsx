@@ -3,9 +3,26 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase, type DatabaseOrder, type DatabaseOrderItem, type DatabaseOrderHistoryEvent, type DatabaseShipment, type DatabaseRefund, type DatabaseNotification, type DatabaseInvoice } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminSkeleton, AdminStatusBadge } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
-import { CaretLeft, Warning, ShoppingCart, User, MapPin, CreditCard, Clock, CheckCircle, Truck, ArrowSquareOut, CurrencyInr, Envelope, ArrowClockwise, PaperPlaneRight, Receipt, DownloadSimple } from '@phosphor-icons/react';
+import { 
+  CaretLeft, 
+  Warning, 
+  ShoppingCart, 
+  User, 
+  MapPin, 
+  CreditCard, 
+  Clock, 
+  CheckCircle, 
+  Truck, 
+  ArrowSquareOut, 
+  CurrencyInr, 
+  Envelope, 
+  ArrowClockwise, 
+  PaperPlaneRight, 
+  Receipt, 
+  DownloadSimple 
+} from '@phosphor-icons/react';
 
 export default function AdminOrdersDetail() {
   const { id } = useParams<{ id: string }>();
@@ -402,44 +419,44 @@ export default function AdminOrdersDetail() {
 
     if (order.order_status === 'new') {
       return (
-        <>
+        <div className="flex items-center gap-2">
           <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('confirmed')} className="admin-btn-primary">
             Confirm Order
           </button>
-          <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('cancelled')} className="bg-red-50 text-red-700 hover:bg-red-100 px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm ring-1 ring-inset ring-red-200">
+          <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('cancelled')} className="admin-btn-secondary !border-[#dc2626] !text-[#dc2626] hover:!bg-[#fef2f2]">
             Cancel Order
           </button>
-        </>
+        </div>
       );
     }
     if (order.order_status === 'confirmed') {
       return (
-        <>
+        <div className="flex items-center gap-2">
           <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('processing')} className="admin-btn-primary">
             Start Processing
           </button>
-          <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('cancelled')} className="bg-red-50 text-red-700 hover:bg-red-100 px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm ring-1 ring-inset ring-red-200">
+          <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('cancelled')} className="admin-btn-secondary !border-[#dc2626] !text-[#dc2626] hover:!bg-[#fef2f2]">
             Cancel Order
           </button>
-        </>
+        </div>
       );
     }
     if (order.order_status === 'processing') {
       return (
-        <>
+        <div className="flex items-center gap-2">
           <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('packed')} className="admin-btn-primary">
             Mark as Packed
           </button>
-          <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('cancelled')} className="bg-red-50 text-red-700 hover:bg-red-100 px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm ring-1 ring-inset ring-red-200">
+          <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('cancelled')} className="admin-btn-secondary !border-[#dc2626] !text-[#dc2626] hover:!bg-[#fef2f2]">
             Cancel Order
           </button>
-        </>
+        </div>
       );
     }
     if (order.order_status === 'packed') {
       return (
-        <>
-          <button disabled={isSubmitting} onClick={() => setIsShipmentModalOpen(true)} className="bg-[#8A6B29] text-white hover:bg-[#7A6027] px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm">
+        <div className="flex items-center gap-2">
+          <button disabled={isSubmitting} onClick={() => setIsShipmentModalOpen(true)} className="admin-btn-secondary">
             {shipment ? 'Edit Shipping Details' : 'Add Shipping Details'}
           </button>
           {shipment ? (
@@ -447,48 +464,48 @@ export default function AdminOrdersDetail() {
               Mark as Shipped
             </button>
           ) : (
-            <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-2 rounded-lg">
+            <span className="text-xs font-medium text-[#71717a] bg-[#f4f4f0] px-3 py-1.5 rounded-lg border border-[#e4e4e7]">
               Add details to enable "Mark as Shipped"
             </span>
           )}
-        </>
+        </div>
       );
     }
     if (order.order_status === 'shipped') {
       return (
-        <>
-          <button disabled={isSubmitting} onClick={() => setIsCorrectionModalOpen(true)} className="bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-2 text-xs font-bold rounded-lg transition-colors border border-slate-300">
+        <div className="flex items-center gap-2">
+          <button disabled={isSubmitting} onClick={() => setIsCorrectionModalOpen(true)} className="admin-btn-secondary">
             Correct Tracking Info
           </button>
           <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('out_for_delivery')} className="admin-btn-primary">
             Mark Out for Delivery
           </button>
-        </>
+        </div>
       );
     }
     if (order.order_status === 'out_for_delivery') {
       return (
-        <>
-          <button disabled={isSubmitting} onClick={() => setIsCorrectionModalOpen(true)} className="bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-2 text-xs font-bold rounded-lg transition-colors border border-slate-300">
+        <div className="flex items-center gap-2">
+          <button disabled={isSubmitting} onClick={() => setIsCorrectionModalOpen(true)} className="admin-btn-secondary">
             Correct Tracking Info
           </button>
-          <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('delivered')} className="bg-[#2D5016] text-white hover:bg-[#1D3A28] px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm">
+          <button disabled={isSubmitting} onClick={() => handleStatusChangeAttempt('delivered')} className="admin-btn-primary">
             Mark Delivered
           </button>
-        </>
+        </div>
       );
     }
 
     if (order.order_status === 'delivered') {
       return (
-        <button disabled={isSubmitting} onClick={() => setIsCorrectionModalOpen(true)} className="bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-2 text-xs font-bold rounded-lg transition-colors border border-slate-300">
+        <button disabled={isSubmitting} onClick={() => setIsCorrectionModalOpen(true)} className="admin-btn-secondary">
           Correct Tracking Info
         </button>
       );
     }
 
     return (
-      <span className="text-sm font-bold text-slate-500 uppercase">
+      <span className="text-xs font-semibold text-[#71717a] uppercase">
         No fulfillment actions available
       </span>
     );
@@ -497,7 +514,7 @@ export default function AdminOrdersDetail() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="space-y-6">
+        <div className="space-y-5">
           <div className="skeleton-pulse w-36 h-6 rounded" />
           <AdminSkeleton type="card" />
           <AdminSkeleton type="table" rows={3} />
@@ -511,11 +528,11 @@ export default function AdminOrdersDetail() {
       <AdminLayout>
         <AdminCard className="admin-error-boundary">
           <div className="text-center py-12">
-            <Warning size={48} className="text-[#B91C1C] mx-auto mb-4" />
-            <h2 className="text-lg font-bold text-[#1D3A28] font-display">Operational Failure</h2>
-            <p className="text-sm text-[#B91C1C] mt-2 font-medium">{error || 'Order record not found.'}</p>
-            <Link to="/admin/orders" className="admin-btn-primary mt-6 inline-block">
-              Back to Orders
+            <Warning size={44} className="text-[#dc2626] mx-auto mb-3" />
+            <h2 className="text-base font-bold text-[#000000]">Operational Failure</h2>
+            <p className="text-xs text-[#71717a] mt-1.5 font-medium">{error || 'Order record not found.'}</p>
+            <Link to="/admin/orders" className="admin-btn-primary mt-5 inline-block">
+              Back to Orders List
             </Link>
           </div>
         </AdminCard>
@@ -525,191 +542,226 @@ export default function AdminOrdersDetail() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        {/* Top bar back button */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-slate-200">
-          <Link to="/admin/orders" className="admin-btn-back">
-            <CaretLeft size={16} weight="bold" />
-            <span>Orders List</span>
-          </Link>
+      <div className="space-y-5 pb-12">
+        {/* Navigation & Header */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#e4e4e7]">
+          <div className="flex items-center gap-3">
+            <Link to="/admin/orders" className="admin-btn-icon" aria-label="Back to orders">
+              <CaretLeft size={16} weight="bold" />
+            </Link>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-[#000000] font-mono">{order.order_number}</span>
+                <AdminStatusBadge status={order.order_status} />
+              </div>
+              <span className="text-xs text-[#71717a]">
+                Placed on {new Date(order.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
+          </div>
+
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-slate-400 font-mono">ID: {order.id}</span>
+            {invoice ? (
+              <Link
+                to="/admin/invoices"
+                className="admin-btn-secondary text-xs"
+              >
+                <DownloadSimple size={14} />
+                <span>Invoice ({invoice.invoice_number})</span>
+              </Link>
+            ) : (
+              <button
+                disabled={isSubmitting}
+                onClick={handleIssueInvoice}
+                className="admin-btn-secondary text-xs"
+              >
+                <Receipt size={14} />
+                <span>Issue Tax Invoice</span>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* 3-Column Split Customer, Address, and Billing details */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Customer Card */}
-          <AdminCard className="space-y-4">
-            <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-              <User size={18} className="text-[#C5A059]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">Customer Identity</h3>
+        {/* Operational Status Action Bar */}
+        <AdminCard className="bg-[#ffffff]">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xs font-semibold text-[#71717a] uppercase tracking-wider">Current Pipeline Stage:</span>
+              <AdminStatusBadge status={order.order_status} />
             </div>
-            <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              {renderActionButtons()}
+            </div>
+          </div>
+        </AdminCard>
+
+        {/* 3-Column Split Customer, Address, and Billing details */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          {/* Customer Card */}
+          <AdminCard className="space-y-3">
+            <div className="flex items-center gap-2 border-b border-[#f4f4f0] pb-2">
+              <User size={16} className="text-[#000000]" />
+              <h3 className="font-semibold text-xs uppercase tracking-wider text-[#71717a]">Customer Identity</h3>
+            </div>
+            <div className="space-y-2 text-xs">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 block uppercase">Name</span>
-                <span className="text-sm font-bold text-[#1D3A28]">{order.customer_name}</span>
+                <span className="text-[0.7rem] font-semibold text-[#71717a] block uppercase">Name</span>
+                <span className="font-semibold text-[#000000]">{order.customer_name}</span>
               </div>
               <div>
-                <span className="text-[10px] font-bold text-slate-400 block uppercase">Phone Contact</span>
-                <span className="text-sm font-mono text-slate-700">{order.customer_phone}</span>
+                <span className="text-[0.7rem] font-semibold text-[#71717a] block uppercase">Phone Contact</span>
+                <span className="font-mono text-[#000000]">{order.customer_phone}</span>
               </div>
               {order.customer_email && (
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Email</span>
-                  <span className="text-sm font-mono text-slate-700">{order.customer_email}</span>
+                  <span className="text-[0.7rem] font-semibold text-[#71717a] block uppercase">Email</span>
+                  <span className="font-mono text-[#000000]">{order.customer_email}</span>
                 </div>
               )}
             </div>
           </AdminCard>
 
           {/* Shipping Address Card */}
-          <AdminCard className="space-y-4">
-            <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-              <MapPin size={18} className="text-[#C5A059]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">Shipping Destination</h3>
+          <AdminCard className="space-y-3">
+            <div className="flex items-center gap-2 border-b border-[#f4f4f0] pb-2">
+              <MapPin size={16} className="text-[#000000]" />
+              <h3 className="font-semibold text-xs uppercase tracking-wider text-[#71717a]">Shipping Destination</h3>
             </div>
-            <div className="space-y-2">
-              <p className="text-sm text-slate-700 leading-relaxed font-sans">{order.shipping_address}</p>
-              <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="space-y-2 text-xs">
+              <p className="text-[#000000] leading-relaxed font-sans">{order.shipping_address}</p>
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 block uppercase">City</span>
-                  <span className="font-semibold text-[#1D3A28]">{order.city}</span>
+                  <span className="text-[0.7rem] font-semibold text-[#71717a] block uppercase">City</span>
+                  <span className="font-semibold text-[#000000]">{order.city}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Pincode</span>
-                  <span className="font-mono font-semibold text-[#1D3A28]">{order.pincode}</span>
+                  <span className="text-[0.7rem] font-semibold text-[#71717a] block uppercase">Pincode</span>
+                  <span className="font-mono font-semibold text-[#000000]">{order.pincode}</span>
                 </div>
               </div>
             </div>
           </AdminCard>
 
           {/* Transaction Metadata Card */}
-          <AdminCard className="space-y-4">
-            <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-              <CreditCard size={18} className="text-[#C5A059]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">Billing & Payment</h3>
+          <AdminCard className="space-y-3">
+            <div className="flex items-center gap-2 border-b border-[#f4f4f0] pb-2">
+              <CreditCard size={16} className="text-[#000000]" />
+              <h3 className="font-semibold text-xs uppercase tracking-wider text-[#71717a]">Billing & Payment</h3>
             </div>
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between items-center py-1">
-                <span className="text-slate-400 font-bold uppercase text-[10px]">Payment Method</span>
-                <span className="font-bold uppercase text-slate-700">{order.payment_method.replace('_', ' ')}</span>
+            <div className="space-y-1.5 text-xs">
+              <div className="flex justify-between items-center py-0.5">
+                <span className="text-[#71717a] font-medium uppercase text-[0.7rem]">Method</span>
+                <span className="font-semibold uppercase text-[#000000]">{order.payment_method.replace('_', ' ')}</span>
               </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-slate-400 font-bold uppercase text-[10px]">Payment ID</span>
-                <span className="font-mono text-slate-500">{order.razorpay_payment_id || 'COD/Pending'}</span>
+              <div className="flex justify-between items-center py-0.5">
+                <span className="text-[#71717a] font-medium uppercase text-[0.7rem]">Payment ID</span>
+                <span className="font-mono text-[#71717a] text-[0.75rem]">{order.razorpay_payment_id || 'COD / Pending'}</span>
               </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-slate-400 font-bold uppercase text-[10px]">Payment Status</span>
-                <span className={`font-bold uppercase ${order.payment_status === 'paid' ? 'text-green-700' : order.payment_status === 'refunded' ? 'text-orange-600' : 'text-slate-700'}`}>
-                  {order.payment_status}
-                </span>
+              <div className="flex justify-between items-center py-0.5">
+                <span className="text-[#71717a] font-medium uppercase text-[0.7rem]">Payment Status</span>
+                <AdminStatusBadge status={order.payment_status} />
               </div>
             </div>
           </AdminCard>
         </div>
 
         {/* Invoice & Tax Operational Card */}
-        <AdminCard className="bg-[#FAF8F5] border-l-4 border-l-[#C5A059]">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-3 mb-3">
+        <AdminCard>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#f4f4f0] pb-2.5 mb-3">
             <div className="flex items-center gap-2">
-              <Receipt size={20} className="text-[#C5A059]" />
+              <Receipt size={18} className="text-[#000000]" />
               <div>
-                <h3 className="font-bold text-sm uppercase tracking-wider text-[#1D3A28] m-0">GST Invoice & Financial Document</h3>
-                <p className="text-[11px] text-slate-500 m-0">Authoritative server-side tax calculation and immutable document snapshot.</p>
+                <h3 className="font-semibold text-xs uppercase tracking-wider text-[#000000] m-0">GST Tax Invoice & Financial Document</h3>
+                <p className="text-[0.7rem] text-[#71717a] m-0">Server-authoritative tax calculations and immutable document snapshot.</p>
               </div>
             </div>
             {invoice ? (
-              <span className={`px-2.5 py-0.5 text-xs font-bold rounded uppercase ${
-                invoice.invoice_type === 'TAX_INVOICE' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-              }`}>
+              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-[#d4f9e0] text-[#000000]">
                 {invoice.invoice_type.replace('_', ' ')}: {invoice.invoice_number}
               </span>
             ) : (
-              <span className="px-2.5 py-0.5 text-xs font-bold rounded uppercase bg-slate-200 text-slate-700">
-                Invoice Not Issued
+              <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-[#f4f4f0] text-[#71717a]">
+                Invoice Pending
               </span>
             )}
           </div>
 
           {invoice ? (
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Invoice Number</span>
-                <span className="font-mono font-bold text-sm text-[#1D3A28]">{invoice.invoice_number}</span>
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Invoice Number</span>
+                <span className="font-mono font-semibold text-[#000000]">{invoice.invoice_number}</span>
               </div>
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Taxable Value</span>
-                <span className="font-mono font-bold text-sm text-slate-800">₹{invoice.taxable_value}</span>
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Taxable Value</span>
+                <span className="font-mono font-semibold text-[#000000]">₹{invoice.taxable_value}</span>
               </div>
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Total GST (CGST+SGST/IGST)</span>
-                <span className="font-mono font-bold text-sm text-slate-800">
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Total GST</span>
+                <span className="font-mono font-semibold text-[#000000]">
                   ₹{(invoice.cgst_total + invoice.sgst_total + invoice.igst_total).toFixed(2)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Link
                   to="/admin/invoices"
-                  className="bg-[#2D5016] hover:bg-[#1D3A28] text-white px-3 py-1.5 text-xs font-bold rounded shadow-sm inline-flex items-center gap-1"
+                  className="admin-btn-secondary text-xs"
                 >
                   <DownloadSimple size={14} />
-                  <span>View in Invoices Portal</span>
+                  <span>Invoices Portal</span>
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between gap-4 text-xs">
-              <p className="text-slate-600 italic m-0">
-                Tax invoice will be generated when order reaches packed/shipped eligibility or via admin authorization.
+            <div className="flex items-center justify-between gap-3 text-xs">
+              <p className="text-[#71717a] italic m-0">
+                Tax invoice will be generated when order reaches packed/shipped status.
               </p>
               <button
                 disabled={isSubmitting}
                 onClick={handleIssueInvoice}
-                className="bg-[#2D5016] hover:bg-[#1D3A28] text-white px-4 py-2 text-xs font-bold rounded-lg transition-colors shadow-sm inline-flex items-center gap-1.5 shrink-0"
+                className="admin-btn-primary text-xs"
               >
-                <Receipt size={16} />
+                <Receipt size={14} />
                 <span>Issue Tax Invoice</span>
               </button>
             </div>
           )}
         </AdminCard>
 
-        {/* Refund Management Card (If order is cancelled and paid, or refund record exists) */}
+        {/* Refund Management Card */}
         {(refund || (order.order_status === 'cancelled' && order.payment_status === 'paid')) && (
-          <AdminCard className="bg-[#FFFDFB] border-l-4 border-l-orange-500">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-3 mb-3">
+          <AdminCard className="bg-[#fbfbf5] border-l-4 border-l-[#dc2626]">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#e4e4e7] pb-2.5 mb-3">
               <div className="flex items-center gap-2">
-                <CurrencyInr size={20} className="text-orange-600" />
-                <h3 className="font-bold text-sm uppercase tracking-wider text-[#1D3A28]">Razorpay Refund Operations</h3>
+                <CurrencyInr size={18} className="text-[#dc2626]" />
+                <h3 className="font-semibold text-xs uppercase tracking-wider text-[#000000]">Razorpay Refund Operations</h3>
               </div>
-              <span className={`px-2.5 py-0.5 text-xs font-bold rounded uppercase ${
-                refund?.status === 'processed' ? 'bg-green-100 text-green-800' :
-                refund?.status === 'failed' ? 'bg-red-100 text-red-800' :
-                'bg-orange-100 text-orange-800'
+              <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${
+                refund?.status === 'processed' ? 'bg-[#d4f9e0] text-[#000000]' : 'bg-[#fef2f2] text-[#dc2626]'
               }`}>
                 Refund Status: {refund ? refund.status : 'Required'}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Refundable Amount</span>
-                <span className="font-mono font-bold text-base text-[#1D3A28]">₹{order.total_amount}</span>
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Refundable Amount</span>
+                <span className="font-mono font-semibold text-sm text-[#000000]">₹{order.total_amount}</span>
               </div>
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Razorpay Refund Reference</span>
-                <span className="font-mono font-bold text-slate-800">{refund?.razorpay_refund_id || 'Not Issued Yet'}</span>
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Razorpay Refund Reference</span>
+                <span className="font-mono font-semibold text-[#000000]">{refund?.razorpay_refund_id || 'Not Issued Yet'}</span>
               </div>
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Refund Action</span>
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Action</span>
                 {refund?.status === 'processed' ? (
-                  <span className="text-green-700 font-bold block mt-1">✓ Money Refunded via Razorpay</span>
+                  <span className="text-[#16a34a] font-semibold block mt-1">✓ Refund Processed</span>
                 ) : (
                   <button
                     disabled={isSubmitting}
                     onClick={handleProcessRefund}
-                    className="mt-1 bg-orange-600 hover:bg-orange-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow-sm transition-colors"
+                    className="admin-btn-primary !bg-[#dc2626] hover:!bg-[#b91c1c] text-xs mt-1"
                   >
                     {isSubmitting ? 'Processing...' : 'Initiate Razorpay Refund'}
                   </button>
@@ -718,90 +770,90 @@ export default function AdminOrdersDetail() {
             </div>
 
             {refund?.reason && (
-              <div className="mt-3 pt-3 border-t border-slate-200 text-xs">
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Cancellation Reason</span>
-                <p className="text-slate-700 italic m-0">{refund.reason}</p>
+              <div className="mt-3 pt-2.5 border-t border-[#e4e4e7] text-xs">
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Cancellation Reason</span>
+                <p className="text-[#71717a] italic m-0">{refund.reason}</p>
               </div>
             )}
           </AdminCard>
         )}
 
-        {/* Dedicated Shipping & Tracking Card (If shipment exists) */}
+        {/* Dedicated Shipping & Tracking Card */}
         {shipment && (
-          <AdminCard className="bg-[#FAF8F5] border-l-4 border-l-[#8A6B29]">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-3 mb-3">
+          <AdminCard>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#f4f4f0] pb-2.5 mb-3">
               <div className="flex items-center gap-2">
-                <Truck size={20} className="text-[#8A6B29]" />
-                <h3 className="font-bold text-sm uppercase tracking-wider text-[#1D3A28]">Shipping & Logistics Record</h3>
+                <Truck size={18} className="text-[#000000]" />
+                <h3 className="font-semibold text-xs uppercase tracking-wider text-[#000000]">Shipping & Logistics Record</h3>
               </div>
-              <span className="px-2.5 py-0.5 text-xs font-bold rounded bg-[#8A6B29]/15 text-[#7A6027] uppercase">
+              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-[#f4f4f0] text-[#000000] uppercase">
                 Shipment Status: {shipment.shipment_status.replace('_', ' ')}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Courier / Carrier</span>
-                <span className="font-bold text-[#1D3A28] text-sm">{shipment.carrier}</span>
-                {shipment.service_name && <span className="text-slate-500 block text-[11px]">{shipment.service_name}</span>}
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Carrier</span>
+                <span className="font-semibold text-[#000000]">{shipment.carrier}</span>
+                {shipment.service_name && <span className="text-[#71717a] block text-[0.7rem]">{shipment.service_name}</span>}
               </div>
 
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Tracking Number</span>
-                <span className="font-mono font-bold text-slate-800">{shipment.tracking_number}</span>
-                {shipment.awb_number && <span className="text-slate-500 block text-[11px]">AWB: {shipment.awb_number}</span>}
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Tracking Number</span>
+                <span className="font-mono font-semibold text-[#000000]">{shipment.tracking_number}</span>
+                {shipment.awb_number && <span className="text-[#71717a] block text-[0.7rem]">AWB: {shipment.awb_number}</span>}
               </div>
 
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Tracking Link</span>
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Tracking Link</span>
                 {shipment.tracking_url ? (
                   <a
                     href={shipment.tracking_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#8A6B29] font-semibold hover:underline inline-flex items-center gap-1 mt-0.5"
+                    className="text-[#000000] font-semibold hover:underline inline-flex items-center gap-1 mt-0.5"
                   >
                     <span>Open Tracking</span>
                     <ArrowSquareOut size={12} />
                   </a>
                 ) : (
-                  <span className="text-slate-400 font-mono">No URL Provided</span>
+                  <span className="text-[#71717a] font-mono text-[0.7rem]">No Link Provided</span>
                 )}
               </div>
 
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Logistics Timestamps</span>
-                <div className="space-y-0.5 text-[11px] text-slate-600">
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Timestamps</span>
+                <div className="space-y-0.5 text-[0.7rem] text-[#71717a]">
                   {shipment.shipped_at && <div>Shipped: {new Date(shipment.shipped_at).toLocaleDateString('en-IN')}</div>}
                   {shipment.delivered_at && <div>Delivered: {new Date(shipment.delivered_at).toLocaleDateString('en-IN')}</div>}
-                  {!shipment.shipped_at && <div className="text-slate-400 italic">Not Dispatched Yet</div>}
+                  {!shipment.shipped_at && <div className="italic">Not Dispatched Yet</div>}
                 </div>
               </div>
             </div>
 
             {shipment.admin_note && (
-              <div className="mt-3 pt-3 border-t border-slate-200 text-xs">
-                <span className="text-[10px] font-bold text-slate-400 uppercase block">Internal Admin Note</span>
-                <p className="text-slate-700 italic m-0">{shipment.admin_note}</p>
+              <div className="mt-3 pt-2.5 border-t border-[#f4f4f0] text-xs">
+                <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase block">Internal Note</span>
+                <p className="text-[#71717a] italic m-0">{shipment.admin_note}</p>
               </div>
             )}
           </AdminCard>
         )}
 
         {/* Customer Communications Card */}
-        <AdminCard className="bg-[#FEFDF8] border-l-4 border-l-[#2D5016]">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-3 mb-4">
+        <AdminCard>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#f4f4f0] pb-2.5 mb-3">
             <div className="flex items-center gap-2">
-              <Envelope size={20} className="text-[#2D5016]" />
-              <h3 className="font-bold text-sm uppercase tracking-wider text-[#1D3A28]">Customer Communications & Notifications</h3>
+              <Envelope size={18} className="text-[#000000]" />
+              <h3 className="font-semibold text-xs uppercase tracking-wider text-[#000000]">Customer Communications</h3>
             </div>
-            <span className="text-xs font-bold text-slate-500">
-              Total Logged: {notifications.length}
+            <span className="text-xs font-medium text-[#71717a]">
+              Logged: {notifications.length}
             </span>
           </div>
 
           {notifications.length === 0 ? (
-            <p className="text-xs text-slate-500 italic py-2">No notification events logged for this purchase order yet.</p>
+            <p className="text-xs text-[#71717a] italic py-1">No notification events logged for this order yet.</p>
           ) : (
             <div className="admin-table-container overflow-x-auto">
               <table className="admin-data-table min-w-full text-xs">
@@ -813,46 +865,36 @@ export default function AdminOrdersDetail() {
                     <th>Status</th>
                     <th>Attempts</th>
                     <th>Timestamps</th>
-                    <th className="text-right">Admin Actions</th>
+                    <th className="text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {notifications.map((n) => (
                     <tr key={n.id}>
-                      <td className="font-bold text-[#1D3A28]">
+                      <td className="font-semibold text-[#000000]">
                         {n.event_type}
                         {n.resend_of_notification_id && (
-                          <span className="ml-1 text-[10px] bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded font-mono">
+                          <span className="ml-1 text-[0.65rem] bg-[#f4f4f0] text-[#000000] px-1.5 py-0.5 rounded font-mono">
                             RESEND
                           </span>
                         )}
                       </td>
-                      <td className="uppercase font-mono text-[11px]">{n.channel}</td>
-                      <td className="font-mono text-slate-600">{n.recipient}</td>
+                      <td className="uppercase font-mono text-[0.7rem] text-[#71717a]">{n.channel}</td>
+                      <td className="font-mono text-[#71717a] text-[0.75rem]">{n.recipient}</td>
                       <td>
-                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase ${
-                          n.status === 'sent' ? 'bg-green-100 text-green-800' :
-                          n.status === 'failed' ? 'bg-red-100 text-red-800' :
-                          n.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                          'bg-amber-100 text-amber-800'
-                        }`}>
-                          {n.status.replace('_', ' ')}
-                        </span>
-                        {n.failure_code && (
-                          <span className="block text-[10px] text-red-600 font-mono mt-0.5">{n.failure_code}</span>
-                        )}
+                        <AdminStatusBadge status={n.status} />
                       </td>
-                      <td className="font-mono text-center">{n.attempt_count} / {n.max_attempts}</td>
-                      <td className="text-[11px] text-slate-500 font-mono">
+                      <td className="font-mono text-center text-[#71717a]">{n.attempt_count} / {n.max_attempts}</td>
+                      <td className="text-[0.7rem] text-[#71717a] font-mono">
                         <div>Created: {new Date(n.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div>
-                        {n.sent_at && <div className="text-green-700 font-bold">Sent: {new Date(n.sent_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div>}
+                        {n.sent_at && <div className="text-[#16a34a] font-semibold">Sent: {new Date(n.sent_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div>}
                       </td>
-                      <td className="text-right space-x-2">
+                      <td className="text-right space-x-1.5">
                         {(n.status === 'failed' || n.status === 'retry_scheduled') && (
                           <button
                             disabled={isSubmitting}
                             onClick={() => handleRetryNotification(n.id)}
-                            className="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 text-[11px] font-bold rounded shadow-sm transition-colors inline-flex items-center gap-1"
+                            className="admin-btn-secondary !py-0.5 !px-2 text-[0.7rem]"
                           >
                             <ArrowClockwise size={12} weight="bold" />
                             <span>Retry</span>
@@ -861,7 +903,7 @@ export default function AdminOrdersDetail() {
                         <button
                           disabled={isSubmitting}
                           onClick={() => handleResendNotification(n.id)}
-                          className="bg-[#2D5016] hover:bg-[#1D3A28] text-white px-2.5 py-1 text-[11px] font-bold rounded shadow-sm transition-colors inline-flex items-center gap-1"
+                          className="admin-btn-secondary !py-0.5 !px-2 text-[0.7rem]"
                         >
                           <PaperPlaneRight size={12} weight="bold" />
                           <span>Resend</span>
@@ -875,51 +917,32 @@ export default function AdminOrdersDetail() {
           )}
         </AdminCard>
 
-        {/* Live operational controls */}
-        <AdminCard className="bg-[#FEFDF8]">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Current Status:</span>
-              <span className={`px-3 py-1 text-sm font-bold rounded-full ${
-                order.order_status === 'delivered' ? 'bg-green-100 text-green-800' :
-                order.order_status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                'bg-blue-100 text-blue-800'
-              }`}>
-                {order.order_status.toUpperCase()}
-              </span>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              {renderActionButtons()}
-            </div>
-          </div>
-        </AdminCard>
-
         {/* Timeline & Items Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* History Timeline */}
           <AdminCard className="lg:col-span-1">
-             <div className="flex items-center gap-2 border-b border-slate-100 pb-2 mb-6">
-              <Clock size={18} className="text-[#C5A059]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">Order Timeline</h3>
+             <div className="flex items-center gap-2 border-b border-[#f4f4f0] pb-2 mb-4">
+              <Clock size={16} className="text-[#000000]" />
+              <h3 className="font-semibold text-xs uppercase tracking-wider text-[#71717a]">Order History & Lifecycle</h3>
             </div>
             
-            <div className="space-y-6 relative before:absolute before:inset-0 before:ml-[15px] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-slate-200 before:z-0 pl-10 md:pl-0">
+            <div className="space-y-4 relative before:absolute before:inset-0 before:ml-[15px] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-[#e4e4e7] before:z-0 pl-8 md:pl-0">
               {timeline.map((event, index) => (
                 <div key={index} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full border-4 border-white bg-[#1D3A28] text-white shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow absolute left-0 md:left-1/2 -translate-x-[20px] md:translate-x-0 z-10">
-                    <CheckCircle size={14} weight="bold" />
+                  <div className="flex items-center justify-center w-7 h-7 rounded-full border-2 border-white bg-[#000000] text-white shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm absolute left-0 md:left-1/2 -translate-x-[18px] md:translate-x-0 z-10">
+                    <CheckCircle size={13} weight="bold" />
                   </div>
                   
-                  <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-2.5rem)] bg-white p-3 rounded-lg shadow-sm border border-slate-100 relative">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="font-bold text-sm text-[#1D3A28] capitalize">
+                  <div className="w-[calc(100%-2rem)] md:w-[calc(50%-2rem)] bg-[#ffffff] p-2.5 rounded-lg border border-[#e4e4e7] relative">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <div className="font-semibold text-xs text-[#000000] capitalize">
                         {event.to_status.replace('_', ' ')}
                       </div>
-                      <div className="text-[10px] text-slate-400 font-mono whitespace-nowrap ml-2">
+                      <div className="text-[0.65rem] text-[#71717a] font-mono ml-2">
                         {new Date(event.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
-                    <div className="text-xs text-slate-500 flex justify-between">
+                    <div className="text-[0.7rem] text-[#71717a] flex justify-between">
                       <span className="capitalize">{event.source}</span>
                       <span>{new Date(event.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}</span>
                     </div>
@@ -929,11 +952,11 @@ export default function AdminOrdersDetail() {
             </div>
           </AdminCard>
 
-          {/* Purchase Line items Table */}
+          {/* Order Line Items & Financial Totals */}
           <AdminCard className="p-0 overflow-hidden lg:col-span-2 flex flex-col">
-            <div className="flex items-center gap-2 border-b border-slate-100 p-4">
-              <ShoppingCart size={18} className="text-[#C5A059]" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">Order Invoice Items</h3>
+            <div className="flex items-center gap-2 border-b border-[#f4f4f0] p-3.5">
+              <ShoppingCart size={16} className="text-[#000000]" />
+              <h3 className="font-semibold text-xs uppercase tracking-wider text-[#71717a]">Order Items & Financial Summary</h3>
             </div>
 
             <div className="admin-table-container flex-1">
@@ -943,29 +966,29 @@ export default function AdminOrdersDetail() {
                     <th>Product Title</th>
                     <th className="text-right">Unit Price</th>
                     <th className="text-center">Qty</th>
-                    <th className="text-right">Subtotal</th>
+                    <th className="text-right">Line Subtotal</th>
                   </tr>
                 </thead>
                 <tbody>
                   {orderItems.map((item) => (
                     <tr key={item.id}>
-                      <td className="font-bold text-[#1D3A28] whitespace-normal min-w-[150px]">{item.product_name}</td>
-                      <td className="text-right font-mono">₹{item.unit_price}</td>
-                      <td className="text-center font-mono">{item.quantity}</td>
-                      <td className="text-right font-mono font-bold">₹{item.total_price}</td>
+                      <td className="font-semibold text-[#000000] whitespace-normal min-w-[150px]">{item.product_name}</td>
+                      <td className="text-right font-mono text-[#000000]">₹{item.unit_price}</td>
+                      <td className="text-center font-mono text-[#000000]">{item.quantity}</td>
+                      <td className="text-right font-mono font-semibold text-[#000000]">₹{item.total_price}</td>
                     </tr>
                   ))}
-                  <tr className="bg-[#FAF8F5] font-semibold border-t-2 border-slate-200">
-                    <td colSpan={3} className="text-right text-slate-500 uppercase text-[10px]">Items Subtotal</td>
-                    <td className="text-right font-mono">₹{order.subtotal}</td>
+                  <tr className="bg-[#fbfbf5] font-medium border-t border-[#e4e4e7]">
+                    <td colSpan={3} className="text-right text-[#71717a] uppercase text-[0.7rem]">Items Subtotal</td>
+                    <td className="text-right font-mono text-[#000000]">₹{order.subtotal}</td>
                   </tr>
-                  <tr className="bg-[#FAF8F5] font-semibold">
-                    <td colSpan={3} className="text-right text-slate-500 uppercase text-[10px]">Delivery Surcharge</td>
-                    <td className="text-right font-mono">₹{order.delivery_charge}</td>
+                  <tr className="bg-[#fbfbf5] font-medium">
+                    <td colSpan={3} className="text-right text-[#71717a] uppercase text-[0.7rem]">Delivery Charge</td>
+                    <td className="text-right font-mono text-[#000000]">₹{order.delivery_charge}</td>
                   </tr>
-                  <tr className="bg-[#FAF8F5] font-bold text-sm text-[#1D3A28] border-t border-slate-200">
-                    <td colSpan={3} className="text-right uppercase text-[11px] tracking-wider">Grand Total Amount</td>
-                    <td className="text-right font-mono text-[#1D3A28]">₹{order.total_amount}</td>
+                  <tr className="bg-[#fbfbf5] font-bold text-sm text-[#000000] border-t border-[#e4e4e7]">
+                    <td colSpan={3} className="text-right uppercase text-[0.75rem] tracking-wider">Grand Total Amount</td>
+                    <td className="text-right font-mono text-[#000000]">₹{order.total_amount?.toLocaleString('en-IN')}</td>
                   </tr>
                 </tbody>
               </table>
@@ -976,42 +999,42 @@ export default function AdminOrdersDetail() {
 
       {/* Mandatory Cancellation Reason Modal */}
       {isCancelModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
-            <h3 className="font-display font-bold text-lg text-red-800">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-[#ffffff] rounded-xl p-5 max-w-md w-full border border-[#e4e4e7] space-y-3.5 shadow-xl">
+            <h3 className="font-semibold text-sm text-[#000000]">
               Cancel Order #{order.order_number}
             </h3>
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-[#71717a]">
               {order.payment_status === 'paid'
-                ? 'This order was paid online. Cancelling it will mark it for a Razorpay refund.'
-                : 'This order will be cancelled. No payment refund is required for COD/unpaid orders.'}
+                ? 'This order was paid online. Cancelling it will flag it for a Razorpay refund.'
+                : 'This order will be marked as cancelled. No payment refund is required for COD/unpaid orders.'}
             </p>
 
             <form onSubmit={handleCancelOrderSubmit} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Cancellation Reason (min 10 chars) *</label>
+                <label className="block font-semibold text-[#000000] mb-1">Cancellation Reason (min 10 chars) *</label>
                 <textarea
                   rows={3}
                   required
-                  placeholder="Enter reason for cancelling order..."
+                  placeholder="State operational reason for cancelling order..."
                   value={cancelReason}
                   onChange={(e) => setCancelReason(e.target.value)}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-xs"
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsCancelModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg font-bold"
+                  className="admin-btn-secondary"
                 >
                   Keep Order
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-red-700 text-white hover:bg-red-800 px-4 py-2 text-xs font-bold rounded-lg transition-colors"
+                  className="admin-btn-primary !bg-[#dc2626] hover:!bg-[#b91c1c]"
                 >
                   {isSubmitting ? 'Cancelling...' : 'Confirm Cancellation'}
                 </button>
@@ -1023,86 +1046,86 @@ export default function AdminOrdersDetail() {
 
       {/* Save Shipping Modal */}
       {isShipmentModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
-            <h3 className="font-display font-bold text-lg text-[#1D3A28]">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-[#ffffff] rounded-xl p-5 max-w-lg w-full border border-[#e4e4e7] space-y-3.5 shadow-xl">
+            <h3 className="font-semibold text-sm text-[#000000]">
               {shipment ? 'Edit Shipping Details' : 'Add Shipping Details'}
             </h3>
             <form onSubmit={handleSaveShipment} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Carrier Name *</label>
+                <label className="block font-semibold text-[#000000] mb-1">Carrier Name *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Delhivery, Bluedart, Speed Post"
                   value={shipmentForm.carrier}
                   onChange={(e) => setShipmentForm({ ...shipmentForm, carrier: e.target.value })}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-xs"
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Tracking Number *</label>
+                <label className="block font-semibold text-[#000000] mb-1">Tracking Number *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. DEL123456789"
                   value={shipmentForm.tracking_number}
                   onChange={(e) => setShipmentForm({ ...shipmentForm, tracking_number: e.target.value })}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono"
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Service Name (Optional)</label>
+                  <label className="block font-semibold text-[#000000] mb-1">Service Name (Optional)</label>
                   <input
                     type="text"
                     placeholder="e.g. Surface Express"
                     value={shipmentForm.service_name}
                     onChange={(e) => setShipmentForm({ ...shipmentForm, service_name: e.target.value })}
-                    className="w-full p-2.5 border border-slate-300 rounded-lg text-xs"
+                    className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">AWB Number (Optional)</label>
+                  <label className="block font-semibold text-[#000000] mb-1">AWB Number (Optional)</label>
                   <input
                     type="text"
                     placeholder="e.g. AWB987654"
                     value={shipmentForm.awb_number}
                     onChange={(e) => setShipmentForm({ ...shipmentForm, awb_number: e.target.value })}
-                    className="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono"
+                    className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Tracking URL (HTTPS Required)</label>
+                <label className="block font-semibold text-[#000000] mb-1">Tracking URL (HTTPS Required)</label>
                 <input
                   type="url"
                   placeholder="https://track.delhivery.com/p/123456789"
                   value={shipmentForm.tracking_url}
                   onChange={(e) => setShipmentForm({ ...shipmentForm, tracking_url: e.target.value })}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono"
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Internal Admin Note (Optional)</label>
+                <label className="block font-semibold text-[#000000] mb-1">Internal Admin Note (Optional)</label>
                 <textarea
                   rows={2}
                   placeholder="Internal notes regarding dispatch..."
                   value={shipmentForm.admin_note}
                   onChange={(e) => setShipmentForm({ ...shipmentForm, admin_note: e.target.value })}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-xs"
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3">
+              <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsShipmentModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg font-bold"
+                  className="admin-btn-secondary"
                 >
                   Cancel
                 </button>
@@ -1121,74 +1144,74 @@ export default function AdminOrdersDetail() {
 
       {/* Post-Dispatch Correction Modal */}
       {isCorrectionModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-slate-200 space-y-4 animate-scaleUp">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <h3 className="font-display font-bold text-lg text-red-800">
-                Audited Post-Dispatch Tracking Correction
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-[#ffffff] rounded-xl p-5 max-w-lg w-full border border-[#e4e4e7] space-y-3.5 shadow-xl">
+            <div className="flex items-center justify-between border-b border-[#f4f4f0] pb-2">
+              <h3 className="font-semibold text-sm text-[#dc2626]">
+                Post-Dispatch Tracking Correction
               </h3>
             </div>
-            <p className="text-xs text-slate-600">
-              This order has already been dispatched. Modifying tracking information will generate an explicit security audit log.
+            <p className="text-xs text-[#71717a]">
+              This order has already been dispatched. Modifying tracking information will log an operational audit event.
             </p>
 
             <form onSubmit={handleCorrectShipment} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">New Carrier Name *</label>
+                <label className="block font-semibold text-[#000000] mb-1">New Carrier Name *</label>
                 <input
                   type="text"
                   required
                   value={correctionForm.carrier}
                   onChange={(e) => setCorrectionForm({ ...correctionForm, carrier: e.target.value })}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-xs"
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">New Tracking Number *</label>
+                <label className="block font-semibold text-[#000000] mb-1">New Tracking Number *</label>
                 <input
                   type="text"
                   required
                   value={correctionForm.tracking_number}
                   onChange={(e) => setCorrectionForm({ ...correctionForm, tracking_number: e.target.value })}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono"
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">New Tracking URL (HTTPS Required)</label>
+                <label className="block font-semibold text-[#000000] mb-1">New Tracking URL (HTTPS Required)</label>
                 <input
                   type="url"
                   value={correctionForm.tracking_url}
                   onChange={(e) => setCorrectionForm({ ...correctionForm, tracking_url: e.target.value })}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-xs font-mono"
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-red-800 mb-1">Correction Reason (Mandatory, min 10 chars) *</label>
+                <label className="block font-semibold text-[#dc2626] mb-1">Correction Reason (min 10 chars) *</label>
                 <textarea
                   rows={2}
                   required
                   placeholder="State why tracking info is being altered after dispatch..."
                   value={correctionForm.reason}
                   onChange={(e) => setCorrectionForm({ ...correctionForm, reason: e.target.value })}
-                  className="w-full p-2.5 border border-red-300 rounded-lg text-xs"
+                  className="w-full p-2 border border-[#dc2626] rounded-lg text-xs focus:outline-none focus:border-[#dc2626]"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3">
+              <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsCorrectionModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg font-bold"
+                  className="admin-btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-red-700 text-white hover:bg-red-800 px-4 py-2 text-xs font-bold rounded-lg transition-colors"
+                  className="admin-btn-primary !bg-[#dc2626] hover:!bg-[#b91c1c]"
                 >
                   {isSubmitting ? 'Logging...' : 'Apply Correction'}
                 </button>

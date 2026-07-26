@@ -2,14 +2,27 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
-import { ShoppingCart, MagnifyingGlass, CheckCircle } from '@phosphor-icons/react';
+import { 
+  AdminCard, 
+  AdminStatusBadge, 
+  AdminDataTable, 
+  AdminMobileRecord, 
+  AdminFilterBar, 
+  AdminPagination, 
+  AdminSkeleton, 
+  AdminEmptyState 
+} from '../components/admin/AdminPrimitives';
 
 export default function AdminProcurement() {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<any[]>([]);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10;
 
   const fetchPOs = async () => {
     setLoading(true);
@@ -34,86 +47,130 @@ export default function AdminProcurement() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredPOs = orders.filter(po => 
-    po.po_number.toLowerCase().includes(search.toLowerCase()) ||
-    (po.suppliers?.legal_name && po.suppliers.legal_name.toLowerCase().includes(search.toLowerCase()))
+  const filteredPOs = orders.filter(po => {
+    const matchesSearch = 
+      po.po_number.toLowerCase().includes(search.toLowerCase()) ||
+      (po.suppliers?.legal_name && po.suppliers.legal_name.toLowerCase().includes(search.toLowerCase()));
+
+    const matchesStatus = statusFilter === 'all' || po.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Pagination calculations
+  const totalRecords = filteredPOs.length;
+  const totalPages = Math.ceil(totalRecords / recordsPerPage);
+  const paginatedPOs = filteredPOs.slice(
+    (currentPage - 1) * recordsPerPage,
+    currentPage * recordsPerPage
   );
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
+
+  const filterOptions = [
+    { label: 'All PO Statuses', value: 'all' },
+    { label: 'Draft', value: 'draft' },
+    { label: 'Issued / Sent', value: 'issued' },
+    { label: 'Partially Received', value: 'partially_received' },
+    { label: 'Received (GRN)', value: 'received' },
+    { label: 'Cancelled', value: 'cancelled' }
+  ];
+
+  const columns = [
+    { 
+      header: 'PO Number', 
+      render: (po: any) => <span className="font-mono font-semibold text-[#000000]">{po.po_number}</span> 
+    },
+    { 
+      header: 'Supplier Legal Name', 
+      render: (po: any) => <span className="font-semibold text-[#000000] text-xs">{po.suppliers?.legal_name || 'Vendor'}</span> 
+    },
+    { 
+      header: 'Status', 
+      render: (po: any) => <AdminStatusBadge status={po.status} /> 
+    },
+    { 
+      header: 'Order Date', 
+      render: (po: any) => <span className="font-mono text-xs text-[#71717a]">{po.order_date}</span> 
+    },
+    { 
+      header: 'Expected Delivery', 
+      render: (po: any) => <span className="font-mono text-xs text-[#71717a]">{po.expected_delivery_date || 'N/A'}</span> 
+    },
+    { 
+      header: 'Grand Total', 
+      render: (po: any) => <span className="font-mono text-xs font-bold text-[#000000]">₹{po.grand_total?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>,
+      className: 'text-right'
+    }
+  ];
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-          <div>
-            <h1 className="font-display font-bold text-2xl text-[#1D3A28] flex items-center gap-2">
-              <ShoppingCart size={28} className="text-[#C5A059]" />
-              <span>Procurement & Purchase Orders</span>
-            </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Issue purchase orders to Ayurvedic suppliers, track expected deliveries, and process Goods Receipts (GRN).
-            </p>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Title Subheader */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Procurement & Replenishment Workspace</span>
+          <p className="text-xs text-[#71717a] margin-0">Issue purchase orders to raw material suppliers, track expected deliveries, and post Goods Receipts (GRN)</p>
         </div>
 
-        {/* Search */}
+        {/* Filter Bar */}
         <AdminCard>
-          <div className="relative max-w-md">
-            <MagnifyingGlass size={16} className="absolute left-3 top-3 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search PO Number, Supplier..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs"
-            />
-          </div>
+          <AdminFilterBar
+            searchQuery={search}
+            onSearchChange={setSearch}
+            searchPlaceholder="Search PO Number or Supplier Name..."
+            selectedFilter={statusFilter}
+            onFilterChange={setStatusFilter}
+            filterOptions={filterOptions}
+            filterLabel="PO Status"
+          />
         </AdminCard>
 
-        {/* PO Table */}
+        {/* PO Workspace */}
         {loading ? (
-          <AdminSkeleton type="table" rows={4} />
-        ) : filteredPOs.length === 0 ? (
-          <AdminCard>
-            <div className="text-center py-12">
-              <CheckCircle size={48} className="text-slate-300 mx-auto mb-3" />
-              <h3 className="font-bold text-sm text-[#1D3A28]">No Purchase Orders Issued</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                Purchase orders generated for stock replenishment will be listed here.
-              </p>
-            </div>
-          </AdminCard>
+          <AdminSkeleton type="table" rows={5} />
+        ) : totalRecords === 0 ? (
+          <AdminEmptyState
+            title="No Purchase Orders Found"
+            description="Purchase orders generated for inventory replenishment will appear here."
+          />
         ) : (
-          <AdminCard className="p-0 overflow-hidden">
-            <div className="admin-table-container overflow-x-auto">
-              <table className="admin-data-table min-w-full text-xs">
-                <thead>
-                  <tr>
-                    <th>PO Number</th>
-                    <th>Supplier</th>
-                    <th>Status</th>
-                    <th>Order Date</th>
-                    <th>Expected Delivery</th>
-                    <th>Grand Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredPOs.map(po => (
-                    <tr key={po.id}>
-                      <td className="font-mono font-bold text-[#1D3A28]">{po.po_number}</td>
-                      <td className="font-bold">{po.suppliers?.legal_name || 'Vendor'}</td>
-                      <td>
-                        <span className="px-2 py-0.5 text-[10px] font-bold rounded uppercase bg-amber-100 text-amber-800">
-                          {po.status}
-                        </span>
-                      </td>
-                      <td className="font-mono text-[11px]">{po.order_date}</td>
-                      <td className="font-mono text-[11px]">{po.expected_delivery_date || 'N/A'}</td>
-                      <td className="font-mono font-bold">₹{po.grand_total}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="space-y-4">
+            {/* Desktop Table View */}
+            <div className="hidden md:block">
+              <AdminCard className="p-0 overflow-hidden">
+                <AdminDataTable
+                  columns={columns}
+                  data={paginatedPOs}
+                  keyExtractor={(po) => po.id}
+                />
+              </AdminCard>
             </div>
-          </AdminCard>
+
+            {/* Mobile Stacked Record View */}
+            <div className="md:hidden space-y-3">
+              {paginatedPOs.map((po) => (
+                <AdminMobileRecord
+                  key={po.id}
+                  title={po.po_number}
+                  subtitle={po.suppliers?.legal_name || 'Vendor'}
+                  meta={`Expected: ${po.expected_delivery_date || 'N/A'} · Total: ₹${po.grand_total?.toLocaleString('en-IN')}`}
+                  badge={<AdminStatusBadge status={po.status} />}
+                />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalRecords={totalRecords}
+              recordsPerPage={recordsPerPage}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         )}
       </div>
     </AdminLayout>

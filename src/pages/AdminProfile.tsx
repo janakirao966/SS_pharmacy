@@ -52,61 +52,60 @@ export default function AdminProfile() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn">
-        <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-          <div>
-            <h2 className="text-[10px] uppercase font-bold text-[#8A6B29] tracking-wider">Account Manager</h2>
-            <h1 className="text-xl font-bold font-display text-[#1D3A28]">Administrator Profile</h1>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Title Subheader */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Administrator Profile Manager</span>
+          <p className="text-xs text-[#71717a] margin-0">Manage account credentials, display name, and system privileges</p>
         </div>
 
         <AdminCard>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <h3 className="font-display font-bold text-lg text-[#1D3A28] border-b border-slate-100 pb-2">
-              Profile Metadata
-            </h3>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="border-b border-[#f4f4f0] pb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Profile Metadata & Identity</h3>
+            </div>
 
-            <div className="space-y-4">
-              <div className="admin-field-group">
-                <label className="admin-field-label">Email Account (Auth)</label>
+            <div className="space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-[#71717a] mb-1">Email Account (Auth)</label>
                 <input
                   type="text"
                   value={profile?.email || ''}
                   disabled
-                  className="admin-input-field font-mono bg-slate-100 cursor-not-allowed"
+                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg font-mono bg-[#f4f4f0] text-[#71717a] cursor-not-allowed"
                 />
               </div>
 
-              <div className="admin-field-group">
-                <label className="admin-field-label">Display Full Name</label>
+              <div>
+                <label className="block font-semibold text-[#000000] mb-1">Display Full Name</label>
                 <input
                   type="text"
                   value={fullName}
                   onChange={handleNameChange}
-                  className="admin-input-field"
+                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-semibold text-[#000000]"
                   placeholder="e.g. Admin User"
                 />
               </div>
 
-              <div className="admin-field-group">
-                <label className="admin-field-label">Privilege Level</label>
+              <div>
+                <label className="block font-semibold text-[#71717a] mb-1">System Privilege Level</label>
                 <input
                   type="text"
-                  value={profile?.is_admin ? 'Super Administrator' : 'Member'}
+                  value={profile?.is_admin ? 'Super Administrator (Full RLS Override)' : 'Member'}
                   disabled
-                  className="admin-input-field font-semibold bg-slate-100 cursor-not-allowed text-[#1D3A28]"
+                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg font-semibold bg-[#f4f4f0] text-[#000000] cursor-not-allowed"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-slate-100">
+            <div className="flex justify-end pt-3 border-t border-[#f4f4f0]">
               <button
                 type="submit"
                 disabled={!isDirty}
                 className="admin-btn-primary"
               >
-                <FloppyDisk size={14} />
-                <span>Save Profile</span>
+                <FloppyDisk size={14} weight="bold" />
+                <span>Save Profile Updates</span>
               </button>
             </div>
           </form>
@@ -115,7 +114,7 @@ export default function AdminProfile() {
 
       <AdminConfirmDialog
         isOpen={isConfirmOpen}
-        title="Update Profile Details?"
+        title="Update Administrator Profile?"
         message="Are you sure you want to write these modifications to your administrator account details?"
         confirmLabel="Save Profile"
         cancelLabel="Cancel"

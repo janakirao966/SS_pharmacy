@@ -3,8 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
-import { CaretLeft, ShieldWarning, PaperPlane, LockKey } from '@phosphor-icons/react';
+import { AdminCard, AdminSkeleton, AdminStatusBadge } from '../components/admin/AdminPrimitives';
+import { CaretLeft, ShieldWarning, PaperPlane } from '@phosphor-icons/react';
 
 export default function AdminSupportDetail() {
   const { ticketNumber } = useParams<{ ticketNumber: string }>();
@@ -169,7 +169,7 @@ export default function AdminSupportDetail() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="space-y-6">
+        <div className="space-y-5">
           <AdminSkeleton type="card" />
         </div>
       </AdminLayout>
@@ -178,50 +178,54 @@ export default function AdminSupportDetail() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-          <Link to="/admin/support" className="admin-btn-back text-xs">
-            <CaretLeft size={16} weight="bold" />
-            <span>Back to Support Center</span>
-          </Link>
-          <span className="font-mono text-xs text-slate-500">Key: {ticket?.ticket_number}</span>
+      <div className="space-y-5 pb-12">
+        {/* Navigation Topbar */}
+        <div className="flex items-center justify-between border-b border-[#e4e4e7] pb-3">
+          <div className="flex items-center gap-3">
+            <Link to="/admin/support" className="admin-btn-icon" aria-label="Back to support list">
+              <CaretLeft size={16} weight="bold" />
+            </Link>
+            <div>
+              <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Support Case Detail</span>
+              <h2 className="text-base font-bold text-[#000000] font-mono">Ticket #{ticket?.ticket_number}</h2>
+            </div>
+          </div>
         </div>
 
-        {/* Pharmaceutical Safety Review Banner */}
+        {/* Pharmaceutical Safety Review Flag Banner */}
         {ticket?.requires_safety_review && (
-          <div className="p-4 bg-purple-100 border-l-4 border-l-purple-700 text-purple-950 rounded-xl space-y-2 text-xs animate-pulse">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 font-bold text-sm">
-                <ShieldWarning size={20} className="text-purple-800" />
-                <span>PHARMACEUTICAL SAFETY REVIEW FLAGGED</span>
+          <div className="p-3.5 bg-[#fbfbf5] border border-[#dc2626] rounded-xl flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2">
+              <ShieldWarning size={20} className="text-[#dc2626] shrink-0" />
+              <div>
+                <span className="font-semibold text-[#dc2626] block uppercase">Pharmaceutical Safety Review Flagged</span>
+                <span className="text-[0.7rem] text-[#71717a]">
+                  This case contains keywords indicating possible adverse reaction or safety concern. Requires clinical review.
+                </span>
               </div>
-              <button
-                onClick={handleToggleSafetyReview}
-                className="bg-purple-900 hover:bg-purple-950 text-white px-3 py-1 text-[11px] font-bold rounded"
-              >
-                Clear Safety Flag
-              </button>
             </div>
-            <p className="m-0 text-purple-900">
-              This case contains keywords indicating possible adverse reaction, allergic response, or product quality concern. Requires qualified clinical review.
-            </p>
+            <button
+              onClick={handleToggleSafetyReview}
+              className="admin-btn-secondary !border-[#dc2626] !text-[#dc2626] hover:!bg-[#fef2f2] text-xs shrink-0"
+            >
+              Clear Flag
+            </button>
           </div>
         )}
 
-        {/* Ticket Header Card */}
-        <AdminCard className="bg-[#FAF8F5] border-l-4 border-l-[#C5A059] space-y-3">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-3">
+        {/* Ticket Header & Status Manager */}
+        <AdminCard>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#f4f4f0] pb-3 mb-3">
             <div>
-              <span className="text-[10px] font-bold text-[#8A6B29] uppercase tracking-wider block">Ticket #{ticket?.ticket_number}</span>
-              <h2 className="font-bold text-xl text-[#1D3A28] font-display m-0">{ticket?.subject}</h2>
-              <p className="text-xs text-slate-500 m-0">Customer: {ticket?.customer_name} • Email: {ticket?.customer_email || 'N/A'}</p>
+              <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider block">Subject</span>
+              <h3 className="font-bold text-sm text-[#000000] m-0">{ticket?.subject}</h3>
+              <p className="text-xs text-[#71717a] m-0">Customer: {ticket?.customer_name} • Email: {ticket?.customer_email || 'N/A'}</p>
             </div>
             <div className="flex items-center gap-2">
               <select
                 value={ticket?.priority}
                 onChange={(e) => handleUpdatePriority(e.target.value)}
-                className="py-1 px-2.5 text-xs font-bold rounded uppercase border border-slate-300 bg-white"
+                className="py-1.5 px-2.5 text-xs font-semibold rounded-lg border border-[#e4e4e7] bg-[#ffffff] text-[#000000]"
               >
                 <option value="low">Low Priority</option>
                 <option value="normal">Normal Priority</option>
@@ -232,7 +236,7 @@ export default function AdminSupportDetail() {
               <select
                 value={ticket?.status}
                 onChange={(e) => handleUpdateStatus(e.target.value)}
-                className="py-1 px-2.5 text-xs font-bold rounded uppercase border border-slate-300 bg-white"
+                className="py-1.5 px-2.5 text-xs font-semibold rounded-lg border border-[#e4e4e7] bg-[#ffffff] text-[#000000]"
               >
                 <option value="open">Open</option>
                 <option value="assigned">Assigned</option>
@@ -244,104 +248,180 @@ export default function AdminSupportDetail() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
             <div>
-              <span className="text-[10px] text-slate-400 block uppercase">Category</span>
-              <span className="font-bold">{ticket?.category}</span>
+              <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Category</span>
+              <span className="font-semibold text-[#000000]">{ticket?.category}</span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 block uppercase">Linked Order</span>
-              <span>{ticket?.orders?.order_number ? `#${ticket.orders.order_number}` : 'None'}</span>
+              <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Priority</span>
+              <AdminStatusBadge status={ticket?.priority} />
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 block uppercase">First Response Due</span>
-              <span>{ticket?.first_response_due_at ? new Date(ticket.first_response_due_at).toLocaleTimeString('en-IN') : 'N/A'}</span>
+              <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Status</span>
+              <AdminStatusBadge status={ticket?.status} />
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 block uppercase">Created At</span>
-              <span>{new Date(ticket?.created_at).toLocaleString('en-IN')}</span>
+              <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Linked Order</span>
+              <span className="font-semibold text-[#000000]">{ticket?.orders?.order_number || 'None'}</span>
             </div>
           </div>
         </AdminCard>
 
-        {/* Message Thread */}
-        <AdminCard className="space-y-4">
-          <h3 className="font-bold text-sm text-[#1D3A28] m-0">Conversation Thread & Notes</h3>
-
-          <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
-            {messages.map(m => (
-              <div
-                key={m.id}
-                className={`p-3.5 rounded-xl text-xs space-y-1 ${
-                  m.visibility === 'internal'
-                    ? 'bg-amber-100/80 border border-amber-300 text-amber-950 ml-4'
-                    : m.sender_type === 'admin'
-                    ? 'bg-[#1D3A28] text-white ml-6'
-                    : 'bg-slate-100 text-slate-800 mr-6'
-                }`}
-              >
-                <div className="flex items-center justify-between text-[10px] opacity-80 border-b border-black/10 pb-1">
-                  <span className="font-bold uppercase flex items-center gap-1">
-                    {m.visibility === 'internal' && <LockKey size={12} />}
-                    {m.sender_type === 'admin' ? 'Support Specialist (Admin)' : 'Customer'}
-                    {m.visibility === 'internal' && ' • INTERNAL NOTE (HIDDEN FROM CUSTOMER)'}
-                  </span>
-                  <span className="font-mono">{new Date(m.created_at).toLocaleString('en-IN')}</span>
-                </div>
-                <p className="m-0 whitespace-pre-wrap leading-relaxed">{m.message}</p>
+        {/* 2-Column Workspace Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          {/* Main Conversation & Response Section */}
+          <div className="lg:col-span-2 space-y-5">
+            {/* Conversation Log */}
+            <AdminCard className="space-y-4">
+              <div className="border-b border-[#f4f4f0] pb-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Case Message History</h3>
               </div>
-            ))}
+
+              {messages.length === 0 ? (
+                <p className="text-xs text-[#71717a] italic py-2">No conversation messages recorded yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {messages.map((msg) => {
+                    const isInternal = msg.is_internal;
+                    const isAdmin = msg.sender_type === 'admin' || msg.sender_type === 'support_rep';
+
+                    return (
+                      <div
+                        key={msg.id}
+                        className={`p-3 rounded-lg border text-xs space-y-1 ${
+                          isInternal 
+                            ? 'bg-[#fbfbf5] border-[#e4e4e7]' 
+                            : isAdmin 
+                            ? 'bg-[#f4f4f0] border-[#e4e4e7]' 
+                            : 'bg-[#ffffff] border-[#e4e4e7]'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-[0.7rem] text-[#71717a]">
+                          <span className="font-semibold text-[#000000]">
+                            {isInternal ? '🔒 Internal Admin Note' : isAdmin ? 'Support Representative' : ticket.customer_name}
+                          </span>
+                          <span className="font-mono">{new Date(msg.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}</span>
+                        </div>
+                        <p className="text-[#000000] leading-relaxed whitespace-pre-wrap margin-0">{msg.message}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </AdminCard>
+
+            {/* Response / Note Input Editor */}
+            <AdminCard className="space-y-3">
+              <div className="flex items-center justify-between border-b border-[#f4f4f0] pb-2">
+                <div className="flex items-center gap-4 text-xs">
+                  <label className="flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="response_type"
+                      checked={!isInternalNote}
+                      onChange={() => setIsInternalNote(false)}
+                      className="accent-[#000000]"
+                    />
+                    <span className="font-semibold text-[#000000]">Customer Reply</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="response_type"
+                      checked={isInternalNote}
+                      onChange={() => setIsInternalNote(true)}
+                      className="accent-[#000000]"
+                    />
+                    <span className="font-semibold text-[#71717a]">🔒 Internal Note Only</span>
+                  </label>
+                </div>
+              </div>
+
+              <form onSubmit={handleSendReply} className="space-y-3 text-xs">
+                {isInternalNote ? (
+                  <div>
+                    <textarea
+                      rows={3}
+                      placeholder="Add an internal operational note (not visible to customer)..."
+                      value={noteText}
+                      onChange={(e) => setNoteText(e.target.value)}
+                      className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs bg-[#fbfbf5] focus:outline-none focus:border-[#000000]"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <textarea
+                      rows={4}
+                      placeholder="Type response to customer..."
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
+                    />
+                  </div>
+                )}
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="admin-btn-primary"
+                  >
+                    <PaperPlane size={14} weight="bold" />
+                    <span>{isSubmitting ? 'Sending...' : isInternalNote ? 'Save Internal Note' : 'Send Reply to Customer'}</span>
+                  </button>
+                </div>
+              </form>
+            </AdminCard>
           </div>
 
-          {/* Reply Form */}
-          <form onSubmit={handleSendReply} className="space-y-3 pt-3 border-t border-slate-200">
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-                <input
-                  type="radio"
-                  name="responseType"
-                  checked={!isInternalNote}
-                  onChange={() => setIsInternalNote(false)}
-                />
-                <span className="font-bold text-[#1D3A28]">Reply to Customer</span>
-              </label>
-              <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-                <input
-                  type="radio"
-                  name="responseType"
-                  checked={isInternalNote}
-                  onChange={() => setIsInternalNote(true)}
-                />
-                <span className="font-bold text-amber-900 flex items-center gap-1">
-                  <LockKey size={14} /> Add Internal Admin Note (Private)
-                </span>
-              </label>
-            </div>
+          {/* Customer Metadata Sidebar */}
+          <div className="space-y-5">
+            <AdminCard className="space-y-3">
+              <div className="border-b border-[#f4f4f0] pb-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Customer Information</h3>
+              </div>
+              <div className="space-y-2 text-xs">
+                <div>
+                  <span className="text-[0.68rem] text-[#71717a] block uppercase font-semibold">Name</span>
+                  <span className="font-semibold text-[#000000]">{ticket?.customer_name}</span>
+                </div>
+                <div>
+                  <span className="text-[0.68rem] text-[#71717a] block uppercase font-semibold">Phone</span>
+                  <span className="font-mono text-[#000000]">{ticket?.customer_phone || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-[0.68rem] text-[#71717a] block uppercase font-semibold">Email</span>
+                  <span className="font-mono text-[#000000]">{ticket?.customer_email || 'N/A'}</span>
+                </div>
+              </div>
+            </AdminCard>
 
-            <textarea
-              rows={3}
-              placeholder={isInternalNote ? 'Write private team note (never visible to customer)...' : 'Type reply message to customer...'}
-              value={isInternalNote ? noteText : replyText}
-              onChange={(e) => isInternalNote ? setNoteText(e.target.value) : setReplyText(e.target.value)}
-              className={`w-full p-3 border rounded-xl text-xs ${
-                isInternalNote ? 'border-amber-400 bg-amber-50/50' : 'border-slate-300 bg-white'
-              }`}
-            />
-
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={`px-5 py-2 text-xs font-bold text-white rounded-lg shadow-sm flex items-center gap-2 ${
-                  isInternalNote ? 'bg-amber-700 hover:bg-amber-800' : 'bg-[#2D5016] hover:bg-[#1D3A28]'
-                }`}
-              >
-                <PaperPlane size={14} />
-                <span>{isInternalNote ? 'Save Internal Note' : 'Send Reply to Customer'}</span>
-              </button>
-            </div>
-          </form>
-        </AdminCard>
+            <AdminCard className="space-y-3">
+              <div className="border-b border-[#f4f4f0] pb-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Case Audit Timestamps</h3>
+              </div>
+              <div className="space-y-2 text-xs font-mono">
+                <div>
+                  <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Created</span>
+                  <span className="text-[#000000]">{new Date(ticket?.created_at).toLocaleString('en-IN')}</span>
+                </div>
+                {ticket?.resolved_at && (
+                  <div>
+                    <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Resolved</span>
+                    <span className="text-[#16a34a] font-semibold">{new Date(ticket?.resolved_at).toLocaleString('en-IN')}</span>
+                  </div>
+                )}
+                {ticket?.closed_at && (
+                  <div>
+                    <span className="text-[0.68rem] text-[#71717a] block uppercase font-sans">Closed</span>
+                    <span className="text-[#000000]">{new Date(ticket?.closed_at).toLocaleString('en-IN')}</span>
+                  </div>
+                )}
+              </div>
+            </AdminCard>
+          </div>
+        </div>
       </div>
     </AdminLayout>
   );

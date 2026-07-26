@@ -23,7 +23,7 @@ export function AdminCard({
   children, 
   className = '', 
   topAccent = false,
-  accentColor = '#2D5016'
+  accentColor = '#000000'
 }: AdminCardProps) {
   const style = topAccent ? { borderTop: `4px solid ${accentColor}` } : undefined;
   return (
@@ -94,18 +94,17 @@ interface AdminStatusBadgeProps {
 }
 
 export function AdminStatusBadge({ status, type }: AdminStatusBadgeProps) {
-  // Infer status type if not provided
   let inferredType: 'success' | 'warning' | 'danger' | 'neutral' | 'info' = type || 'neutral';
   
   if (!type) {
     const s = status.toLowerCase();
-    if (s === 'active' || s === 'paid' || s === 'resolved' || s === 'approved' || s === 'delivered') {
+    if (s === 'active' || s === 'paid' || s === 'resolved' || s === 'approved' || s === 'delivered' || s === 'completed' || s === 'published') {
       inferredType = 'success';
-    } else if (s === 'draft' || s === 'pending' || s === 'cod_pending' || s === 'under_review' || s === 'preparing') {
+    } else if (s === 'draft' || s === 'pending' || s === 'cod_pending' || s === 'under_review' || s === 'preparing' || s === 'investigating' || s === 'issued') {
       inferredType = 'warning';
-    } else if (s === 'failed' || s === 'cancelled' || s === 'rejected') {
+    } else if (s === 'failed' || s === 'cancelled' || s === 'rejected' || s === 'critical') {
       inferredType = 'danger';
-    } else if (s === 'archived' || s === 'contacted') {
+    } else if (s === 'archived' || s === 'contacted' || s === 'in_transit') {
       inferredType = 'info';
     }
   }
@@ -141,8 +140,8 @@ export function AdminDataTable<T>({
   onRowClick
 }: AdminDataTableProps<T>) {
   return (
-    <div className="admin-table-container">
-      <table className="admin-data-table">
+    <div className="admin-table-container overflow-x-auto">
+      <table className="admin-data-table min-w-full text-xs">
         <thead>
           <tr>
             {columns.map((col, idx) => (
@@ -173,7 +172,7 @@ export function AdminDataTable<T>({
 }
 
 // ==========================================
-// 5. ADMIN MOBILE RECORD (MOBILE REPLACEMENT FOR TABLES)
+// 5. ADMIN MOBILE RECORD
 // ==========================================
 interface AdminMobileRecordProps {
   title: React.ReactNode;
@@ -193,31 +192,29 @@ export function AdminMobileRecord({
   onClick
 }: AdminMobileRecordProps) {
   const CardContent = (
-    <div className="admin-mobile-record-body">
-      <div className="admin-mobile-record-header">
-        <div className="admin-mobile-record-title-box">
-          <h4 className="admin-mobile-record-title">{title}</h4>
-          {subtitle && <p className="admin-mobile-record-subtitle">{subtitle}</p>}
+    <div className="admin-mobile-record-body space-y-2 p-3">
+      <div className="flex justify-between items-start gap-2">
+        <div>
+          <h4 className="font-semibold text-xs text-[#000000] m-0">{title}</h4>
+          {subtitle && <p className="text-[0.68rem] text-[#71717a] m-0 mt-0.5">{subtitle}</p>}
         </div>
-        {badge && <div className="admin-mobile-record-badge">{badge}</div>}
+        {badge && <div className="shrink-0">{badge}</div>}
       </div>
-      <div className="admin-mobile-record-footer">
-        <div className="admin-mobile-record-meta">{meta}</div>
-        <div className="admin-mobile-record-arrow">
-          <Eye size={16} />
-        </div>
+      <div className="flex justify-between items-center pt-2 border-t border-[#f4f4f0] text-[0.68rem] text-[#71717a]">
+        <div>{meta}</div>
+        <Eye size={14} className="text-[#71717a]" />
       </div>
     </div>
   );
 
   return (
-    <AdminCard className="admin-mobile-record">
+    <AdminCard className="p-0 overflow-hidden">
       {actionUrl ? (
-        <Link to={actionUrl} className="admin-mobile-record-link">
+        <Link to={actionUrl} className="block hover:bg-[#fbfbf5]">
           {CardContent}
         </Link>
       ) : onClick ? (
-        <button type="button" onClick={onClick} className="admin-mobile-record-button text-left w-full">
+        <button type="button" onClick={onClick} className="block text-left w-full hover:bg-[#fbfbf5]">
           {CardContent}
         </button>
       ) : (
@@ -255,24 +252,24 @@ export function AdminFilterBar({
   filterLabel = 'Status'
 }: AdminFilterBarProps) {
   return (
-    <div className="admin-filter-bar">
-      <div className="admin-search-box">
-        <MagnifyingGlass className="admin-search-icon" size={16} />
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+      <div className="relative flex-1 max-w-md">
+        <MagnifyingGlass className="absolute left-3 top-3 text-[#71717a]" size={15} />
         <input
           type="text"
           placeholder={searchPlaceholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="admin-search-input"
+          className="w-full pl-9 pr-3 py-2 border border-[#e4e4e7] rounded-lg text-xs min-h-[44px]"
         />
       </div>
 
-      <div className="admin-filter-select-box">
-        <span className="admin-filter-label">{filterLabel}:</span>
+      <div className="flex items-center gap-2 self-start sm:self-auto">
+        <span className="font-semibold text-[#71717a] shrink-0">{filterLabel}:</span>
         <select
           value={selectedFilter}
           onChange={(e) => onFilterChange(e.target.value)}
-          className="admin-filter-select"
+          className="p-2 border border-[#e4e4e7] rounded-lg text-xs bg-[#ffffff] font-semibold text-[#000000] min-h-[44px]"
         >
           {filterOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -309,20 +306,20 @@ export function AdminPagination({
   const endRecord = Math.min(currentPage * recordsPerPage, totalRecords);
 
   return (
-    <div className="admin-pagination-container">
-      <p className="admin-pagination-info">
-        Showing <span className="font-mono">{startRecord}</span> to <span className="font-mono">{endRecord}</span> of <span className="font-mono">{totalRecords}</span> entries
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-2">
+      <p className="text-[#71717a] m-0">
+        Showing <span className="font-mono font-semibold text-[#000000]">{startRecord}</span> to <span className="font-mono font-semibold text-[#000000]">{endRecord}</span> of <span className="font-mono font-semibold text-[#000000]">{totalRecords}</span> entries
       </p>
 
-      <div className="admin-pagination-buttons">
+      <div className="flex items-center gap-1">
         <button
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="admin-page-btn"
+          className="admin-btn-secondary !p-2 !min-h-[36px] disabled:opacity-40"
           aria-label="Previous page"
         >
-          <CaretLeft size={16} />
+          <CaretLeft size={14} />
         </button>
 
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -330,7 +327,11 @@ export function AdminPagination({
             key={page}
             type="button"
             onClick={() => onPageChange(page)}
-            className={`admin-page-btn-number ${currentPage === page ? 'active' : ''}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-colors ${
+              currentPage === page
+                ? 'bg-[#000000] text-[#ffffff]'
+                : 'bg-[#f4f4f0] text-[#71717a] hover:bg-[#e4e4e7]'
+            }`}
             aria-current={currentPage === page ? 'page' : undefined}
           >
             {page}
@@ -341,10 +342,10 @@ export function AdminPagination({
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="admin-page-btn"
+          className="admin-btn-secondary !p-2 !min-h-[36px] disabled:opacity-40"
           aria-label="Next page"
         >
-          <CaretRight size={16} />
+          <CaretRight size={14} />
         </button>
       </div>
     </div>
@@ -352,7 +353,92 @@ export function AdminPagination({
 }
 
 // ==========================================
-// 8. ADMIN SKELETON
+// 8. ADMIN FORM PRIMITIVES (44px TOUCH TARGETS)
+// ==========================================
+interface AdminInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  helperText?: string;
+  error?: string;
+}
+
+export function AdminInput({ label, helperText, error, className = '', ...props }: AdminInputProps) {
+  return (
+    <div className="space-y-1 text-xs">
+      {label && <label className="block font-semibold text-[#000000]">{label} {props.required && <span className="text-[#dc2626]">*</span>}</label>}
+      <input
+        {...props}
+        className={`w-full p-2.5 border rounded-lg text-xs min-h-[44px] ${
+          error ? 'border-[#dc2626] bg-[#fbfbf5]' : 'border-[#e4e4e7] bg-[#ffffff]'
+        } ${className}`}
+      />
+      {error ? (
+        <p className="text-[0.68rem] text-[#dc2626] font-semibold m-0">{error}</p>
+      ) : helperText ? (
+        <p className="text-[0.68rem] text-[#71717a] m-0">{helperText}</p>
+      ) : null}
+    </div>
+  );
+}
+
+interface AdminSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  label?: string;
+  helperText?: string;
+  error?: string;
+  options: { label: string; value: string }[];
+}
+
+export function AdminSelect({ label, helperText, error, options, className = '', ...props }: AdminSelectProps) {
+  return (
+    <div className="space-y-1 text-xs">
+      {label && <label className="block font-semibold text-[#000000]">{label} {props.required && <span className="text-[#dc2626]">*</span>}</label>}
+      <select
+        {...props}
+        className={`w-full p-2.5 border rounded-lg text-xs min-h-[44px] bg-[#ffffff] font-semibold text-[#000000] ${
+          error ? 'border-[#dc2626]' : 'border-[#e4e4e7]'
+        } ${className}`}
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      {error ? (
+        <p className="text-[0.68rem] text-[#dc2626] font-semibold m-0">{error}</p>
+      ) : helperText ? (
+        <p className="text-[0.68rem] text-[#71717a] m-0">{helperText}</p>
+      ) : null}
+    </div>
+  );
+}
+
+interface AdminTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  label?: string;
+  helperText?: string;
+  error?: string;
+}
+
+export function AdminTextarea({ label, helperText, error, className = '', ...props }: AdminTextareaProps) {
+  return (
+    <div className="space-y-1 text-xs">
+      {label && <label className="block font-semibold text-[#000000]">{label} {props.required && <span className="text-[#dc2626]">*</span>}</label>}
+      <textarea
+        {...props}
+        className={`w-full p-2.5 border rounded-lg text-xs ${
+          error ? 'border-[#dc2626] bg-[#fbfbf5]' : 'border-[#e4e4e7] bg-[#ffffff]'
+        } ${className}`}
+      />
+      {error ? (
+        <p className="text-[0.68rem] text-[#dc2626] font-semibold m-0">{error}</p>
+      ) : helperText ? (
+        <p className="text-[0.68rem] text-[#71717a] m-0">{helperText}</p>
+      ) : null}
+    </div>
+  );
+}
+
+// ==========================================
+// 9. ADMIN SKELETON
 // ==========================================
 interface AdminSkeletonProps {
   type?: 'card' | 'table' | 'line' | 'kpi';
@@ -362,12 +448,11 @@ interface AdminSkeletonProps {
 export function AdminSkeleton({ type = 'line', rows = 3 }: AdminSkeletonProps) {
   if (type === 'kpi') {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, idx) => (
-          <div key={idx} className="admin-card skeleton-stat-card">
-            <div className="skeleton-pulse skeleton-kpi-title" />
-            <div className="skeleton-pulse skeleton-kpi-value" />
-            <div className="skeleton-pulse skeleton-kpi-text" />
+          <div key={idx} className="p-4 bg-[#f4f4f0] rounded-xl animate-pulse space-y-2">
+            <div className="h-3 w-24 bg-[#e4e4e7] rounded" />
+            <div className="h-6 w-16 bg-[#e4e4e7] rounded" />
           </div>
         ))}
       </div>
@@ -376,29 +461,24 @@ export function AdminSkeleton({ type = 'line', rows = 3 }: AdminSkeletonProps) {
 
   if (type === 'card') {
     return (
-      <div className="admin-card skeleton-card">
-        <div className="skeleton-pulse skeleton-title" />
-        <div className="skeleton-pulse skeleton-subtitle" />
-        <div className="space-y-3 mt-4">
-          <div className="skeleton-pulse skeleton-line-full" />
-          <div className="skeleton-pulse skeleton-line-mid" />
-          <div className="skeleton-pulse skeleton-line-short" />
-        </div>
+      <div className="p-5 bg-[#ffffff] border border-[#e4e4e7] rounded-xl animate-pulse space-y-3">
+        <div className="h-4 w-40 bg-[#f4f4f0] rounded" />
+        <div className="h-3 w-64 bg-[#f4f4f0] rounded" />
+        <div className="h-20 w-full bg-[#f4f4f0] rounded mt-2" />
       </div>
     );
   }
 
   if (type === 'table') {
     return (
-      <div className="admin-card p-0 overflow-hidden">
-        <div className="skeleton-pulse skeleton-table-header" />
-        <div className="p-4 space-y-4">
+      <div className="bg-[#ffffff] border border-[#e4e4e7] rounded-xl overflow-hidden">
+        <div className="h-10 bg-[#f4f4f0] border-b border-[#e4e4e7]" />
+        <div className="p-4 space-y-3">
           {Array.from({ length: rows }).map((_, idx) => (
-            <div key={idx} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-0">
-              <div className="skeleton-pulse skeleton-text-name" />
-              <div className="skeleton-pulse skeleton-text-info" />
-              <div className="skeleton-pulse skeleton-text-price" />
-              <div className="skeleton-pulse skeleton-text-badge" />
+            <div key={idx} className="flex justify-between items-center py-2 border-b border-[#f4f4f0] last:border-0">
+              <div className="h-3 w-28 bg-[#f4f4f0] rounded" />
+              <div className="h-3 w-36 bg-[#f4f4f0] rounded" />
+              <div className="h-3 w-20 bg-[#f4f4f0] rounded" />
             </div>
           ))}
         </div>
@@ -407,16 +487,16 @@ export function AdminSkeleton({ type = 'line', rows = 3 }: AdminSkeletonProps) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {Array.from({ length: rows }).map((_, idx) => (
-        <div key={idx} className="skeleton-pulse skeleton-text-line" />
+        <div key={idx} className="h-3 w-full bg-[#f4f4f0] rounded animate-pulse" />
       ))}
     </div>
   );
 }
 
 // ==========================================
-// 9. ADMIN EMPTY STATE
+// 10. ADMIN EMPTY STATE
 // ==========================================
 interface AdminEmptyStateProps {
   title: string;
@@ -432,29 +512,25 @@ export function AdminEmptyState({
   onActionClick
 }: AdminEmptyStateProps) {
   return (
-    <AdminCard className="admin-empty-state">
-      <div className="admin-empty-state-content">
-        <div className="admin-empty-state-icon">
-          <WarningCircle size={48} weight="light" />
-        </div>
-        <h3 className="admin-empty-state-title">{title}</h3>
-        <p className="admin-empty-state-description">{description}</p>
-        {actionLabel && onActionClick && (
-          <button
-            type="button"
-            onClick={onActionClick}
-            className="admin-btn-primary mt-4"
-          >
-            {actionLabel}
-          </button>
-        )}
-      </div>
+    <AdminCard className="text-center py-10">
+      <WarningCircle size={40} className="text-[#71717a] mx-auto mb-2" weight="light" />
+      <h3 className="font-bold text-xs text-[#000000] m-0">{title}</h3>
+      <p className="text-xs text-[#71717a] max-w-sm mx-auto mt-1 m-0">{description}</p>
+      {actionLabel && onActionClick && (
+        <button
+          type="button"
+          onClick={onActionClick}
+          className="admin-btn-primary mt-4"
+        >
+          {actionLabel}
+        </button>
+      )}
     </AdminCard>
   );
 }
 
 // ==========================================
-// 10. ADMIN QUICK ACTION
+// 11. ADMIN QUICK ACTION
 // ==========================================
 interface AdminQuickActionProps {
   title: string;
@@ -472,26 +548,26 @@ export function AdminQuickAction({
   onClick
 }: AdminQuickActionProps) {
   const ActionContent = (
-    <div className="admin-quick-action-card-body">
-      <div className="admin-quick-action-icon-box">{icon}</div>
-      <div className="admin-quick-action-text-box">
-        <h4 className="admin-quick-action-title">{title}</h4>
-        <p className="admin-quick-action-description">{description}</p>
+    <div className="flex items-center justify-between gap-3 p-3">
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-[#f4f4f0] text-[#000000] rounded-lg shrink-0">{icon}</div>
+        <div>
+          <h4 className="font-semibold text-xs text-[#000000] m-0">{title}</h4>
+          <p className="text-[0.68rem] text-[#71717a] m-0 mt-0.5">{description}</p>
+        </div>
       </div>
-      <div className="admin-quick-action-arrow">
-        <ArrowRight size={16} weight="bold" />
-      </div>
+      <ArrowRight size={14} className="text-[#71717a] shrink-0" weight="bold" />
     </div>
   );
 
   return (
-    <AdminCard className="admin-quick-action-card">
+    <AdminCard className="p-0 overflow-hidden hover:bg-[#fbfbf5] transition-colors">
       {url ? (
-        <Link to={url} className="admin-quick-action-link">
+        <Link to={url} className="block">
           {ActionContent}
         </Link>
       ) : (
-        <button type="button" onClick={onClick} className="admin-quick-action-button text-left w-full">
+        <button type="button" onClick={onClick} className="block text-left w-full">
           {ActionContent}
         </button>
       )}
@@ -500,13 +576,13 @@ export function AdminQuickAction({
 }
 
 // ==========================================
-// 11. ADMIN ATTENTION ITEM
+// 12. ADMIN ATTENTION ITEM
 // ==========================================
 interface AdminAttentionItemProps {
   label: string;
   actionUrl: string;
   badgeText?: string;
-  badgeType?: 'success' | 'warning' | 'danger' | 'info';
+  badgeType?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
 }
 
 export function AdminAttentionItem({
@@ -516,30 +592,27 @@ export function AdminAttentionItem({
   badgeType = 'warning'
 }: AdminAttentionItemProps) {
   return (
-    <Link to={actionUrl} className="admin-attention-item">
-      <div className="admin-attention-item-content">
-        <div className={`admin-attention-dot bg-${badgeType}`} />
-        <span className="admin-attention-label">{label}</span>
+    <Link to={actionUrl} className="flex items-center justify-between p-2.5 rounded-lg border border-[#e4e4e7] hover:bg-[#fbfbf5] text-xs transition-colors">
+      <div className="flex items-center gap-2">
+        <span className="font-semibold text-[#000000]">{label}</span>
       </div>
-      <div className="admin-attention-right">
+      <div className="flex items-center gap-2">
         {badgeText && (
-          <span className={`admin-attention-badge badge-${badgeType}`}>
-            {badgeText}
-          </span>
+          <AdminStatusBadge status={badgeText} type={badgeType} />
         )}
-        <ArrowRight className="admin-attention-arrow" size={14} weight="bold" />
+        <ArrowRight className="text-[#71717a]" size={14} weight="bold" />
       </div>
     </Link>
   );
 }
 
 // ==========================================
-// 12. PREVIEW MODE BADGE
+// 13. PREVIEW MODE BADGE
 // ==========================================
 export function PreviewModeBadge() {
   return (
-    <span className="admin-preview-badge" title="Data on this screen is run in Local Preview Mode and not saved to the database.">
-      Preview Mode — Mock Data
+    <span className="bg-[#f4f4f0] text-[#71717a] text-[0.65rem] font-mono font-semibold px-2 py-0.5 rounded uppercase" title="Local Preview Mode">
+      Preview Mode
     </span>
   );
 }

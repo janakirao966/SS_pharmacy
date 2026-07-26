@@ -3,8 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
-import { CaretLeft } from '@phosphor-icons/react';
+import { AdminCard, AdminSkeleton, AdminStatusBadge } from '../components/admin/AdminPrimitives';
+import { CaretLeft, Check, X, ClipboardText, CreditCard } from '@phosphor-icons/react';
 
 export default function AdminReturnDetail() {
   const { returnId } = useParams<{ returnId: string }>();
@@ -239,7 +239,7 @@ export default function AdminReturnDetail() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="space-y-6">
+        <div className="space-y-5">
           <AdminSkeleton type="card" />
           <AdminSkeleton type="table" rows={4} />
         </div>
@@ -251,99 +251,129 @@ export default function AdminReturnDetail() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-          <Link to="/admin/returns" className="admin-btn-back text-xs">
-            <CaretLeft size={16} weight="bold" />
-            <span>Back to Returns Portal</span>
-          </Link>
-          <span className="font-mono text-xs text-slate-500">Return Key: {returnRecord?.return_number}</span>
+      <div className="space-y-5 pb-12">
+        {/* Navigation & Header */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#e4e4e7]">
+          <div className="flex items-center gap-3">
+            <Link to="/admin/returns" className="admin-btn-icon" aria-label="Back to returns queue">
+              <CaretLeft size={16} weight="bold" />
+            </Link>
+            <div>
+              <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Merchandise Return Detail</span>
+              <h2 className="text-base font-bold text-[#000000] font-mono">Return #{returnRecord?.return_number}</h2>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <AdminStatusBadge status={returnRecord?.status} />
+          </div>
         </div>
 
-        {/* Action Header Card */}
-        <AdminCard className="bg-[#FAF8F5] border-l-4 border-l-[#C5A059] space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-3">
+        {/* Master Return & Order Summary Card */}
+        <AdminCard>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#f4f4f0] pb-3 mb-3">
             <div>
-              <span className="text-[10px] font-bold text-[#8A6B29] uppercase tracking-wider block">Return Operations Dashboard</span>
-              <h2 className="font-bold text-xl text-[#1D3A28] font-display m-0">{returnRecord?.return_number}</h2>
-              <p className="text-xs text-slate-500 m-0">Order: #{returnRecord?.orders?.order_number} • Customer: {returnRecord?.orders?.customer_name}</p>
+              <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider block">Customer</span>
+              <h3 className="font-bold text-sm text-[#000000] m-0">{returnRecord?.orders?.customer_name}</h3>
+              <p className="text-xs text-[#71717a] m-0">Phone: {returnRecord?.orders?.customer_phone || 'N/A'}</p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className={`px-2.5 py-1 text-xs font-bold rounded uppercase ${
-                returnRecord?.status === 'requested' ? 'bg-amber-100 text-amber-800' :
-                returnRecord?.status === 'approved' ? 'bg-blue-100 text-blue-800' :
-                returnRecord?.status === 'completed' ? 'bg-green-100 text-green-800' :
-                returnRecord?.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                'bg-slate-100 text-slate-800'
-              }`}>
-                {returnRecord?.status.replace('_', ' ')}
-              </span>
+            <div className="flex items-center gap-2 font-mono text-xs">
+              <div className="text-center px-3 py-1.5 bg-[#ffffff] rounded-lg border border-[#e4e4e7]">
+                <span className="text-[0.68rem] text-[#71717a] block font-semibold uppercase">Linked Order</span>
+                <span className="font-semibold text-sm text-[#000000]">#{returnRecord?.orders?.order_number}</span>
+              </div>
+              <div className="text-center px-3 py-1.5 bg-[#ffffff] rounded-lg border border-[#e4e4e7]">
+                <span className="text-[0.68rem] text-[#71717a] block font-semibold uppercase">Reason Code</span>
+                <span className="font-semibold text-xs text-[#000000] uppercase">{returnRecord?.reason_code?.replace('_', ' ')}</span>
+              </div>
+              <div className="text-center px-3 py-1.5 bg-[#d4f9e0] rounded-lg border border-[#c1fbd4]">
+                <span className="text-[0.68rem] text-[#000000] block font-semibold uppercase">Refund Amount</span>
+                <span className="font-bold text-sm text-[#000000]">₹{totalEligibleRefund.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+              </div>
             </div>
           </div>
 
-          {/* Workflow Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2 pt-1">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span className="text-[#71717a]">Customer Comments: <strong className="text-[#000000]">{returnRecord?.reason_detail || 'None provided'}</strong></span>
+            <span className="font-mono text-[#71717a]">Requested: {new Date(returnRecord?.requested_at).toLocaleString('en-IN')}</span>
+          </div>
+        </AdminCard>
+
+        {/* Workflow Operational Action Buttons */}
+        <AdminCard className="space-y-3">
+          <div className="border-b border-[#f4f4f0] pb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Return Workflow Operations</h3>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
             {returnRecord?.status === 'requested' && (
               <>
                 <button
-                  onClick={handleApprove}
                   disabled={isSubmitting}
-                  className="bg-[#2D5016] hover:bg-[#1D3A28] text-white px-3 py-1.5 text-xs font-bold rounded shadow-sm"
+                  onClick={handleApprove}
+                  className="admin-btn-primary"
                 >
-                  Approve Return Request
+                  <Check size={14} weight="bold" />
+                  <span>Approve Return</span>
                 </button>
                 <button
-                  onClick={handleReject}
                   disabled={isSubmitting}
-                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 text-xs font-bold rounded shadow-sm"
+                  onClick={handleReject}
+                  className="admin-btn-secondary !border-[#dc2626] !text-[#dc2626] hover:!bg-[#fef2f2]"
                 >
-                  Reject Return
+                  <X size={14} weight="bold" />
+                  <span>Reject Return</span>
                 </button>
               </>
             )}
 
-            {(returnRecord?.status === 'approved' || returnRecord?.status === 'received' || returnRecord?.status === 'inspection') && (
+            {(returnRecord?.status === 'received' || returnRecord?.status === 'inspection') && (
               <button
+                disabled={isSubmitting}
                 onClick={() => setIsInspectModalOpen(true)}
-                className="bg-purple-700 hover:bg-purple-800 text-white px-3 py-1.5 text-xs font-bold rounded shadow-sm"
+                className="admin-btn-primary"
               >
-                Record Physical Inspection & Disposition
-              </button>
-            )}
-
-            {returnRecord?.orders?.payment_method === 'cod' && !codPayout && (
-              <button
-                onClick={() => setIsCodModalOpen(true)}
-                className="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 text-xs font-bold rounded shadow-sm"
-              >
-                Record COD Bank Payout
+                <ClipboardText size={14} weight="bold" />
+                <span>Complete Physical Inspection</span>
               </button>
             )}
 
             {returnRecord?.status === 'inspection_completed' && (
-              <button
-                onClick={handleCompleteReturn}
-                disabled={isSubmitting}
-                className="bg-[#2D5016] hover:bg-[#1D3A28] text-white px-3 py-1.5 text-xs font-bold rounded shadow-sm"
-              >
-                Finalize Return & Issue Credit Note
-              </button>
+              <>
+                {!codPayout && returnRecord?.orders?.payment_method === 'cod' && (
+                  <button
+                    disabled={isSubmitting}
+                    onClick={() => setIsCodModalOpen(true)}
+                    className="admin-btn-secondary"
+                  >
+                    <CreditCard size={14} weight="bold" />
+                    <span>Record COD Payout</span>
+                  </button>
+                )}
+                <button
+                  disabled={isSubmitting}
+                  onClick={handleCompleteReturn}
+                  className="admin-btn-primary"
+                >
+                  <Check size={14} weight="bold" />
+                  <span>Finalize & Issue Credit Note</span>
+                </button>
+              </>
             )}
           </div>
         </AdminCard>
 
-        {/* Returned Items Table */}
+        {/* Return Line Items Table */}
         <AdminCard className="space-y-3">
-          <h3 className="font-bold text-sm text-[#1D3A28] m-0">Returned Line Items</h3>
+          <div className="border-b border-[#f4f4f0] pb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Returned Line Items</h3>
+          </div>
           <div className="admin-table-container overflow-x-auto">
             <table className="admin-data-table min-w-full text-xs">
               <thead>
                 <tr>
-                  <th>Product Description</th>
-                  <th className="text-right">Return Qty</th>
+                  <th>Product Formulation</th>
+                  <th className="text-right">Quantity</th>
                   <th className="text-right">Unit Price</th>
-                  <th className="text-right">Eligible Refund</th>
+                  <th className="text-right">Refund Eligible</th>
                   <th>Condition</th>
                   <th>Inventory Disposition</th>
                 </tr>
@@ -351,23 +381,15 @@ export default function AdminReturnDetail() {
               <tbody>
                 {returnItems.map(it => (
                   <tr key={it.id}>
-                    <td className="font-bold text-[#1D3A28]">{it.products?.name || it.product_id}</td>
-                    <td className="text-right font-mono font-bold text-slate-800">{it.quantity}</td>
-                    <td className="text-right font-mono text-slate-600">₹{it.unit_price_snapshot}</td>
-                    <td className="text-right font-mono font-bold text-[#1D3A28]">₹{it.refund_eligible_amount}</td>
+                    <td className="font-semibold text-[#000000]">{it.products?.name || it.product_id}</td>
+                    <td className="text-right font-mono font-semibold text-[#000000]">{it.quantity}</td>
+                    <td className="text-right font-mono text-[#71717a]">₹{it.unit_price?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    <td className="text-right font-mono font-bold text-[#000000]">₹{it.refund_eligible_amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                     <td>
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-700 rounded">
-                        {it.condition_status || 'UNOPENED'}
-                      </span>
+                      <AdminStatusBadge status={it.condition_status?.toLowerCase()} />
                     </td>
                     <td>
-                      <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase ${
-                        it.inventory_disposition === 'restock' ? 'bg-green-100 text-green-800' :
-                        it.inventory_disposition === 'damaged' ? 'bg-red-100 text-red-800' :
-                        'bg-slate-100 text-slate-700'
-                      }`}>
-                        {it.inventory_disposition.replace('_', ' ')}
-                      </span>
+                      <span className="font-mono text-xs uppercase text-[#71717a]">{it.inventory_disposition?.replace('_', ' ')}</span>
                     </td>
                   </tr>
                 ))}
@@ -376,227 +398,188 @@ export default function AdminReturnDetail() {
           </div>
         </AdminCard>
 
-        {/* COD Payout Summary if applicable */}
-        {codPayout && (
-          <AdminCard className="bg-amber-50/60 border-l-4 border-l-amber-500">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-amber-900 m-0 mb-2">COD Bank Payout Record</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
-              <div>
-                <span className="text-[10px] text-slate-400 block uppercase">Method</span>
-                <span className="font-bold">{codPayout.payout_method}</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 block uppercase">Beneficiary</span>
-                <span className="font-bold">{codPayout.beneficiary_name}</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 block uppercase">Amount</span>
-                <span className="font-bold text-[#1D3A28]">₹{codPayout.amount}</span>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400 block uppercase">Bank UTR / Ref</span>
-                <span className="font-bold text-amber-900">{codPayout.reference_number}</span>
-              </div>
-            </div>
-          </AdminCard>
-        )}
-
-        {/* Return Status History Timeline */}
-        <AdminCard className="space-y-4">
-          <h3 className="font-bold text-sm text-[#1D3A28] m-0">Return Status Audit History</h3>
-          <div className="space-y-3">
-            {history.map((h, idx) => (
-              <div key={h.id || idx} className="flex gap-3 text-xs">
-                <div className="w-2 h-2 rounded-full bg-[#C5A059] mt-1.5 shrink-0" />
+        {/* Audit Status History */}
+        <AdminCard className="space-y-3">
+          <div className="border-b border-[#f4f4f0] pb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Return Audit History Log</h3>
+          </div>
+          <div className="space-y-2 text-xs">
+            {history.map((h) => (
+              <div key={h.id} className="flex justify-between items-center bg-[#fbfbf5] p-2.5 rounded-lg border border-[#e4e4e7]">
                 <div>
-                  <div className="font-bold text-[#1D3A28]">
-                    {h.from_status.toUpperCase()} → {h.to_status.toUpperCase()}
-                  </div>
-                  {h.note && <p className="text-slate-500 text-[11px] m-0">{h.note}</p>}
-                  <span className="font-mono text-[10px] text-slate-400">
-                    {new Date(h.created_at).toLocaleString('en-IN')}
-                  </span>
+                  <span className="font-semibold text-[#000000] capitalize">{h.from_status || 'Initial'} → {h.to_status}</span>
+                  {h.note && <span className="text-[#71717a] ml-2">({h.note})</span>}
                 </div>
+                <span className="font-mono text-[0.7rem] text-[#71717a]">{new Date(h.created_at).toLocaleString('en-IN')}</span>
               </div>
             ))}
           </div>
         </AdminCard>
+      </div>
 
-        {/* Physical Inspection Modal */}
-        {isInspectModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4 text-xs">
-              <div className="border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-base text-[#1D3A28] m-0">Physical Merchandise Inspection</h3>
-                <p className="text-slate-500 m-0">Select condition and disposition for returned items.</p>
-              </div>
-
-              <form onSubmit={handleInspectionSubmit} className="space-y-4">
-                {returnItems.map(it => (
-                  <div key={it.id} className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
-                    <div className="font-bold text-[#1D3A28]">{it.products?.name || it.product_id}</div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-500">Condition</label>
-                        <select
-                          value={itemDispositions[it.id]?.condition || 'UNOPENED'}
-                          onChange={(e) => setItemDispositions(prev => ({
-                            ...prev,
-                            [it.id]: { ...prev[it.id], condition: e.target.value }
-                          }))}
-                          className="w-full p-1.5 border border-slate-300 rounded text-xs"
-                        >
-                          <option value="UNOPENED">Unopened / Sealed</option>
-                          <option value="OPENED">Opened</option>
-                          <option value="DAMAGED">Damaged Container</option>
-                          <option value="EXPIRED">Expired Product</option>
-                          <option value="LEAKING">Leaking Container</option>
-                          <option value="TAMPERED">Tampered Seal</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-slate-500">Inventory Disposition</label>
-                        <select
-                          value={itemDispositions[it.id]?.disposition || 'restock'}
-                          onChange={(e) => setItemDispositions(prev => ({
-                            ...prev,
-                            [it.id]: { ...prev[it.id], disposition: e.target.value }
-                          }))}
-                          className="w-full p-1.5 border border-slate-300 rounded text-xs"
-                        >
-                          <option value="restock">Sellable (Restock Stock)</option>
-                          <option value="damaged">Damaged (No Restock)</option>
-                          <option value="expired">Expired (No Restock)</option>
-                          <option value="quarantine">Quarantine Inspection</option>
-                          <option value="discard">Discard / Waste</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
-                  <button
-                    type="button"
-                    onClick={() => setIsInspectModalOpen(false)}
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="bg-[#2D5016] hover:bg-[#1D3A28] text-white font-bold px-4 py-1.5 rounded-lg shadow-sm"
-                  >
-                    Save Inspection Results
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* COD Payout Modal */}
-        {isCodModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4 text-xs">
-              <div className="border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-base text-[#1D3A28] m-0">Record COD Refund Payout</h3>
-                <p className="text-slate-500 m-0">Amount: ₹{totalEligibleRefund}</p>
-              </div>
-
-              <form onSubmit={handleSaveCodPayout} className="space-y-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Payout Method *</label>
-                  <select
-                    value={payoutMethod}
-                    onChange={(e) => setPayoutMethod(e.target.value as any)}
-                    className="w-full p-2 border border-slate-300 rounded-lg text-xs"
-                  >
-                    <option value="BANK_TRANSFER">NEFT / RTGS / IMPS Bank Transfer</option>
-                    <option value="UPI">UPI Instant Payout</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Beneficiary Name *</label>
-                  <input
-                    type="text"
-                    placeholder="Customer Account Name"
-                    value={beneficiaryName}
-                    onChange={(e) => setBeneficiaryName(e.target.value)}
-                    className="w-full p-2 border border-slate-300 rounded-lg text-xs"
-                  />
-                </div>
-
-                {payoutMethod === 'BANK_TRANSFER' ? (
+      {/* Physical Inspection Modal */}
+      {isInspectModalOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#ffffff] border border-[#e4e4e7] rounded-xl max-w-lg w-full p-5 space-y-4 shadow-xl">
+            <h3 className="font-bold text-sm text-[#000000]">Physical Warehouse Inspection</h3>
+            <form onSubmit={handleInspectionSubmit} className="space-y-4 text-xs">
+              {returnItems.map(it => (
+                <div key={it.id} className="space-y-2 p-3 bg-[#fbfbf5] rounded-lg border border-[#e4e4e7]">
+                  <span className="font-semibold text-[#000000] block">{it.products?.name} (Qty: {it.quantity})</span>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block font-bold text-slate-700 mb-1">Account Last 4</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. 4882"
-                        value={accountLast4}
-                        onChange={(e) => setAccountLast4(e.target.value)}
-                        className="w-full p-2 border border-slate-300 rounded-lg text-xs"
-                      />
+                      <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold">Condition</label>
+                      <select
+                        value={itemDispositions[it.id]?.condition}
+                        onChange={(e) => setItemDispositions({
+                          ...itemDispositions,
+                          [it.id]: { ...itemDispositions[it.id], condition: e.target.value }
+                        })}
+                        className="w-full p-1.5 border border-[#e4e4e7] rounded text-xs bg-[#ffffff]"
+                      >
+                        <option value="UNOPENED">Unopened</option>
+                        <option value="DAMAGED_TRANSIT">Damaged in Transit</option>
+                        <option value="EXPIRED">Expired</option>
+                        <option value="TAMPERED">Tampered</option>
+                      </select>
                     </div>
                     <div>
-                      <label className="block font-bold text-slate-700 mb-1">IFSC Code</label>
-                      <input
-                        type="text"
-                        placeholder="SBIN0001234"
-                        value={ifscCode}
-                        onChange={(e) => setIfscCode(e.target.value)}
-                        className="w-full p-2 border border-slate-300 rounded-lg text-xs"
-                      />
+                      <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold font-sans">Disposition</label>
+                      <select
+                        value={itemDispositions[it.id]?.disposition}
+                        onChange={(e) => setItemDispositions({
+                          ...itemDispositions,
+                          [it.id]: { ...itemDispositions[it.id], disposition: e.target.value }
+                        })}
+                        className="w-full p-1.5 border border-[#e4e4e7] rounded text-xs bg-[#ffffff]"
+                      >
+                        <option value="restock">Restock to Inventory</option>
+                        <option value="quarantine">Quarantine Batch</option>
+                        <option value="scrap">Scrap / Destroy</option>
+                      </select>
                     </div>
                   </div>
-                ) : (
+                </div>
+              ))}
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsInspectModalOpen(false)}
+                  className="admin-btn-secondary"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="admin-btn-primary"
+                >
+                  Save Inspection Results
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* COD Payout Modal */}
+      {isCodModalOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#ffffff] border border-[#e4e4e7] rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl">
+            <h3 className="font-bold text-sm text-[#000000]">Record COD Refund Payout</h3>
+            <form onSubmit={handleSaveCodPayout} className="space-y-3 text-xs">
+              <div>
+                <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">Payout Method</label>
+                <select
+                  value={payoutMethod}
+                  onChange={(e) => setPayoutMethod(e.target.value as any)}
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg bg-[#ffffff]"
+                >
+                  <option value="BANK_TRANSFER">NEFT / RTGS Bank Transfer</option>
+                  <option value="UPI">UPI Instant Payout</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">Beneficiary Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Customer Full Name"
+                  value={beneficiaryName}
+                  onChange={(e) => setBeneficiaryName(e.target.value)}
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs"
+                />
+              </div>
+
+              {payoutMethod === 'BANK_TRANSFER' ? (
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block font-bold text-slate-700 mb-1">UPI ID</label>
+                    <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">Account Last 4 Digits</label>
                     <input
                       type="text"
-                      placeholder="customer@upi"
-                      value={upiId}
-                      onChange={(e) => setUpiId(e.target.value)}
-                      className="w-full p-2 border border-slate-300 rounded-lg text-xs"
+                      maxLength={4}
+                      placeholder="e.g. 5678"
+                      value={accountLast4}
+                      onChange={(e) => setAccountLast4(e.target.value)}
+                      className="w-full p-2 border border-[#e4e4e7] rounded-lg font-mono text-xs"
                     />
                   </div>
-                )}
-
+                  <div>
+                    <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">IFSC Code</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. SBIN0001234"
+                      value={ifscCode}
+                      onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
+                      className="w-full p-2 border border-[#e4e4e7] rounded-lg font-mono text-xs uppercase"
+                    />
+                  </div>
+                </div>
+              ) : (
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Bank Reference / UTR Number *</label>
+                  <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">UPI VPA ID</label>
                   <input
                     type="text"
-                    placeholder="e.g. UTR1299482910"
-                    value={referenceNumber}
-                    onChange={(e) => setReferenceNumber(e.target.value)}
-                    className="w-full p-2 border border-slate-300 rounded-lg text-xs font-mono"
+                    placeholder="e.g. customer@upi"
+                    value={upiId}
+                    onChange={(e) => setUpiId(e.target.value)}
+                    className="w-full p-2 border border-[#e4e4e7] rounded-lg font-mono text-xs"
                   />
                 </div>
+              )}
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
-                  <button
-                    type="button"
-                    onClick={() => setIsCodModalOpen(false)}
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="bg-[#2D5016] hover:bg-[#1D3A28] text-white font-bold px-4 py-1.5 rounded-lg shadow-sm"
-                  >
-                    Save Payout Record
-                  </button>
-                </div>
-              </form>
-            </div>
+              <div>
+                <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">Bank Reference / UTR Number *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. UTR123456789"
+                  value={referenceNumber}
+                  onChange={(e) => setReferenceNumber(e.target.value)}
+                  className="w-full p-2 border border-[#e4e4e7] rounded-lg font-mono text-xs"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCodModalOpen(false)}
+                  className="admin-btn-secondary"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="admin-btn-primary"
+                >
+                  Record Refund
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase, type DatabaseGSTReportRow } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
-import { Receipt, DownloadSimple, CheckCircle } from '@phosphor-icons/react';
+import { AdminCard, AdminSkeleton, AdminDataTable, AdminEmptyState } from '../components/admin/AdminPrimitives';
+import { DownloadSimple } from '@phosphor-icons/react';
 
 export default function AdminGSTReport() {
   const { showToast } = useToast();
@@ -52,79 +52,125 @@ export default function AdminGSTReport() {
     }
   };
 
+  // Aggregate Tax Summary
+  const totalTaxable = rows.reduce((acc, r) => acc + (r.total_taxable_value || 0), 0);
+  const totalCGST = rows.reduce((acc, r) => acc + (r.total_cgst || 0), 0);
+  const totalSGST = rows.reduce((acc, r) => acc + (r.total_sgst || 0), 0);
+  const totalIGST = rows.reduce((acc, r) => acc + (r.total_igst || 0), 0);
+  const totalInvoiceVal = rows.reduce((acc, r) => acc + (r.total_invoice_value || 0), 0);
+
+  const columns = [
+    { 
+      header: 'Report Month', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-mono text-xs font-semibold text-[#000000]">{r.report_month}</span> 
+    },
+    { 
+      header: 'Place of Supply', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-semibold text-xs text-[#000000]">{r.place_of_supply}</span> 
+    },
+    { 
+      header: 'HSN Code', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-mono text-xs font-semibold text-[#000000]">{r.hsn_code}</span> 
+    },
+    { 
+      header: 'GST Rate', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-mono text-xs text-[#71717a]">{r.gst_rate}%</span> 
+    },
+    { 
+      header: 'Quantity', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-mono text-xs text-[#000000]">{r.total_quantity}</span>,
+      className: 'text-right'
+    },
+    { 
+      header: 'Taxable Value', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-mono text-xs font-semibold text-[#000000]">₹{r.total_taxable_value?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>,
+      className: 'text-right'
+    },
+    { 
+      header: 'CGST (9%)', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-mono text-xs text-[#71717a]">₹{r.total_cgst?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>,
+      className: 'text-right'
+    },
+    { 
+      header: 'SGST (9%)', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-mono text-xs text-[#71717a]">₹{r.total_sgst?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>,
+      className: 'text-right'
+    },
+    { 
+      header: 'IGST (18%)', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-mono text-xs text-[#71717a]">₹{r.total_igst?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>,
+      className: 'text-right'
+    },
+    { 
+      header: 'Total Value', 
+      render: (r: DatabaseGSTReportRow) => <span className="font-mono text-xs font-bold text-[#000000]">₹{r.total_invoice_value?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>,
+      className: 'text-right'
+    }
+  ];
+
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="space-y-5 pb-12">
+        {/* Title Subheader & Action */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e4e4e7]">
           <div>
-            <h1 className="font-display font-bold text-2xl text-[#1D3A28] flex items-center gap-2">
-              <Receipt size={28} className="text-[#C5A059]" />
-              <span>GSTR-1 Preparation Report & Sales Register</span>
-            </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              State-wise Place of Supply, HSN B2B/B2C summary, CGST, SGST, IGST tax breakdown derived from invoice line snapshots.
-            </p>
+            <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">GST Compliance & Tax Reporting</span>
+            <p className="text-xs text-[#71717a] margin-0">State-wise Place of Supply, HSN B2B/B2C summary, CGST, SGST, IGST tax breakdown</p>
           </div>
 
           <button
             onClick={handleExportGSTR1}
             disabled={isExporting}
-            className="bg-[#2D5016] hover:bg-[#1D3A28] text-white px-4 py-2 text-xs font-bold rounded-lg shadow-sm flex items-center gap-2 min-h-[36px]"
+            className="admin-btn-primary self-start sm:self-auto"
           >
-            <DownloadSimple size={16} />
-            <span>Export GSTR-1 CSV</span>
+            <DownloadSimple size={14} weight="bold" />
+            <span>{isExporting ? 'Exporting...' : 'Export GSTR-1 CSV'}</span>
           </button>
         </div>
 
-        {/* GST Report Table */}
-        {loading ? (
-          <AdminSkeleton type="table" rows={4} />
-        ) : rows.length === 0 ? (
+        {/* Aggregate Tax Metric Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           <AdminCard>
-            <div className="text-center py-12">
-              <CheckCircle size={48} className="text-slate-300 mx-auto mb-3" />
-              <h3 className="font-bold text-sm text-[#1D3A28]">No Tax Invoices Found for GSTR-1</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                Issued GST tax invoices will populate state-wise tax data here.
-              </p>
-            </div>
+            <span className="text-[0.68rem] font-semibold text-[#71717a] uppercase tracking-wider block">Taxable Value</span>
+            <span className="text-lg font-bold font-mono text-[#000000]">₹{totalTaxable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
           </AdminCard>
+
+          <AdminCard>
+            <span className="text-[0.68rem] font-semibold text-[#71717a] uppercase tracking-wider block">CGST (9%)</span>
+            <span className="text-lg font-bold font-mono text-[#000000]">₹{totalCGST.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+          </AdminCard>
+
+          <AdminCard>
+            <span className="text-[0.68rem] font-semibold text-[#71717a] uppercase tracking-wider block">SGST (9%)</span>
+            <span className="text-lg font-bold font-mono text-[#000000]">₹{totalSGST.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+          </AdminCard>
+
+          <AdminCard>
+            <span className="text-[0.68rem] font-semibold text-[#71717a] uppercase tracking-wider block">IGST (18%)</span>
+            <span className="text-lg font-bold font-mono text-[#000000]">₹{totalIGST.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+          </AdminCard>
+
+          <AdminCard>
+            <span className="text-[0.68rem] font-semibold text-[#71717a] uppercase tracking-wider block">Total Sales</span>
+            <span className="text-lg font-bold font-mono text-[#000000]">₹{totalInvoiceVal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+          </AdminCard>
+        </div>
+
+        {/* GST Report Data Table */}
+        {loading ? (
+          <AdminSkeleton type="table" rows={5} />
+        ) : rows.length === 0 ? (
+          <AdminEmptyState
+            title="No Tax Data Recorded"
+            description="Issued GST tax invoices will populate state-wise tax data automatically."
+          />
         ) : (
           <AdminCard className="p-0 overflow-hidden">
-            <div className="admin-table-container overflow-x-auto">
-              <table className="admin-data-table min-w-full text-xs">
-                <thead>
-                  <tr>
-                    <th>Month</th>
-                    <th>Place of Supply (State)</th>
-                    <th>HSN Code</th>
-                    <th>GST Rate</th>
-                    <th>Quantity</th>
-                    <th>Taxable Value</th>
-                    <th>CGST</th>
-                    <th>SGST</th>
-                    <th>IGST</th>
-                    <th>Total Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((r, i) => (
-                    <tr key={i}>
-                      <td className="font-mono">{r.report_month}</td>
-                      <td className="font-bold">{r.place_of_supply}</td>
-                      <td className="font-mono font-bold">{r.hsn_code}</td>
-                      <td className="font-mono">{r.gst_rate}%</td>
-                      <td className="font-mono">{r.total_quantity}</td>
-                      <td className="font-mono font-bold">₹{r.total_taxable_value}</td>
-                      <td className="font-mono text-slate-600">₹{r.total_cgst}</td>
-                      <td className="font-mono text-slate-600">₹{r.total_sgst}</td>
-                      <td className="font-mono text-slate-600">₹{r.total_igst}</td>
-                      <td className="font-mono font-bold text-[#1D3A28]">₹{r.total_invoice_value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <AdminDataTable
+              columns={columns}
+              data={rows}
+              keyExtractor={(r) => `${r.report_month}-${r.hsn_code}-${r.place_of_supply}`}
+            />
           </AdminCard>
         )}
       </div>

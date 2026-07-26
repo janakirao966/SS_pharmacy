@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
@@ -16,6 +17,7 @@ import { Eye, CheckSquare } from '@phosphor-icons/react';
 
 export default function AdminEnquiries() {
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [enquiries, setEnquiries] = useState<any[]>([]);
@@ -32,7 +34,6 @@ export default function AdminEnquiries() {
     setLoading(true);
     setError(null);
     try {
-      // Query distributor_applications table
       const { data, error: dbError } = await supabase
         .from('distributor_applications')
         .select('*')
@@ -40,7 +41,6 @@ export default function AdminEnquiries() {
 
       if (dbError) throw dbError;
 
-      // Filter local enquiries (where company_name starts with 'Enquiry:' or is 'General Contact Enquiry')
       const list = (data || []).filter(item => 
         item.company_name.startsWith('Enquiry:') || item.company_name === 'General Contact Enquiry'
       );
@@ -89,7 +89,6 @@ export default function AdminEnquiries() {
   const handleQuickResolve = async (id: string, name: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      // Map Resolved to 'approved' status (satisfies DB CHECK constraint)
       const { error: dbError } = await supabase
         .from('distributor_applications')
         .update({ status: 'approved' })
@@ -117,33 +116,51 @@ export default function AdminEnquiries() {
   ];
 
   const columns = [
-    { header: 'Contact Name', render: (e: any) => <span className="font-bold text-[#1D3A28]">{e.contact_person}</span> },
-    { header: 'Source Type', render: (e: any) => <span className="text-slate-500 font-semibold">{e.company_name.replace('Enquiry: ', '')}</span> },
-    { header: 'Email Address', render: (e: any) => <span className="font-mono text-xs">{e.email}</span> },
-    { header: 'Phone Number', render: (e: any) => <span className="font-mono text-xs">{e.phone}</span> },
-    { header: 'Received Date', render: (e: any) => <span className="text-[10px] text-slate-400 font-medium">{new Date(e.created_at).toLocaleDateString('en-IN')}</span> },
-    { header: 'Status', render: (e: any) => <AdminStatusBadge status={e.status === 'approved' ? 'resolved' : e.status === 'under_review' ? 'in_progress' : e.status} /> },
+    { 
+      header: 'Contact Name', 
+      render: (e: any) => <span className="font-semibold text-[#000000]">{e.contact_person}</span> 
+    },
+    { 
+      header: 'Source / Type', 
+      render: (e: any) => <span className="text-[#71717a] font-medium">{e.company_name.replace('Enquiry: ', '')}</span> 
+    },
+    { 
+      header: 'Email Address', 
+      render: (e: any) => <span className="font-mono text-xs text-[#71717a]">{e.email}</span> 
+    },
+    { 
+      header: 'Phone Contact', 
+      render: (e: any) => <span className="font-mono text-xs text-[#71717a]">{e.phone}</span> 
+    },
+    { 
+      header: 'Received Date', 
+      render: (e: any) => <span className="text-xs text-[#71717a] font-mono">{new Date(e.created_at).toLocaleDateString('en-IN')}</span> 
+    },
+    { 
+      header: 'Status', 
+      render: (e: any) => <AdminStatusBadge status={e.status === 'approved' ? 'resolved' : e.status === 'under_review' ? 'in_progress' : e.status} /> 
+    },
     {
       header: 'Actions',
       render: (e: any) => (
-        <div className="flex items-center justify-end gap-1">
+        <div className="flex items-center justify-end gap-1.5">
           <button
             type="button"
-            onClick={() => window.location.href = `/admin/enquiries/${e.id}`}
-            className="admin-btn-action"
+            onClick={() => navigate(`/admin/enquiries/${e.id}`)}
+            className="admin-btn-outline !min-h-[30px] !py-1 !px-2 text-[0.7rem]"
             title="Open message preview"
           >
-            <Eye size={12} />
+            <Eye size={13} />
             <span>Open</span>
           </button>
           {e.status !== 'approved' && (
             <button
               type="button"
               onClick={(event) => handleQuickResolve(e.id, e.contact_person, event)}
-              className="admin-btn-action success-accent"
+              className="admin-btn-icon"
               title="Quick Resolve"
             >
-              <CheckSquare size={12} />
+              <CheckSquare size={13} />
             </button>
           )}
         </div>
@@ -154,15 +171,14 @@ export default function AdminEnquiries() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn">
-        <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-          <div>
-            <h2 className="text-[10px] uppercase font-bold text-[#8A6B29] tracking-wider">Customer Relations</h2>
-            <h1 className="text-xl font-bold font-display text-[#1D3A28]">Website Enquiries & Contacts</h1>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Title Subheader */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Customer Relations Workspace</span>
+          <p className="text-xs text-[#71717a] margin-0">Website contact inquiries, lead generation, and customer submissions</p>
         </div>
 
-        {/* Filter controls */}
+        {/* Filter Bar */}
         <AdminCard>
           <AdminFilterBar
             searchQuery={searchQuery}
@@ -171,13 +187,13 @@ export default function AdminEnquiries() {
             selectedFilter={statusFilter}
             onFilterChange={setStatusFilter}
             filterOptions={filterOptions}
-            filterLabel="Filter Status"
+            filterLabel="Status"
           />
         </AdminCard>
 
-        {/* Workspace Listings */}
+        {/* Listings Workspace */}
         {loading ? (
-          <AdminSkeleton type="table" rows={6} />
+          <AdminSkeleton type="table" rows={5} />
         ) : error ? (
           <AdminEmptyState
             title="Operational Error"
@@ -196,33 +212,33 @@ export default function AdminEnquiries() {
           />
         ) : (
           <div className="space-y-4">
-            {/* Desktop Table */}
+            {/* Desktop Table View */}
             <div className="hidden md:block">
               <AdminCard className="p-0 overflow-hidden">
                 <AdminDataTable
                   columns={columns}
                   data={paginatedList}
                   keyExtractor={(e) => e.id}
-                  onRowClick={(e) => window.location.href = `/admin/enquiries/${e.id}`}
+                  onRowClick={(e) => navigate(`/admin/enquiries/${e.id}`)}
                 />
               </AdminCard>
             </div>
 
-            {/* Mobile Cards */}
+            {/* Mobile Stacked Record View */}
             <div className="md:hidden space-y-3">
               {paginatedList.map((e) => (
                 <AdminMobileRecord
                   key={e.id}
                   title={e.contact_person}
                   subtitle={e.company_name.replace('Enquiry: ', '')}
-                  meta={`${e.phone} · Received: ${new Date(e.created_at).toLocaleDateString('en-IN')}`}
+                  meta={`Phone: ${e.phone} · ${e.email}`}
                   badge={<AdminStatusBadge status={e.status === 'approved' ? 'resolved' : e.status === 'under_review' ? 'in_progress' : e.status} />}
                   actionUrl={`/admin/enquiries/${e.id}`}
                 />
               ))}
             </div>
 
-            {/* Pagination controls */}
+            {/* Pagination Controls */}
             <AdminPagination
               currentPage={currentPage}
               totalPages={totalPages}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase, type DatabaseOrder } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
@@ -16,6 +17,7 @@ import { Eye } from '@phosphor-icons/react';
 
 export default function AdminOrders() {
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<DatabaseOrder[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,7 @@ export default function AdminOrders() {
       setOrders(data || []);
     } catch (err: any) {
       console.error('Error loading orders:', err);
-      setError('Unable to retrieve orders. Please check database permissions.');
+      setError('Unable to retrieve purchase orders. Please check network connectivity.');
       showToast('Error syncing orders list.', 'error');
     } finally {
       setLoading(false);
@@ -89,22 +91,69 @@ export default function AdminOrders() {
     { label: 'Cancelled', value: 'cancelled' }
   ];
 
+  // Quick category summary counts
+  const counts = {
+    all: orders.length,
+    new: orders.filter(o => o.order_status === 'new').length,
+    confirmed: orders.filter(o => o.order_status === 'confirmed').length,
+    processing: orders.filter(o => o.order_status === 'processing').length,
+    shipped: orders.filter(o => o.order_status === 'shipped').length,
+    delivered: orders.filter(o => o.order_status === 'delivered').length,
+    cancelled: orders.filter(o => o.order_status === 'cancelled').length
+  };
+
   const columns = [
-    { header: 'Order ID', render: (o: DatabaseOrder) => <span className="font-mono font-bold text-[#1D3A28]">{o.order_number}</span> },
-    { header: 'Customer', render: (o: DatabaseOrder) => <span>{o.customer_name}</span> },
-    { header: 'Phone', render: (o: DatabaseOrder) => <span className="font-mono text-slate-500">{o.customer_phone}</span> },
-    { header: 'Method', render: (o: DatabaseOrder) => <span className="uppercase text-[10px] font-bold text-slate-500">{o.payment_method.replace('online_razorpay', 'razorpay')}</span> },
-    { header: 'Payment Status', render: (o: DatabaseOrder) => <AdminStatusBadge status={o.payment_status} /> },
-    { header: 'Order Status', render: (o: DatabaseOrder) => <AdminStatusBadge status={o.order_status} /> },
-    { header: 'Total Amount', render: (o: DatabaseOrder) => <span className="font-mono font-bold">₹{o.total_amount}</span> },
     { 
-      header: 'Actions', 
+      header: 'Order #', 
+      render: (o: DatabaseOrder) => <span className="font-mono font-semibold text-[#000000]">{o.order_number}</span> 
+    },
+    { 
+      header: 'Customer', 
+      render: (o: DatabaseOrder) => (
+        <div className="flex flex-col">
+          <span className="font-medium text-[#000000]">{o.customer_name}</span>
+          <span className="text-[0.7rem] text-[#71717a] font-mono">{o.customer_phone}</span>
+        </div>
+      ) 
+    },
+    { 
+      header: 'Date', 
+      render: (o: DatabaseOrder) => (
+        <span className="text-[0.75rem] text-[#71717a] font-medium">
+          {new Date(o.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+        </span>
+      ) 
+    },
+    { 
+      header: 'Payment', 
+      render: (o: DatabaseOrder) => (
+        <div className="flex flex-col items-start gap-0.5">
+          <span className="uppercase text-[0.65rem] font-semibold text-[#71717a]">
+            {o.payment_method.replace('online_razorpay', 'razorpay')}
+          </span>
+          <AdminStatusBadge status={o.payment_status} />
+        </div>
+      ) 
+    },
+    { 
+      header: 'Fulfillment Status', 
+      render: (o: DatabaseOrder) => <AdminStatusBadge status={o.order_status} /> 
+    },
+    { 
+      header: 'Total', 
+      render: (o: DatabaseOrder) => <span className="font-mono font-semibold text-[#000000]">₹{o.total_amount?.toLocaleString('en-IN')}</span> 
+    },
+    { 
+      header: 'Action', 
       render: (o: DatabaseOrder) => (
         <button 
           type="button" 
-          onClick={() => window.location.href = `/admin/orders/${o.id}`}
-          className="admin-btn-action"
-          aria-label={`View order ${o.order_number}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/admin/orders/${o.id}`);
+          }}
+          className="admin-btn-outline !min-h-[32px] !py-1 !px-3 text-xs"
+          aria-label={`View details for order ${o.order_number}`}
         >
           <Eye size={14} />
           <span>View</span>
@@ -116,40 +165,124 @@ export default function AdminOrders() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn">
-        <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-          <div>
-            <h2 className="text-[10px] uppercase font-bold text-[#8A6B29] tracking-wider">Commerce Module</h2>
-            <h1 className="text-xl font-bold font-display text-[#1D3A28]">Customer Purchase Orders</h1>
+      <div className="space-y-5">
+        {/* Page Subtitle & Summary Filter Pills */}
+        <div className="flex flex-col gap-3 pb-3 border-b border-[#e4e4e7]">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Order Management Workspace</span>
+              <p className="text-xs text-[#71717a] margin-0">Review, process, and update customer order lifecycles</p>
+            </div>
+          </div>
+
+          {/* Category Summary Count Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+            <button
+              type="button"
+              onClick={() => setStatusFilter('all')}
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                statusFilter === 'all' 
+                  ? 'bg-[#000000] text-[#ffffff]' 
+                  : 'bg-[#ffffff] text-[#71717a] border border-[#e4e4e7] hover:bg-[#f4f4f0]'
+              }`}
+            >
+              All ({counts.all})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('new')}
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                statusFilter === 'new' 
+                  ? 'bg-[#000000] text-[#ffffff]' 
+                  : 'bg-[#ffffff] text-[#71717a] border border-[#e4e4e7] hover:bg-[#f4f4f0]'
+              }`}
+            >
+              New ({counts.new})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('confirmed')}
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                statusFilter === 'confirmed' 
+                  ? 'bg-[#000000] text-[#ffffff]' 
+                  : 'bg-[#ffffff] text-[#71717a] border border-[#e4e4e7] hover:bg-[#f4f4f0]'
+              }`}
+            >
+              Confirmed ({counts.confirmed})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('processing')}
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                statusFilter === 'processing' 
+                  ? 'bg-[#000000] text-[#ffffff]' 
+                  : 'bg-[#ffffff] text-[#71717a] border border-[#e4e4e7] hover:bg-[#f4f4f0]'
+              }`}
+            >
+              Processing ({counts.processing})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('shipped')}
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                statusFilter === 'shipped' 
+                  ? 'bg-[#000000] text-[#ffffff]' 
+                  : 'bg-[#ffffff] text-[#71717a] border border-[#e4e4e7] hover:bg-[#f4f4f0]'
+              }`}
+            >
+              Shipped ({counts.shipped})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('delivered')}
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                statusFilter === 'delivered' 
+                  ? 'bg-[#000000] text-[#ffffff]' 
+                  : 'bg-[#ffffff] text-[#71717a] border border-[#e4e4e7] hover:bg-[#f4f4f0]'
+              }`}
+            >
+              Delivered ({counts.delivered})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('cancelled')}
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                statusFilter === 'cancelled' 
+                  ? 'bg-[#000000] text-[#ffffff]' 
+                  : 'bg-[#ffffff] text-[#71717a] border border-[#e4e4e7] hover:bg-[#f4f4f0]'
+              }`}
+            >
+              Cancelled ({counts.cancelled})
+            </button>
           </div>
         </div>
 
-        {/* Filter controls */}
+        {/* Filter Bar */}
         <AdminCard>
           <AdminFilterBar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            searchPlaceholder="Search order number, customer name, or mobile..."
+            searchPlaceholder="Search order ID, customer name, or phone number..."
             selectedFilter={statusFilter}
             onFilterChange={setStatusFilter}
             filterOptions={filterOptions}
-            filterLabel="Order Status"
+            filterLabel="Status"
           />
         </AdminCard>
 
-        {/* Main List Workspace */}
+        {/* Main Workspace List */}
         {loading ? (
           <AdminSkeleton type="table" rows={6} />
         ) : error ? (
           <AdminEmptyState
-            title="Operational Error"
+            title="Unable to Sync Orders"
             description={error}
             actionLabel="Retry Sync"
             onActionClick={fetchOrders}
           />
         ) : totalRecords === 0 ? (
           <AdminEmptyState
-            title="No Orders Found"
+            title="No Purchase Orders Found"
             description={
               searchQuery || statusFilter !== 'all'
                 ? 'No purchase orders match your search and filter criteria.'
@@ -165,7 +298,7 @@ export default function AdminOrders() {
                   columns={columns}
                   data={paginatedOrders}
                   keyExtractor={(o) => o.id}
-                  onRowClick={(o) => window.location.href = `/admin/orders/${o.id}`}
+                  onRowClick={(o) => navigate(`/admin/orders/${o.id}`)}
                 />
               </AdminCard>
             </div>

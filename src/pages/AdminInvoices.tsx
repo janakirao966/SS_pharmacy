@@ -1,19 +1,33 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase, type DatabaseInvoice } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
-import { Receipt, MagnifyingGlass, DownloadSimple, ArrowClockwise, FileText, CheckCircle, Warning } from '@phosphor-icons/react';
+import { 
+  AdminCard, 
+  AdminStatusBadge, 
+  AdminDataTable, 
+  AdminMobileRecord, 
+  AdminFilterBar, 
+  AdminPagination, 
+  AdminSkeleton, 
+  AdminEmptyState 
+} from '../components/admin/AdminPrimitives';
+import { DownloadSimple, ArrowClockwise } from '@phosphor-icons/react';
 
 export default function AdminInvoices() {
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [invoices, setInvoices] = useState<DatabaseInvoice[]>([]);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('ALL');
   const [pdfFilter, setPdfFilter] = useState<string>('ALL');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10;
 
   const fetchInvoices = async () => {
     setLoading(true);
@@ -38,7 +52,8 @@ export default function AdminInvoices() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleRetryPdf = async (invoiceId: string) => {
+  const handleRetryPdf = async (invoiceId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setIsSubmitting(true);
     try {
       const { data, error: fnErr } = await supabase.functions.invoke('generate-invoice-pdf', {
@@ -57,7 +72,8 @@ export default function AdminInvoices() {
     }
   };
 
-  const handleDownloadPdf = async (inv: DatabaseInvoice) => {
+  const handleDownloadPdf = async (inv: DatabaseInvoice, e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!inv.pdf_storage_path) {
       showToast('PDF storage path not available. Regenerate PDF first.', 'error');
       return;
@@ -82,150 +98,209 @@ export default function AdminInvoices() {
     return matchesSearch && matchesType && matchesPdf;
   });
 
+  // Pagination calculations
+  const totalRecords = filteredInvoices.length;
+  const totalPages = Math.ceil(totalRecords / recordsPerPage);
+  const paginatedInvoices = filteredInvoices.slice(
+    (currentPage - 1) * recordsPerPage,
+    currentPage * recordsPerPage
+  );
+
+  // Reset page when search or filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, typeFilter, pdfFilter]);
+
+  // Aggregate metrics
+  const totalTaxable = invoices.reduce((acc, i) => acc + (i.taxable_value || 0), 0);
+  const totalGrand = invoices.reduce((acc, i) => acc + (i.grand_total || 0), 0);
+
+  const filterOptions = [
+    { label: 'All Document Types', value: 'ALL' },
+    { label: 'Tax Invoices', value: 'TAX_INVOICE' },
+    { label: 'Bills of Supply', value: 'BILL_OF_SUPPLY' }
+  ];
+
+  const columns = [
+    { 
+      header: 'Invoice #', 
+      render: (inv: DatabaseInvoice) => <span className="font-mono font-semibold text-[#000000]">{inv.invoice_number}</span> 
+    },
+    { 
+      header: 'Doc Type', 
+      render: (inv: DatabaseInvoice) => <AdminStatusBadge status={inv.invoice_type.toLowerCase()} /> 
+    },
+    { 
+      header: 'Customer Info', 
+      render: (inv: DatabaseInvoice) => (
+        <div>
+          <span className="font-semibold text-[#000000] block text-xs">{inv.customer_name}</span>
+          {inv.customer_gstin && <span className="text-[0.68rem] font-mono text-[#71717a]">GSTIN: {inv.customer_gstin}</span>}
+        </div>
+      ) 
+    },
+    { 
+      header: 'FY', 
+      render: (inv: DatabaseInvoice) => <span className="font-mono text-xs text-[#71717a]">{inv.financial_year}</span> 
+    },
+    { 
+      header: 'Taxable Value', 
+      render: (inv: DatabaseInvoice) => <span className="font-mono text-xs font-semibold text-[#000000]">₹{inv.taxable_value?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>,
+      className: 'text-right'
+    },
+    { 
+      header: 'Grand Total', 
+      render: (inv: DatabaseInvoice) => <span className="font-mono text-xs font-bold text-[#000000]">₹{inv.grand_total?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>,
+      className: 'text-right'
+    },
+    { 
+      header: 'PDF Status', 
+      render: (inv: DatabaseInvoice) => <AdminStatusBadge status={inv.pdf_status} /> 
+    },
+    { 
+      header: 'Actions', 
+      render: (inv: DatabaseInvoice) => (
+        <div className="flex items-center justify-end gap-1.5">
+          {inv.pdf_status === 'generated' && (
+            <button
+              onClick={(e) => handleDownloadPdf(inv, e)}
+              className="admin-btn-outline !min-h-[30px] !py-1 !px-2 text-[0.7rem]"
+              aria-label={`Download PDF for invoice ${inv.invoice_number}`}
+            >
+              <DownloadSimple size={13} weight="bold" />
+              <span>PDF</span>
+            </button>
+          )}
+          {(inv.pdf_status === 'failed' || inv.pdf_status === 'pending') && (
+            <button
+              disabled={isSubmitting}
+              onClick={(e) => handleRetryPdf(inv.id, e)}
+              className="admin-btn-secondary text-[0.7rem] !py-1 !px-2"
+            >
+              <ArrowClockwise size={13} weight="bold" />
+              <span>Generate</span>
+            </button>
+          )}
+          <Link
+            to={`/admin/orders/${inv.order_id}`}
+            className="admin-btn-outline !min-h-[30px] !py-1 !px-2 text-[0.7rem]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Order
+          </Link>
+        </div>
+      ),
+      className: 'text-right'
+    }
+  ];
+
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-          <div>
-            <h1 className="font-display font-bold text-2xl text-[#1D3A28] flex items-center gap-2">
-              <Receipt size={28} className="text-[#C5A059]" />
-              <span>GST Tax Invoices & Financial Documents</span>
-            </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Authoritative, immutable financial snapshots for issued tax invoices and bills of supply.
-            </p>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Title Subheader */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Financial Administration & Tax Records</span>
+          <p className="text-xs text-[#71717a] margin-0">Authoritative tax invoices, bills of supply, and GST accounting documents</p>
         </div>
 
-        {/* Filter Controls */}
-        <AdminCard className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="relative">
-              <MagnifyingGlass size={16} className="absolute left-3 top-3 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search Invoice # or Customer Name..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs"
-              />
-            </div>
-            <div>
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="w-full py-2 px-3 border border-slate-300 rounded-lg text-xs"
-              >
-                <option value="ALL">All Document Types</option>
-                <option value="TAX_INVOICE">Tax Invoice</option>
-                <option value="BILL_OF_SUPPLY">Bill of Supply</option>
-              </select>
-            </div>
-            <div>
+        {/* Financial Summary Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+          <AdminCard>
+            <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider block">Total Invoices</span>
+            <span className="text-xl font-bold font-mono text-[#000000]">{invoices.length}</span>
+          </AdminCard>
+
+          <AdminCard>
+            <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider block">Total Taxable Value</span>
+            <span className="text-xl font-bold font-mono text-[#000000]">₹{totalTaxable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+          </AdminCard>
+
+          <AdminCard>
+            <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider block">Total Billing Value</span>
+            <span className="text-xl font-bold font-mono text-[#000000]">₹{totalGrand.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+          </AdminCard>
+
+          <AdminCard>
+            <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider block">PDF Storage Status</span>
+            <span className="text-xl font-bold font-mono text-[#000000]">
+              {invoices.filter(i => i.pdf_status === 'generated').length} / {invoices.length}
+            </span>
+          </AdminCard>
+        </div>
+
+        {/* Search & Filters Bar */}
+        <AdminCard className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <AdminFilterBar
+              searchQuery={search}
+              onSearchChange={setSearch}
+              searchPlaceholder="Search Invoice # or Customer Name..."
+              selectedFilter={typeFilter}
+              onFilterChange={setTypeFilter}
+              filterOptions={filterOptions}
+              filterLabel="Doc Type"
+            />
+            <div className="flex items-center gap-2 justify-end">
+              <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase">PDF Status:</span>
               <select
                 value={pdfFilter}
                 onChange={(e) => setPdfFilter(e.target.value)}
-                className="w-full py-2 px-3 border border-slate-300 rounded-lg text-xs"
+                className="py-1.5 px-2.5 text-xs font-semibold rounded-lg border border-[#e4e4e7] bg-[#ffffff] text-[#000000]"
               >
                 <option value="ALL">All PDF Statuses</option>
-                <option value="generated">PDF Generated</option>
-                <option value="pending">PDF Pending</option>
-                <option value="failed">PDF Failed</option>
+                <option value="generated">Generated</option>
+                <option value="pending">Pending</option>
+                <option value="failed">Failed</option>
               </select>
             </div>
           </div>
         </AdminCard>
 
-        {/* Invoices List */}
+        {/* Invoices Workspace */}
         {loading ? (
-          <AdminSkeleton type="table" rows={4} />
-        ) : filteredInvoices.length === 0 ? (
-          <AdminCard>
-            <div className="text-center py-12">
-              <FileText size={48} className="text-slate-300 mx-auto mb-3" />
-              <h3 className="font-bold text-sm text-[#1D3A28]">No Issued Invoices Found</h3>
-              <p className="text-xs text-slate-500 mt-1">Invoices will appear here as orders reach packed/shipped eligibility.</p>
-            </div>
-          </AdminCard>
+          <AdminSkeleton type="table" rows={5} />
+        ) : totalRecords === 0 ? (
+          <AdminEmptyState
+            title="No Invoices Found"
+            description="No issued tax invoices match your search and filter parameters."
+          />
         ) : (
-          <AdminCard className="p-0 overflow-hidden">
-            <div className="admin-table-container overflow-x-auto">
-              <table className="admin-data-table min-w-full text-xs">
-                <thead>
-                  <tr>
-                    <th>Invoice Number</th>
-                    <th>Document Type</th>
-                    <th>Customer</th>
-                    <th>Financial Year</th>
-                    <th>Taxable Value</th>
-                    <th>Grand Total</th>
-                    <th>PDF Status</th>
-                    <th className="text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredInvoices.map((inv) => (
-                    <tr key={inv.id}>
-                      <td className="font-mono font-bold text-[#1D3A28]">{inv.invoice_number}</td>
-                      <td>
-                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase ${
-                          inv.invoice_type === 'TAX_INVOICE' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {inv.invoice_type.replace('_', ' ')}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="font-bold text-[#1D3A28]">{inv.customer_name}</div>
-                        {inv.customer_gstin && <div className="text-[10px] font-mono text-slate-500">GSTIN: {inv.customer_gstin}</div>}
-                      </td>
-                      <td className="font-mono text-center">{inv.financial_year}</td>
-                      <td className="font-mono">₹{inv.taxable_value}</td>
-                      <td className="font-mono font-bold text-[#1D3A28]">₹{inv.grand_total}</td>
-                      <td>
-                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase inline-flex items-center gap-1 ${
-                          inv.pdf_status === 'generated' ? 'bg-green-100 text-green-800' :
-                          inv.pdf_status === 'failed' ? 'bg-red-100 text-red-800' :
-                          'bg-amber-100 text-amber-800'
-                        }`}>
-                          {inv.pdf_status === 'generated' && <CheckCircle size={12} />}
-                          {inv.pdf_status === 'failed' && <Warning size={12} />}
-                          <span>{inv.pdf_status}</span>
-                        </span>
-                      </td>
-                      <td className="text-right space-x-2">
-                        {inv.pdf_status === 'generated' && (
-                          <button
-                            onClick={() => handleDownloadPdf(inv)}
-                            className="bg-[#2D5016] hover:bg-[#1D3A28] text-white px-2.5 py-1 text-[11px] font-bold rounded shadow-sm transition-colors inline-flex items-center gap-1"
-                          >
-                            <DownloadSimple size={12} weight="bold" />
-                            <span>PDF</span>
-                          </button>
-                        )}
-                        {(inv.pdf_status === 'failed' || inv.pdf_status === 'pending') && (
-                          <button
-                            disabled={isSubmitting}
-                            onClick={() => handleRetryPdf(inv.id)}
-                            className="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 text-[11px] font-bold rounded shadow-sm transition-colors inline-flex items-center gap-1"
-                          >
-                            <ArrowClockwise size={12} weight="bold" />
-                            <span>Generate PDF</span>
-                          </button>
-                        )}
-                        <Link
-                          to={`/admin/orders/${inv.order_id}`}
-                          className="bg-slate-100 text-slate-700 hover:bg-slate-200 px-2.5 py-1 text-[11px] font-bold rounded border border-slate-300 inline-block"
-                        >
-                          Order
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="space-y-4">
+            {/* Desktop Table View */}
+            <div className="hidden md:block">
+              <AdminCard className="p-0 overflow-hidden">
+                <AdminDataTable
+                  columns={columns}
+                  data={paginatedInvoices}
+                  keyExtractor={(inv) => inv.id}
+                  onRowClick={(inv) => navigate(`/admin/orders/${inv.order_id}`)}
+                />
+              </AdminCard>
             </div>
-          </AdminCard>
+
+            {/* Mobile Stacked Record View */}
+            <div className="md:hidden space-y-3">
+              {paginatedInvoices.map((inv) => (
+                <AdminMobileRecord
+                  key={inv.id}
+                  title={inv.invoice_number}
+                  subtitle={inv.customer_name}
+                  meta={`Total: ₹${inv.grand_total?.toLocaleString('en-IN')} · FY: ${inv.financial_year}`}
+                  badge={<AdminStatusBadge status={inv.pdf_status} />}
+                  actionUrl={`/admin/orders/${inv.order_id}`}
+                />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalRecords={totalRecords}
+              recordsPerPage={recordsPerPage}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         )}
       </div>
     </AdminLayout>

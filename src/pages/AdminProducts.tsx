@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { products as initialProducts, type Product } from '../data/products';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
@@ -18,6 +18,7 @@ import { Plus, Eye, Copy, Trash } from '@phosphor-icons/react';
 
 export default function AdminProducts() {
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [productList, setProductList] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -76,7 +77,6 @@ export default function AdminProducts() {
   const handleConfirmAction = () => {
     if (!pendingAction) return;
     setIsConfirmOpen(false);
-
     const { type, productId } = pendingAction;
     const target = productList.find(p => p.id === productId);
     if (!target) return;
@@ -92,7 +92,6 @@ export default function AdminProducts() {
       sessionStorage.setItem('ssp-mock-products', JSON.stringify(updated));
       showToast(`Duplicated "${target.name}" in Preview Mode.`, 'success');
     } else if (type === 'archive') {
-      // Filter out of current list for demonstration
       const updated = productList.filter(p => p.id !== productId);
       setProductList(updated);
       sessionStorage.setItem('ssp-mock-products', JSON.stringify(updated));
@@ -109,53 +108,53 @@ export default function AdminProducts() {
 
   const columns = [
     { 
-      header: 'Product Name', 
+      header: 'Formulation Product', 
       render: (p: Product) => (
         <div className="flex items-center gap-3">
           <img 
             src={p.image || `${import.meta.env.BASE_URL}products/logo/logo.webp`}
             alt={p.name} 
-            className="w-10 h-10 object-contain bg-[#FEFDF8] border border-[#E8E2D5] rounded-lg p-1"
+            className="w-9 h-9 object-contain bg-[#ffffff] border border-[#e4e4e7] rounded-md p-1 shrink-0"
           />
           <div>
-            <span className="font-bold text-[#1D3A28] block">{p.name}</span>
-            <span className="text-[10px] text-slate-400 font-mono">ID: {p.id}</span>
+            <span className="font-semibold text-[#000000] block text-xs">{p.name}</span>
+            <span className="text-[0.7rem] text-[#71717a] font-mono">ID: {p.id}</span>
           </div>
         </div>
       )
     },
-    { header: 'Category', render: (p: Product) => <span className="text-xs text-slate-600">{p.category}</span> },
-    { header: 'Pack Size', render: (p: Product) => <span className="font-mono text-xs">{p.packSize}</span> },
-    { header: 'MRP Price', render: (p: Product) => <span className="font-mono font-bold">₹{p.mrp}</span> },
+    { header: 'Category', render: (p: Product) => <span className="text-xs text-[#71717a]">{p.category}</span> },
+    { header: 'Pack Size', render: (p: Product) => <span className="font-mono text-xs text-[#000000]">{p.packSize}</span> },
+    { header: 'MRP Price', render: (p: Product) => <span className="font-mono font-semibold text-[#000000]">₹{p.mrp?.toLocaleString('en-IN')}</span> },
     { header: 'Status', render: () => <AdminStatusBadge status="active" /> },
     { 
       header: 'Actions', 
       render: (p: Product) => (
-        <div className="flex items-center justify-end gap-1">
+        <div className="flex items-center justify-end gap-1.5">
           <button 
             type="button" 
-            onClick={() => window.location.href = `/admin/products/${p.id}`}
-            className="admin-btn-action"
-            title="Edit product info"
+            onClick={() => navigate(`/admin/products/${p.id}`)}
+            className="admin-btn-outline !min-h-[30px] !py-1 !px-2 text-[0.7rem]"
+            title="Edit product formulation"
           >
-            <Eye size={12} />
+            <Eye size={13} />
             <span>Edit</span>
           </button>
           <button 
             type="button" 
             onClick={(e) => handleActionClick('duplicate', p.id, e)}
-            className="admin-btn-action"
-            title="Duplicate product details"
+            className="admin-btn-icon"
+            title="Duplicate product"
           >
-            <Copy size={12} />
+            <Copy size={13} />
           </button>
           <button 
             type="button" 
             onClick={(e) => handleActionClick('archive', p.id, e)}
-            className="admin-btn-action danger"
+            className="admin-btn-icon !border-[#dc2626] !text-[#dc2626] hover:!bg-[#fef2f2]"
             title="Archive product"
           >
-            <Trash size={12} />
+            <Trash size={13} />
           </button>
         </div>
       ),
@@ -165,28 +164,29 @@ export default function AdminProducts() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn">
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-slate-200">
+      <div className="space-y-5">
+        {/* Workspace Title & Action Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e4e4e7]">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-[10px] uppercase font-bold text-[#8A6B29] tracking-wider">Catalog Inventory</h2>
+              <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Catalog Workspace</span>
               <PreviewModeBadge />
             </div>
-            <h1 className="text-xl font-bold font-display text-[#1D3A28] mt-0.5">Ayurvedic Formulations & Packshots</h1>
+            <p className="text-xs text-[#71717a] margin-0">Manage licensed Ayurvedic formulations, packshots, and prices</p>
           </div>
 
-          <Link to="/admin/products/new" className="admin-btn-primary">
-            <Plus size={16} weight="bold" />
+          <Link to="/admin/products/new" className="admin-btn-primary self-start sm:self-auto">
+            <Plus size={15} weight="bold" />
             <span>Add Formulation</span>
           </Link>
         </div>
 
-        {/* Filter controls */}
+        {/* Filter Bar */}
         <AdminCard>
           <AdminFilterBar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            searchPlaceholder="Search product name or categories..."
+            searchPlaceholder="Search product title or categories..."
             selectedFilter={categoryFilter}
             onFilterChange={setCategoryFilter}
             filterOptions={filterOptions}
@@ -194,29 +194,29 @@ export default function AdminProducts() {
           />
         </AdminCard>
 
-        {/* Listings Workspace */}
+        {/* Workspace Listings */}
         {totalRecords === 0 ? (
           <AdminEmptyState
             title="No Products Found"
-            description="No formulations match your search parameters. You can add a new one in Preview Mode."
+            description="No formulations match your search parameters. You can create a new formulation in Preview Mode."
             actionLabel="Add Formulation"
-            onActionClick={() => window.location.href = '/admin/products/new'}
+            onActionClick={() => navigate('/admin/products/new')}
           />
         ) : (
           <div className="space-y-4">
-            {/* Desktop Table */}
+            {/* Desktop Table View */}
             <div className="hidden md:block">
               <AdminCard className="p-0 overflow-hidden">
                 <AdminDataTable
                   columns={columns}
                   data={paginatedProducts}
                   keyExtractor={(p) => p.id}
-                  onRowClick={(p) => window.location.href = `/admin/products/${p.id}`}
+                  onRowClick={(p) => navigate(`/admin/products/${p.id}`)}
                 />
               </AdminCard>
             </div>
 
-            {/* Mobile Cards */}
+            {/* Mobile Stacked View */}
             <div className="md:hidden space-y-3">
               {paginatedProducts.map((p) => (
                 <AdminMobileRecord
@@ -230,7 +230,7 @@ export default function AdminProducts() {
               ))}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination Controls */}
             <AdminPagination
               currentPage={currentPage}
               totalPages={totalPages}
@@ -242,16 +242,16 @@ export default function AdminProducts() {
         )}
       </div>
 
-      {/* Confirmation guard */}
+      {/* Confirmation Guard Dialog */}
       <AdminConfirmDialog
         isOpen={isConfirmOpen}
         title={pendingAction?.type === 'duplicate' ? 'Duplicate Formulation?' : 'Archive Formulation?'}
         message={
           pendingAction?.type === 'duplicate'
-            ? 'Are you sure you want to duplicate this product schema details? A copy will be added to your preview catalog.'
-            : 'Are you sure you want to archive this product? It will be removed from your preview catalog listing.'
+            ? 'Are you sure you want to duplicate this formulation in local Preview Mode?'
+            : 'Are you sure you want to archive this formulation? It will be removed from your active session catalog.'
         }
-        confirmLabel={pendingAction?.type === 'duplicate' ? 'Duplicate' : 'Archive'}
+        confirmLabel={pendingAction?.type === 'duplicate' ? 'Duplicate Product' : 'Archive Product'}
         cancelLabel="Cancel"
         isDestructive={pendingAction?.type === 'archive'}
         onConfirm={handleConfirmAction}

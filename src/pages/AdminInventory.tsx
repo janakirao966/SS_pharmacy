@@ -1,13 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
-import { Package, MagnifyingGlass, Warning, CheckCircle, ArrowClockwise } from '@phosphor-icons/react';
+import { 
+  AdminCard, 
+  AdminSkeleton, 
+  AdminStatusBadge, 
+  AdminFilterBar, 
+  AdminDataTable, 
+  AdminMobileRecord, 
+  AdminEmptyState 
+} from '../components/admin/AdminPrimitives';
+import { ArrowClockwise } from '@phosphor-icons/react';
 
 export default function AdminInventory() {
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [inventoryList, setInventoryList] = useState<any[]>([]);
   const [search, setSearch] = useState('');
@@ -39,6 +48,7 @@ export default function AdminInventory() {
 
   useEffect(() => {
     fetchInventory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleOpenAdjustModal = (item: any) => {
@@ -102,206 +112,233 @@ export default function AdminInventory() {
   const lowStockCount = inventoryList.filter(i => (i.quantity_on_hand - i.quantity_reserved) > 0 && (i.quantity_on_hand - i.quantity_reserved) <= i.reorder_level).length;
   const outOfStockCount = inventoryList.filter(i => (i.quantity_on_hand - i.quantity_reserved) <= 0).length;
 
+  const filterOptions = [
+    { label: 'All Stock Statuses', value: 'ALL' },
+    { label: 'In Stock', value: 'IN_STOCK' },
+    { label: 'Low Stock', value: 'LOW_STOCK' },
+    { label: 'Out of Stock', value: 'OUT_OF_STOCK' },
+    { label: 'Disabled', value: 'DISABLED' }
+  ];
+
+  const columns = [
+    {
+      header: 'Product Description',
+      render: (item: any) => (
+        <div>
+          <span className="font-semibold text-[#000000] block text-xs">{item.products?.name || item.product_id}</span>
+          <span className="text-[0.7rem] text-[#71717a]">{item.products?.category}</span>
+        </div>
+      )
+    },
+    {
+      header: 'SKU',
+      render: (item: any) => <span className="font-mono text-xs text-[#71717a]">{item.sku || 'N/A'}</span>
+    },
+    {
+      header: 'On Hand',
+      render: (item: any) => <span className="font-mono font-semibold text-[#000000]">{item.quantity_on_hand}</span>,
+      className: 'text-right'
+    },
+    {
+      header: 'Reserved',
+      render: (item: any) => <span className="font-mono text-[#71717a]">{item.quantity_reserved}</span>,
+      className: 'text-right'
+    },
+    {
+      header: 'Available',
+      render: (item: any) => {
+        const available = item.quantity_on_hand - item.quantity_reserved;
+        return <span className="font-mono font-semibold text-[#000000]">{available}</span>;
+      },
+      className: 'text-right'
+    },
+    {
+      header: 'Reorder Level',
+      render: (item: any) => <span className="font-mono text-xs text-[#71717a]">{item.reorder_level}</span>,
+      className: 'text-center'
+    },
+    {
+      header: 'Stock Condition',
+      render: (item: any) => {
+        const available = item.quantity_on_hand - item.quantity_reserved;
+        let status = 'in_stock';
+        if (!item.inventory_enabled) status = 'disabled';
+        else if (available <= 0) status = 'out_of_stock';
+        else if (available <= item.reorder_level) status = 'low_stock';
+
+        return <AdminStatusBadge status={status} />;
+      }
+    },
+    {
+      header: 'Actions',
+      render: (item: any) => (
+        <div className="flex items-center justify-end gap-1.5">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenAdjustModal(item);
+            }}
+            className="admin-btn-outline !min-h-[30px] !py-1 !px-2 text-[0.7rem]"
+          >
+            <ArrowClockwise size={13} weight="bold" />
+            <span>Adjust</span>
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/admin/inventory/${item.product_id}`);
+            }}
+            aria-label={`View ledger history for ${item.products?.name || item.product_id}`}
+            className="admin-btn-icon"
+            title="Ledger History"
+          >
+            <span>Ledger</span>
+          </button>
+        </div>
+      ),
+      className: 'text-right'
+    }
+  ];
+
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-          <div>
-            <h1 className="font-display font-bold text-2xl text-[#1D3A28] flex items-center gap-2">
-              <Package size={28} className="text-[#C5A059]" />
-              <span>Production Inventory & Stock Control</span>
-            </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Server-authoritative stock levels, active reservations, and append-only movement ledger.
-            </p>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Subtitle Header */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Inventory Management Workspace</span>
+          <p className="text-xs text-[#71717a] margin-0">Server-authoritative stock levels, reservations, and adjustment ledger</p>
         </div>
 
-        {/* KPI Metrics Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <AdminCard className="bg-[#FAF8F5]">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Tracked SKUs</span>
-            <span className="text-2xl font-bold font-mono text-[#1D3A28]">{totalSKUs}</span>
+        {/* Operational Metrics Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <AdminCard>
+            <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider block">Total Tracked SKUs</span>
+            <span className="text-xl font-bold font-mono text-[#000000]">{totalSKUs}</span>
           </AdminCard>
 
-          <AdminCard className="bg-amber-50/60 border-l-4 border-l-amber-500">
-            <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Low Stock Warnings</span>
-            <span className="text-2xl font-bold font-mono text-amber-900">{lowStockCount}</span>
+          <AdminCard className="!border-[#e4e4e7]">
+            <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider block">Low Stock Warnings</span>
+            <span className="text-xl font-bold font-mono text-[#000000]">{lowStockCount}</span>
           </AdminCard>
 
-          <AdminCard className="bg-red-50/60 border-l-4 border-l-red-500">
-            <span className="text-[10px] font-bold text-red-800 uppercase tracking-wider block">Out of Stock Alert</span>
-            <span className="text-2xl font-bold font-mono text-red-900">{outOfStockCount}</span>
+          <AdminCard className="!border-[#dc2626]">
+            <span className="text-[0.7rem] font-semibold text-[#dc2626] uppercase tracking-wider block">Out of Stock Alert</span>
+            <span className="text-xl font-bold font-mono text-[#dc2626]">{outOfStockCount}</span>
           </AdminCard>
         </div>
 
-        {/* Filter Controls */}
-        <AdminCard className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="relative">
-              <MagnifyingGlass size={16} className="absolute left-3 top-3 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search Product Name or SKU..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs"
-              />
-            </div>
-            <div>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full py-2 px-3 border border-slate-300 rounded-lg text-xs"
-              >
-                <option value="ALL">All Stock Statuses</option>
-                <option value="IN_STOCK">In Stock</option>
-                <option value="LOW_STOCK">Low Stock</option>
-                <option value="OUT_OF_STOCK">Out of Stock</option>
-                <option value="DISABLED">Inventory Disabled</option>
-              </select>
-            </div>
-          </div>
+        {/* Filter Bar */}
+        <AdminCard>
+          <AdminFilterBar
+            searchQuery={search}
+            onSearchChange={setSearch}
+            searchPlaceholder="Search product title or SKU..."
+            selectedFilter={statusFilter}
+            onFilterChange={setStatusFilter}
+            filterOptions={filterOptions}
+            filterLabel="Stock Status"
+          />
         </AdminCard>
 
-        {/* Inventory Data Table */}
+        {/* Inventory Data Workspace */}
         {loading ? (
-          <AdminSkeleton type="table" rows={4} />
+          <AdminSkeleton type="table" rows={5} />
         ) : filteredInventory.length === 0 ? (
-          <AdminCard>
-            <div className="text-center py-12">
-              <Package size={48} className="text-slate-300 mx-auto mb-3" />
-              <h3 className="font-bold text-sm text-[#1D3A28]">No Inventory Products Found</h3>
-            </div>
-          </AdminCard>
+          <AdminEmptyState
+            title="No Inventory Records Found"
+            description="No inventory items match your search and filter criteria."
+          />
         ) : (
-          <AdminCard className="p-0 overflow-hidden">
-            <div className="admin-table-container overflow-x-auto">
-              <table className="admin-data-table min-w-full text-xs">
-                <thead>
-                  <tr>
-                    <th>Product Description</th>
-                    <th>SKU</th>
-                    <th className="text-right">Stock On Hand</th>
-                    <th className="text-right">Reserved</th>
-                    <th className="text-right">Available</th>
-                    <th className="text-center">Reorder Level</th>
-                    <th>Status</th>
-                    <th className="text-right">Stock Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredInventory.map((item) => {
-                    const available = item.quantity_on_hand - item.quantity_reserved;
-                    let isLow = available > 0 && available <= item.reorder_level;
-                    let isOut = available <= 0;
-
-                    return (
-                      <tr key={item.id}>
-                        <td>
-                          <div className="font-bold text-[#1D3A28]">{item.products?.name || item.product_id}</div>
-                          <div className="text-[10px] text-slate-400">{item.products?.category}</div>
-                        </td>
-                        <td className="font-mono text-slate-600">{item.sku || 'N/A'}</td>
-                        <td className="text-right font-mono font-bold text-slate-800">{item.quantity_on_hand}</td>
-                        <td className="text-right font-mono text-amber-800 font-bold">{item.quantity_reserved}</td>
-                        <td className="text-right font-mono font-bold text-[#1D3A28] text-sm">{available}</td>
-                        <td className="text-center font-mono text-slate-500">{item.reorder_level}</td>
-                        <td>
-                          <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase inline-flex items-center gap-1 ${
-                            isOut ? 'bg-red-100 text-red-800' :
-                            isLow ? 'bg-amber-100 text-amber-800' :
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {isOut && <Warning size={12} />}
-                            {isLow && <Warning size={12} />}
-                            {!isOut && !isLow && <CheckCircle size={12} />}
-                            <span>{isOut ? 'Out of Stock' : isLow ? 'Low Stock' : 'In Stock'}</span>
-                          </span>
-                        </td>
-                        <td className="text-right space-x-2">
-                          <button
-                            onClick={() => handleOpenAdjustModal(item)}
-                            className="bg-[#2D5016] hover:bg-[#1D3A28] text-white px-2.5 py-1 text-[11px] font-bold rounded shadow-sm transition-colors inline-flex items-center gap-1"
-                          >
-                            <ArrowClockwise size={12} weight="bold" />
-                            <span>Adjust Stock</span>
-                          </button>
-                          <Link
-                            to={`/admin/inventory/${item.product_id}`}
-                            className="bg-slate-100 text-slate-700 hover:bg-slate-200 px-2.5 py-1 text-[11px] font-bold rounded border border-slate-300 inline-block"
-                          >
-                            Ledger History
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+          <div className="space-y-4">
+            {/* Desktop Table View */}
+            <div className="hidden md:block">
+              <AdminCard className="p-0 overflow-hidden">
+                <AdminDataTable
+                  columns={columns}
+                  data={filteredInventory}
+                  keyExtractor={(item) => item.id}
+                  onRowClick={(item) => navigate(`/admin/inventory/${item.product_id}`)}
+                />
+              </AdminCard>
             </div>
-          </AdminCard>
+
+            {/* Mobile Stacked Record View */}
+            <div className="md:hidden space-y-3">
+              {filteredInventory.map((item) => {
+                const available = item.quantity_on_hand - item.quantity_reserved;
+                let status = 'in_stock';
+                if (!item.inventory_enabled) status = 'disabled';
+                else if (available <= 0) status = 'out_of_stock';
+                else if (available <= item.reorder_level) status = 'low_stock';
+
+                return (
+                  <AdminMobileRecord
+                    key={item.id}
+                    title={item.products?.name || item.product_id}
+                    subtitle={`SKU: ${item.sku || 'N/A'}`}
+                    meta={`Avail: ${available} · On Hand: ${item.quantity_on_hand} · Res: ${item.quantity_reserved}`}
+                    badge={<AdminStatusBadge status={status} />}
+                    actionUrl={`/admin/inventory/${item.product_id}`}
+                  />
+                );
+              })}
+            </div>
+          </div>
         )}
 
         {/* Stock Adjustment Modal */}
         {isAdjustModalOpen && selectedProduct && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4 text-xs">
-              <div className="border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-base text-[#1D3A28] m-0">Manual Stock Adjustment</h3>
-                <p className="text-slate-500 m-0">{selectedProduct.products?.name || selectedProduct.product_id}</p>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+            <div className="bg-[#ffffff] rounded-xl max-w-md w-full p-5 border border-[#e4e4e7] space-y-3.5 shadow-xl text-xs">
+              <div className="border-b border-[#f4f4f0] pb-2">
+                <h3 className="font-semibold text-sm text-[#000000]">
+                  Adjust Stock: {selectedProduct.products?.name || selectedProduct.product_id}
+                </h3>
+                <span className="text-[0.7rem] text-[#71717a] font-mono">Current Stock: {selectedProduct.quantity_on_hand}</span>
               </div>
 
-              <form onSubmit={handleAdjustSubmit} className="space-y-4">
-                <div className="bg-[#FAF8F5] p-3 rounded-lg border border-[#C5A059]/30 grid grid-cols-2 gap-2 font-mono text-center">
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 block uppercase">Stock On Hand</span>
-                    <span className="font-bold text-sm text-[#1D3A28]">{selectedProduct.quantity_on_hand}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-amber-800 block uppercase">Active Reserved</span>
-                    <span className="font-bold text-sm text-amber-900">{selectedProduct.quantity_reserved}</span>
-                  </div>
-                </div>
-
+              <form onSubmit={handleAdjustSubmit} className="space-y-3 text-xs">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Quantity Delta (+ to Add, - to Deduct) *</label>
+                  <label className="block font-semibold text-[#000000] mb-1">Quantity Delta (+ / -) *</label>
                   <input
                     type="number"
-                    placeholder="e.g. +50 or -5"
-                    value={adjustDelta || ''}
-                    onChange={(e) => setAdjustDelta(parseInt(e.target.value) || 0)}
-                    className="w-full p-2.5 border border-slate-300 rounded-lg font-mono text-sm"
+                    required
+                    placeholder="e.g. +10 or -5"
+                    value={adjustDelta}
+                    onChange={(e) => setAdjustDelta(Number(e.target.value))}
+                    className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
                   />
-                  <p className="text-[10px] text-slate-400 mt-1">New Stock On Hand will become: {selectedProduct.quantity_on_hand + adjustDelta}</p>
+                  <span className="text-[0.68rem] text-[#71717a] mt-0.5 block">Use positive numbers to add stock, negative to reduce.</span>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Mandatory Adjustment Reason *</label>
+                  <label className="block font-semibold text-[#000000] mb-1">Adjustment Reason (Mandatory) *</label>
                   <textarea
-                    rows={3}
-                    placeholder="e.g. Received supplier batch shipment #8841"
+                    rows={2}
+                    required
+                    placeholder="State reason for stock adjustment..."
                     value={adjustReason}
                     onChange={(e) => setAdjustReason(e.target.value)}
-                    className="w-full p-2.5 border border-slate-300 rounded-lg text-xs"
+                    className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+                <div className="flex justify-end gap-2 pt-2 border-t border-[#f4f4f0]">
                   <button
                     type="button"
                     onClick={() => setIsAdjustModalOpen(false)}
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg"
+                    className="admin-btn-secondary"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-[#2D5016] hover:bg-[#1D3A28] text-white font-bold px-4 py-1.5 rounded-lg shadow-sm"
+                    className="admin-btn-primary"
                   >
-                    Save Stock Adjustment
+                    {isSubmitting ? 'Updating...' : 'Save Stock Adjustment'}
                   </button>
                 </div>
               </form>

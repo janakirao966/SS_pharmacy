@@ -62,68 +62,67 @@ export default function AdminSecurity() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn">
-        <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-          <div>
-            <h2 className="text-[10px] uppercase font-bold text-[#8A6B29] tracking-wider">Security Manager</h2>
-            <h1 className="text-xl font-bold font-display text-[#1D3A28]">Administrative Credentials</h1>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Title Subheader */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Administrative Security Credentials</span>
+          <p className="text-xs text-[#71717a] margin-0">Update account password and active session authentication parameters</p>
         </div>
 
         <AdminCard>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <h3 className="font-display font-bold text-lg text-[#1D3A28] border-b border-slate-100 pb-2">
-              Update Admin Password
-            </h3>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="border-b border-[#f4f4f0] pb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">Update Administrator Password</h3>
+            </div>
 
             {error && (
-              <div className="p-3 bg-[#FEF2F2] border border-[#FCA5A5] text-[#B91C1C] rounded-xl text-xs font-semibold">
+              <div className="p-3 bg-[#fbfbf5] border border-[#dc2626] text-[#dc2626] rounded-xl text-xs font-semibold">
                 {error}
               </div>
             )}
 
-            <div className="space-y-4">
-              <div className="admin-field-group">
-                <label className="admin-field-label">New Password</label>
+            <div className="space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-[#000000] mb-1">New Password *</label>
                 <div className="relative flex items-center">
-                  <span className="absolute left-3 text-slate-400">
-                    <Lock size={16} />
+                  <span className="absolute left-3 text-[#71717a]">
+                    <Lock size={15} />
                   </span>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="admin-input-field pl-9"
+                    className="w-full pl-9 p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
                     placeholder="••••••••"
                   />
                 </div>
               </div>
 
-              <div className="admin-field-group">
-                <label className="admin-field-label">Confirm New Password</label>
+              <div>
+                <label className="block font-semibold text-[#000000] mb-1">Confirm New Password *</label>
                 <div className="relative flex items-center">
-                  <span className="absolute left-3 text-slate-400">
-                    <Lock size={16} />
+                  <span className="absolute left-3 text-[#71717a]">
+                    <Lock size={15} />
                   </span>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="admin-input-field pl-9"
+                    className="w-full pl-9 p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
                     placeholder="••••••••"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-slate-100">
+            <div className="flex justify-end pt-3 border-t border-[#f4f4f0]">
               <button
                 type="submit"
                 disabled={loading || (!password && !confirmPassword)}
                 className="admin-btn-primary"
               >
-                <FloppyDisk size={14} />
-                <span>{loading ? 'Updating...' : 'Update Password'}</span>
+                <FloppyDisk size={14} weight="bold" />
+                <span>{loading ? 'Updating Password...' : 'Update Password'}</span>
               </button>
             </div>
           </form>
@@ -133,7 +132,7 @@ export default function AdminSecurity() {
       <AdminConfirmDialog
         isOpen={isConfirmOpen}
         title="Change Admin Password?"
-        message="Are you sure you want to modify your administrator account login password? This will affect your next login session."
+        message="Are you sure you want to modify your administrator account password? You will need to use this new password on your next login."
         confirmLabel="Update Password"
         cancelLabel="Cancel"
         isDestructive={true}

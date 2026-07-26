@@ -76,7 +76,7 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
 
         {/* Brand/Logo Section */}
         <div className="admin-sidebar-brand-box">
-          <Link to="/admin" onClick={navClick} className="admin-brand-link">
+          <Link to="/admin" onClick={navClick} className="admin-brand-link" title="S.S. Pharmacy Admin">
             <img 
               src={`${import.meta.env.BASE_URL}products/logo/logo.webp`}
               alt="S.S. Pharmacy Logo" 
@@ -85,15 +85,15 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
             {!isCollapsed && (
               <div className="admin-brand-text-box">
                 <span className="admin-brand-title">S.S. PHARMACY</span>
-                <span className="admin-brand-subtitle">CONTROL CENTER</span>
+                <span className="admin-brand-subtitle">ADMIN</span>
               </div>
             )}
           </Link>
         </div>
 
         {/* Scrollable Navigation */}
-        <nav className="admin-sidebar-nav">
-          {/* OVERVIEW SECTION */}
+        <nav className="admin-sidebar-nav" aria-label="Admin Navigation">
+          {/* OVERVIEW GROUP */}
           <div className="admin-nav-group">
             {!isCollapsed && <p className="admin-nav-group-title">Overview</p>}
             <NavItem 
@@ -104,9 +104,17 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
               pathname={pathname} 
               onClick={navClick} 
             />
+            <NavItem 
+              href="/admin/analytics" 
+              icon={<TrendUp size={18} />} 
+              label="Analytics" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
           </div>
 
-          {/* COMMERCE SECTION */}
+          {/* COMMERCE GROUP */}
           <div className="admin-nav-group">
             {!isCollapsed && <p className="admin-nav-group-title">Commerce</p>}
             <NavItem 
@@ -117,6 +125,27 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
               pathname={pathname} 
               onClick={navClick} 
             />
+            <NavItem 
+              href="/admin/returns" 
+              icon={<Package size={18} />} 
+              label="Returns" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/invoices" 
+              icon={<Receipt size={18} />} 
+              label="Invoices" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+          </div>
+
+          {/* CATALOG & STOCK GROUP */}
+          <div className="admin-nav-group">
+            {!isCollapsed && <p className="admin-nav-group-title">Catalog & Stock</p>}
             <NavItem 
               href="/admin/products" 
               icon={<Package size={18} />} 
@@ -136,7 +165,7 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
             <NavItem 
               href="/admin/inventory/batches" 
               icon={<Package size={18} />} 
-              label="Batch Stock" 
+              label="Batches" 
               collapsed={isCollapsed} 
               pathname={pathname} 
               onClick={navClick} 
@@ -144,47 +173,20 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
             <NavItem 
               href="/admin/expiry" 
               icon={<Calendar size={18} />} 
-              label="Expiry Center" 
+              label="Expiry" 
               collapsed={isCollapsed} 
               pathname={pathname} 
               onClick={navClick} 
             />
-            <NavItem 
-              href="/admin/recalls" 
-              icon={<Warning size={18} />} 
-              label="Product Recalls" 
-              collapsed={isCollapsed} 
-              pathname={pathname} 
-              onClick={navClick} 
-            />
+          </div>
+
+          {/* SUPPLY GROUP */}
+          <div className="admin-nav-group">
+            {!isCollapsed && <p className="admin-nav-group-title">Supply</p>}
             <NavItem 
               href="/admin/suppliers" 
               icon={<Buildings size={18} />} 
               label="Suppliers" 
-              collapsed={isCollapsed} 
-              pathname={pathname} 
-              onClick={navClick} 
-            />
-            <NavItem 
-              href="/admin/analytics" 
-              icon={<TrendUp size={18} />} 
-              label="Analytics BI" 
-              collapsed={isCollapsed} 
-              pathname={pathname} 
-              onClick={navClick} 
-            />
-            <NavItem 
-              href="/admin/analytics/gst" 
-              icon={<Receipt size={18} />} 
-              label="GST Register" 
-              collapsed={isCollapsed} 
-              pathname={pathname} 
-              onClick={navClick} 
-            />
-            <NavItem 
-              href="/admin/security" 
-              icon={<ShieldWarning size={18} />} 
-              label="Security Operations" 
               collapsed={isCollapsed} 
               pathname={pathname} 
               onClick={navClick} 
@@ -198,34 +200,26 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
               onClick={navClick} 
             />
             <NavItem 
-              href="/admin/returns" 
-              icon={<Package size={18} />} 
-              label="Returns" 
-              collapsed={isCollapsed} 
-              pathname={pathname} 
-              onClick={navClick} 
-            />
-            <NavItem 
-              href="/admin/support" 
-              icon={<Headset size={18} />} 
-              label="Support Desk" 
-              collapsed={isCollapsed} 
-              pathname={pathname} 
-              onClick={navClick} 
-            />
-            <NavItem 
-              href="/admin/invoices" 
-              icon={<Receipt size={18} />} 
-              label="Invoices" 
+              href="/admin/recalls" 
+              icon={<Warning size={18} />} 
+              label="Recalls" 
               collapsed={isCollapsed} 
               pathname={pathname} 
               onClick={navClick} 
             />
           </div>
 
-          {/* CUSTOMERS SECTION */}
+          {/* CUSTOMERS GROUP */}
           <div className="admin-nav-group">
             {!isCollapsed && <p className="admin-nav-group-title">Customers</p>}
+            <NavItem 
+              href="/admin/support" 
+              icon={<Headset size={18} />} 
+              label="Support" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
             <NavItem 
               href="/admin/enquiries" 
               icon={<ChatCircleText size={18} />} 
@@ -237,16 +231,16 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
             <NavItem 
               href="/admin/distributors" 
               icon={<Handshake size={18} />} 
-              label="Distributor Leads" 
+              label="Distributors" 
               collapsed={isCollapsed} 
               pathname={pathname} 
               onClick={navClick} 
             />
           </div>
 
-          {/* WEBSITE SECTION */}
+          {/* CONTENT GROUP */}
           <div className="admin-nav-group">
-            {!isCollapsed && <p className="admin-nav-group-title">Website</p>}
+            {!isCollapsed && <p className="admin-nav-group-title">Content</p>}
             <NavItem 
               href="/admin/content" 
               icon={<FileText size={18} />} 
@@ -274,20 +268,28 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
             <NavItem 
               href="/admin/media" 
               icon={<Image size={18} />} 
-              label="Media Library" 
+              label="Media" 
               collapsed={isCollapsed} 
               pathname={pathname} 
               onClick={navClick} 
             />
           </div>
 
-          {/* SYSTEM SECTION */}
+          {/* SYSTEM GROUP */}
           <div className="admin-nav-group">
             {!isCollapsed && <p className="admin-nav-group-title">System</p>}
             <NavItem 
               href="/admin/operations" 
               icon={<ShieldWarning size={18} />} 
               label="Operations" 
+              collapsed={isCollapsed} 
+              pathname={pathname} 
+              onClick={navClick} 
+            />
+            <NavItem 
+              href="/admin/security" 
+              icon={<GearSix size={18} />} 
+              label="Security" 
               collapsed={isCollapsed} 
               pathname={pathname} 
               onClick={navClick} 
@@ -308,22 +310,14 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
               pathname={pathname} 
               onClick={navClick} 
             />
-            <NavItem 
-              href="/admin/security" 
-              icon={<GearSix size={18} />} 
-              label="Security" 
-              collapsed={isCollapsed} 
-              pathname={pathname} 
-              onClick={navClick} 
-            />
           </div>
         </nav>
 
         {/* Footer Area */}
         <div className="admin-sidebar-footer">
-          <Link to="/" className="admin-footer-btn" onClick={navClick} title="View Website">
+          <Link to="/" className="admin-footer-btn" onClick={navClick} title="View Storefront">
             <ArrowSquareOut size={16} />
-            {!isCollapsed && <span>View Website</span>}
+            {!isCollapsed && <span>View Storefront</span>}
           </Link>
           <button 
             type="button" 
@@ -370,6 +364,7 @@ function NavItem({ href, icon, label, collapsed, pathname, onClick }: NavItemPro
       onClick={onClick}
       className={`admin-nav-item ${isActive ? 'active' : ''}`}
       title={collapsed ? label : undefined}
+      aria-current={isActive ? 'page' : undefined}
     >
       <span className="admin-nav-item-icon">{icon}</span>
       {!collapsed && <span className="admin-nav-item-label">{label}</span>}

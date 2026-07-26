@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
@@ -16,6 +17,7 @@ import { Eye } from '@phosphor-icons/react';
 
 export default function AdminDistributors() {
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [leads, setLeads] = useState<any[]>([]);
@@ -39,7 +41,6 @@ export default function AdminDistributors() {
 
       if (dbError) throw dbError;
 
-      // Filter B2B applications (exclude enquiries where company_name starts with 'Enquiry:' or is 'General Contact Enquiry')
       const list = (data || []).filter(item => 
         !item.company_name.startsWith('Enquiry:') && item.company_name !== 'General Contact Enquiry'
       );
@@ -96,23 +97,44 @@ export default function AdminDistributors() {
   ];
 
   const columns = [
-    { header: 'Business / Company', render: (l: any) => <span className="font-bold text-[#1D3A28]">{l.company_name}</span> },
-    { header: 'Contact Person', render: (l: any) => <span>{l.contact_person}</span> },
-    { header: 'Phone Number', render: (l: any) => <span className="font-mono text-xs">{l.phone}</span> },
-    { header: 'City / Location', render: (l: any) => <span>{l.city}</span> },
-    { header: 'Expected Vol.', render: (l: any) => <span className="font-medium text-slate-500">{l.expected_monthly_volume || 'Not Specified'}</span> },
-    { header: 'Received Date', render: (l: any) => <span className="text-[10px] text-slate-400 font-medium">{new Date(l.created_at).toLocaleDateString('en-IN')}</span> },
-    { header: 'Status', render: (l: any) => <AdminStatusBadge status={l.status} /> },
+    { 
+      header: 'Business / Company Name', 
+      render: (l: any) => <span className="font-semibold text-[#000000]">{l.company_name}</span> 
+    },
+    { 
+      header: 'Contact Person', 
+      render: (l: any) => <span className="text-[#000000]">{l.contact_person}</span> 
+    },
+    { 
+      header: 'Phone Contact', 
+      render: (l: any) => <span className="font-mono text-xs text-[#71717a]">{l.phone}</span> 
+    },
+    { 
+      header: 'City / Location', 
+      render: (l: any) => <span className="text-xs text-[#71717a]">{l.city}</span> 
+    },
+    { 
+      header: 'Expected Vol.', 
+      render: (l: any) => <span className="font-medium text-xs text-[#71717a]">{l.expected_monthly_volume || 'Not Specified'}</span> 
+    },
+    { 
+      header: 'Received Date', 
+      render: (l: any) => <span className="text-xs text-[#71717a] font-mono">{new Date(l.created_at).toLocaleDateString('en-IN')}</span> 
+    },
+    { 
+      header: 'Status', 
+      render: (l: any) => <AdminStatusBadge status={l.status} /> 
+    },
     {
       header: 'Actions',
       render: (l: any) => (
         <button
           type="button"
-          onClick={() => window.location.href = `/admin/distributors/${l.id}`}
-          className="admin-btn-action"
-          aria-label={`View distributor application ${l.company_name}`}
+          onClick={() => navigate(`/admin/distributors/${l.id}`)}
+          className="admin-btn-outline !min-h-[30px] !py-1 !px-2 text-[0.7rem]"
+          aria-label={`View distributor application for ${l.company_name}`}
         >
-          <Eye size={12} />
+          <Eye size={13} />
           <span>View</span>
         </button>
       ),
@@ -122,15 +144,14 @@ export default function AdminDistributors() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn">
-        <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-          <div>
-            <h2 className="text-[10px] uppercase font-bold text-[#8A6B29] tracking-wider">B2B Channel Partners</h2>
-            <h1 className="text-xl font-bold font-display text-[#1D3A28]">Distributor Wholesale Applications</h1>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Title Subheader */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">B2B Channel Partners Workspace</span>
+          <p className="text-xs text-[#71717a] margin-0">Distributor wholesale applications, partner lead evaluation, and status tracking</p>
         </div>
 
-        {/* Filter controls */}
+        {/* Filter Bar */}
         <AdminCard>
           <AdminFilterBar
             searchQuery={searchQuery}
@@ -139,13 +160,13 @@ export default function AdminDistributors() {
             selectedFilter={statusFilter}
             onFilterChange={setStatusFilter}
             filterOptions={filterOptions}
-            filterLabel="Application Status"
+            filterLabel="Status"
           />
         </AdminCard>
 
-        {/* Listings Workplace */}
+        {/* Listings Workspace */}
         {loading ? (
-          <AdminSkeleton type="table" rows={6} />
+          <AdminSkeleton type="table" rows={5} />
         ) : error ? (
           <AdminEmptyState
             title="Operational Error"
@@ -164,19 +185,19 @@ export default function AdminDistributors() {
           />
         ) : (
           <div className="space-y-4">
-            {/* Desktop Table */}
+            {/* Desktop Table View */}
             <div className="hidden md:block">
               <AdminCard className="p-0 overflow-hidden">
                 <AdminDataTable
                   columns={columns}
                   data={paginatedList}
                   keyExtractor={(l) => l.id}
-                  onRowClick={(l) => window.location.href = `/admin/distributors/${l.id}`}
+                  onRowClick={(l) => navigate(`/admin/distributors/${l.id}`)}
                 />
               </AdminCard>
             </div>
 
-            {/* Mobile Cards */}
+            {/* Mobile Stacked View */}
             <div className="md:hidden space-y-3">
               {paginatedList.map((l) => (
                 <AdminMobileRecord
@@ -190,7 +211,7 @@ export default function AdminDistributors() {
               ))}
             </div>
 
-            {/* Pagination controls */}
+            {/* Pagination Controls */}
             <AdminPagination
               currentPage={currentPage}
               totalPages={totalPages}

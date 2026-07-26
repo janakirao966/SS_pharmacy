@@ -2,14 +2,27 @@ import { useState, useEffect } from 'react';
 import { supabase, type DatabaseSupplier } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton } from '../components/admin/AdminPrimitives';
-import { Buildings, MagnifyingGlass, CheckCircle } from '@phosphor-icons/react';
+import { 
+  AdminCard, 
+  AdminStatusBadge, 
+  AdminDataTable, 
+  AdminMobileRecord, 
+  AdminFilterBar, 
+  AdminPagination, 
+  AdminSkeleton, 
+  AdminEmptyState 
+} from '../components/admin/AdminPrimitives';
 
 export default function AdminSuppliers() {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [suppliers, setSuppliers] = useState<DatabaseSupplier[]>([]);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10;
 
   const fetchSuppliers = async () => {
     setLoading(true);
@@ -34,99 +47,141 @@ export default function AdminSuppliers() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredSuppliers = suppliers.filter(s => 
-    s.legal_name.toLowerCase().includes(search.toLowerCase()) ||
-    s.supplier_code.toLowerCase().includes(search.toLowerCase()) ||
-    (s.gstin && s.gstin.toLowerCase().includes(search.toLowerCase()))
+  const filteredSuppliers = suppliers.filter(s => {
+    const matchesSearch = 
+      s.legal_name.toLowerCase().includes(search.toLowerCase()) ||
+      s.supplier_code.toLowerCase().includes(search.toLowerCase()) ||
+      (s.gstin && s.gstin.toLowerCase().includes(search.toLowerCase()));
+
+    const matchesStatus = statusFilter === 'all' || s.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Pagination calculations
+  const totalRecords = filteredSuppliers.length;
+  const totalPages = Math.ceil(totalRecords / recordsPerPage);
+  const paginatedSuppliers = filteredSuppliers.slice(
+    (currentPage - 1) * recordsPerPage,
+    currentPage * recordsPerPage
   );
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
+
+  const filterOptions = [
+    { label: 'All Vendor Statuses', value: 'all' },
+    { label: 'Active Suppliers', value: 'active' },
+    { label: 'Inactive / Suspended', value: 'inactive' }
+  ];
+
+  const columns = [
+    { 
+      header: 'Supplier Code', 
+      render: (s: DatabaseSupplier) => <span className="font-mono font-semibold text-[#000000]">{s.supplier_code}</span> 
+    },
+    { 
+      header: 'Legal Name / Trade Name', 
+      render: (s: DatabaseSupplier) => (
+        <div>
+          <span className="font-semibold text-[#000000] block text-xs">{s.legal_name}</span>
+          {s.trade_name && <span className="text-[0.68rem] text-[#71717a]">{s.trade_name}</span>}
+        </div>
+      ) 
+    },
+    { 
+      header: 'GSTIN', 
+      render: (s: DatabaseSupplier) => <span className="font-mono text-xs text-[#71717a]">{s.gstin || 'Unconfigured'}</span> 
+    },
+    { 
+      header: 'Drug License #', 
+      render: (s: DatabaseSupplier) => <span className="font-mono text-xs text-[#71717a]">{s.drug_license_number || 'N/A'}</span> 
+    },
+    { 
+      header: 'Contact Info', 
+      render: (s: DatabaseSupplier) => (
+        <div>
+          <span className="font-semibold text-[#000000] block text-xs">{s.contact_person || 'N/A'}</span>
+          <span className="text-[0.68rem] text-[#71717a] font-mono">{s.phone || s.email}</span>
+        </div>
+      ) 
+    },
+    { 
+      header: 'Status', 
+      render: (s: DatabaseSupplier) => <AdminStatusBadge status={s.status} /> 
+    },
+    { 
+      header: 'Created Date', 
+      render: (s: DatabaseSupplier) => <span className="font-mono text-xs text-[#71717a]">{new Date(s.created_at).toLocaleDateString('en-IN')}</span> 
+    }
+  ];
 
   return (
     <AdminLayout>
-      <div className="space-y-6 animate-fadeIn pb-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-          <div>
-            <h1 className="font-display font-bold text-2xl text-[#1D3A28] flex items-center gap-2">
-              <Buildings size={28} className="text-[#C5A059]" />
-              <span>Pharmaceutical Suppliers Directory</span>
-            </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Manage licensed Ayurvedic raw material & finished goods vendors, GSTIN details, and drug licenses.
-            </p>
-          </div>
+      <div className="space-y-5 pb-12">
+        {/* Title Subheader */}
+        <div className="pb-3 border-b border-[#e4e4e7]">
+          <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Pharmaceutical Suppliers Directory</span>
+          <p className="text-xs text-[#71717a] margin-0">Licensed Ayurvedic raw material & finished goods vendors, GSTIN credentials, and drug licenses</p>
         </div>
 
-        {/* Search Bar */}
+        {/* Filter Bar */}
         <AdminCard>
-          <div className="relative max-w-md">
-            <MagnifyingGlass size={16} className="absolute left-3 top-3 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search Supplier Name, Code, GSTIN..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs"
-            />
-          </div>
+          <AdminFilterBar
+            searchQuery={search}
+            onSearchChange={setSearch}
+            searchPlaceholder="Search Supplier Name, Code, GSTIN..."
+            selectedFilter={statusFilter}
+            onFilterChange={setStatusFilter}
+            filterOptions={filterOptions}
+            filterLabel="Vendor Status"
+          />
         </AdminCard>
 
-        {/* Suppliers List */}
+        {/* Suppliers Workspace */}
         {loading ? (
-          <AdminSkeleton type="table" rows={4} />
-        ) : filteredSuppliers.length === 0 ? (
-          <AdminCard>
-            <div className="text-center py-12">
-              <CheckCircle size={48} className="text-slate-300 mx-auto mb-3" />
-              <h3 className="font-bold text-sm text-[#1D3A28]">No Suppliers Registered</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                Vendor records will appear here as procurement purchase orders are configured.
-              </p>
-            </div>
-          </AdminCard>
+          <AdminSkeleton type="table" rows={5} />
+        ) : totalRecords === 0 ? (
+          <AdminEmptyState
+            title="No Registered Suppliers Found"
+            description="Vendor records will appear here as procurement purchase orders and raw material suppliers are configured."
+          />
         ) : (
-          <AdminCard className="p-0 overflow-hidden">
-            <div className="admin-table-container overflow-x-auto">
-              <table className="admin-data-table min-w-full text-xs">
-                <thead>
-                  <tr>
-                    <th>Supplier Code</th>
-                    <th>Legal Name / Trade Name</th>
-                    <th>GSTIN</th>
-                    <th>Drug License #</th>
-                    <th>Contact Person</th>
-                    <th>Status</th>
-                    <th>Created At</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredSuppliers.map(s => (
-                    <tr key={s.id}>
-                      <td className="font-mono font-bold text-[#1D3A28]">{s.supplier_code}</td>
-                      <td>
-                        <div className="font-bold">{s.legal_name}</div>
-                        {s.trade_name && <div className="text-[10px] text-slate-500">{s.trade_name}</div>}
-                      </td>
-                      <td className="font-mono text-[11px]">{s.gstin || 'Unconfigured'}</td>
-                      <td className="font-mono text-[11px]">{s.drug_license_number || 'N/A'}</td>
-                      <td>
-                        <div>{s.contact_person || 'N/A'}</div>
-                        <div className="font-mono text-[10px] text-slate-500">{s.phone || s.email}</div>
-                      </td>
-                      <td>
-                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase ${
-                          s.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {s.status}
-                        </span>
-                      </td>
-                      <td className="font-mono text-[11px] text-slate-500">
-                        {new Date(s.created_at).toLocaleDateString('en-IN')}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="space-y-4">
+            {/* Desktop Table View */}
+            <div className="hidden md:block">
+              <AdminCard className="p-0 overflow-hidden">
+                <AdminDataTable
+                  columns={columns}
+                  data={paginatedSuppliers}
+                  keyExtractor={(s) => s.id}
+                />
+              </AdminCard>
             </div>
-          </AdminCard>
+
+            {/* Mobile Stacked Record View */}
+            <div className="md:hidden space-y-3">
+              {paginatedSuppliers.map((s) => (
+                <AdminMobileRecord
+                  key={s.id}
+                  title={s.supplier_code}
+                  subtitle={s.legal_name}
+                  meta={`GSTIN: ${s.gstin || 'N/A'} · Contact: ${s.contact_person || 'N/A'}`}
+                  badge={<AdminStatusBadge status={s.status} />}
+                />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalRecords={totalRecords}
+              recordsPerPage={recordsPerPage}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         )}
       </div>
     </AdminLayout>
