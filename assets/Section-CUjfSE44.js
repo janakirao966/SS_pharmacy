@@ -1,1 +1,0 @@
-import{mt as e}from"./vendor-react-core-BnMgzWcC.js";var t=e();function n({children:e,className:n=``,id:r}){return(0,t.jsx)(`section`,{id:r,className:`section-spacing ${n}`,children:e})}export{n as t};
