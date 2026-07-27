@@ -11,8 +11,10 @@ interface AuthContextType {
   isAdmin: boolean;
   isAuthOpen: boolean;
   authModalMode: AuthModalMode;
-  openAuthModal: (mode?: AuthModalMode) => void;
+  postAuthRedirect: string | null;
+  openAuthModal: (mode?: AuthModalMode, redirectUrl?: string) => void;
   closeAuthModal: () => void;
+  setPostAuthRedirect: (url: string | null) => void;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
 }
@@ -26,9 +28,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<AuthModalMode>('login');
+  const [postAuthRedirect, setPostAuthRedirect] = useState<string | null>(null);
 
-  const openAuthModal = (mode: AuthModalMode = 'login') => {
+  const openAuthModal = (mode: AuthModalMode = 'login', redirectUrl?: string) => {
     setAuthModalMode(mode);
+    setPostAuthRedirect(redirectUrl || null);
     setIsAuthOpen(true);
   };
 
@@ -51,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAdmin(isSessionAdmin);
         setProfile({
           id: userId,
-          full_name: 'Admin User',
+          full_name: isSessionAdmin ? 'Admin User' : (email ? email.split('@')[0] : 'Valued Customer'),
           email: email,
           is_admin: isSessionAdmin,
           created_at: new Date().toISOString()
@@ -153,8 +157,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin,
       isAuthOpen,
       authModalMode,
+      postAuthRedirect,
       openAuthModal,
       closeAuthModal,
+      setPostAuthRedirect,
       signOut,
       refreshSession
     }}>

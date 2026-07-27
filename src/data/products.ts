@@ -11,6 +11,7 @@ export interface Product {
   safetyNote: string;
   image?: string; // Image path reference
   transparentImage?: string; // Transparent image path reference
+  galleryImages?: string[]; // Multiple gallery images for thumbnail row
 }
 
 export const products: Product[] = [
@@ -31,7 +32,12 @@ export const products: Product[] = [
     shelfLife: "3 Years",
     safetyNote: "Ayurvedic cream for external use only",
     image: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp",
-    transparentImage: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp"
+    transparentImage: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp",
+    galleryImages: [
+      import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp",
+      import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream transparent image.webp",
+      import.meta.env.BASE_URL + "products/Hero%20section/hero-pain-cream-mobile.webp"
+    ]
   },
   {
     id: "dr-lion-pain-pills",
@@ -50,7 +56,12 @@ export const products: Product[] = [
     shelfLife: "2 Years",
     safetyNote: "Use only as directed. Consult a qualified healthcare professional for individual conditions.",
     image: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp",
-    transparentImage: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp"
+    transparentImage: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp",
+    galleryImages: [
+      import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp",
+      import.meta.env.BASE_URL + "products/Dr lion Pain pills/pain pills transparent.webp",
+      import.meta.env.BASE_URL + "products/Hero%20section/hero-pain-pills-mobile.webp"
+    ]
   },
   {
     id: "moon-light-cream",
@@ -69,6 +80,12 @@ export const products: Product[] = [
     shelfLife: "3 Years",
     safetyNote: "Ayurvedic cream for external use only",
     image: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp",
-    transparentImage: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp"
+    transparentImage: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp",
+    galleryImages: [
+      import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp",
+      import.meta.env.BASE_URL + "products/Moon-light/Moon cream Hero_section.webp",
+      import.meta.env.BASE_URL + "products/Moon-light/Moon cream transparent.webp",
+      import.meta.env.BASE_URL + "products/Hero%20section/hero-moon-mobile.webp"
+    ]
   }
 ];

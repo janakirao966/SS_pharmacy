@@ -61,7 +61,7 @@ export default function About() {
                 <img
                   src={`${import.meta.env.BASE_URL}products/Moon-light/Moon cream Hero_section.webp`}
                   alt="Ayurvedic herbs and formulation process at S.S. Pharmacy"
-                  className="w-full h-[380px] md:h-[440px] object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-[260px] sm:h-[340px] md:h-[440px] object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
                 />

@@ -19,6 +19,7 @@
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "@supabase/supabase-js": "^2.110.8",
+    "antd-mobile": "^5.42.3",
     "fuse.js": "^7.5.0",
     "lucide-react": "^1.24.0",
     "react": "^19.2.7",

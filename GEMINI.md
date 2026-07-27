@@ -64,20 +64,23 @@ Refer to [CONVENTIONS.md](./CONVENTIONS.md) for detailed UI, state, and developm
 <!-- GSD:skills-start source:skills/ -->
 ## Project Skills
 
-Retained core skills are pre-installed in `.agents/skills/`. See [SKILLS_REPORT.md](./SKILLS_REPORT.md) for the 10 active skills inventory.
+Retained core skills and Superpowers framework are pre-installed in `.agents/skills/` (53 active skills inventory documented in `.agents/skill-manifest.json`).
 <!-- GSD:skills-end -->
 
 <!-- GSD:workflow-start source:GSD defaults -->
-## GSD Workflow Enforcement
+## GSD & 5-Stage Task Execution Protocol
 
-Before using Edit, Write, or other file-changing tools, start work through a GSD command so planning artifacts and execution context stay in sync.
+### 🛡️ Strict 5-Stage Execution Standard
+1. **🔍 Intent Ingestion**: Read the prompt completely. Infer the primary goal, visual vibe, constraints, and business logic without omitting details.
+2. **📝 Implementation Plan (`implementation_plan.md`)**: Mandatory for Tier 2/3 work. Outline files to edit, exact component structures, responsive rules, and safety boundaries. **Hard stop until user approves.**
+3. **📋 Granular Checklist (`task.md`)**: Once approved, create `task.md` and complete tasks sequentially without skipping steps.
+4. **🧪 Empirical Quality Gate**: Run `npx tsc -b`, `npx vitest run`, and `npm run build` to verify zero errors before declaring complete.
+5. **📊 Final Summary**: Deliver a high-impact summary with skill attribution (`Loaded Skills` & `Rule Validation Checks`).
 
-Use these entry points:
+Use GSD entry points:
 - `/gsd-quick` for small fixes, doc updates, and ad-hoc tasks
 - `/gsd-debug` for investigation and bug fixing
 - `/gsd-execute-phase` for planned phase work
-
-Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
 <!-- GSD:workflow-end -->
 
 <!-- GSD:profile-start -->

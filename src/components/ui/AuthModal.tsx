@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, ShieldCheck, Mail, Lock, User, Phone, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../context/ToastContext';
@@ -12,6 +13,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, onSuccess, initialMode }: AuthModalProps) {
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const authCtx = useAuth();
 
@@ -63,6 +65,11 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
           showToast('Welcome back to S.S. PHARMACY!', 'success');
           if (onSuccess) onSuccess();
           handleCloseModal();
+          if (authCtx.postAuthRedirect) {
+            const redirectPath = authCtx.postAuthRedirect;
+            authCtx.setPostAuthRedirect(null);
+            navigate(redirectPath);
+          }
         }
       } else if (mode === 'signup') {
         if (formData.password !== formData.confirmPassword) {
@@ -88,6 +95,11 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
           showToast('Account created successfully!', 'success');
           if (onSuccess) onSuccess();
           handleCloseModal();
+          if (authCtx.postAuthRedirect) {
+            const redirectPath = authCtx.postAuthRedirect;
+            authCtx.setPostAuthRedirect(null);
+            navigate(redirectPath);
+          }
         }
       } else if (mode === 'forgot') {
         if (!formData.email.trim()) {

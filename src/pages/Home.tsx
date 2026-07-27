@@ -1,4 +1,4 @@
-import { Plant, Certificate, ShieldCheck, Flask, Leaf, Factory, Handshake } from '@phosphor-icons/react';
+import { Leaf, Factory, Handshake, ShieldCheck, Plant, Certificate, Flask } from '@phosphor-icons/react';
 import { products } from '../data/products';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
@@ -8,7 +8,6 @@ import ProductCard from '../components/cards/ProductCard';
 import HeroCarousel from '../components/ui/HeroCarousel';
 import SEO from '../components/ui/SEO';
 import ScrollReveal from '../components/ui/ScrollReveal';
-import TrustBadgesBar from '../components/ui/TrustBadgesBar';
 
 interface HomeProps {
   setActiveTab: (tab: string) => void;
@@ -161,7 +160,7 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
         <Section className="home-about-section">
           <Container>
             <div className="home-about-grid">
-              <div className="home-about-image-col">
+              <div className="home-about-image-col hidden md:block">
                 <div className="about-image-frame">
                   <img
                     src={`${import.meta.env.BASE_URL}products/Moon-light/Moon cream Hero_section.webp`}
@@ -199,9 +198,6 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
                 </div>
               </div>
             </div>
-
-            {/* 5 Verified Trust Credentials Bar */}
-            <TrustBadgesBar className="mt-10" />
           </Container>
         </Section>
       </ScrollReveal>
@@ -287,51 +283,6 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
           </Container>
         </Section>
       </ScrollReveal>
-
-      {/* 6. Controlled Dark-Green Quality Trust Band */}
-      <section className="home-trust-band-section">
-        <Container>
-          <div className="trust-band-content">
-            <div className="trust-band-column">
-              <ShieldCheck size={30} weight="duotone" className="trust-band-icon" aria-hidden="true" />
-              <div className="trust-band-text-group">
-                <span className="trust-band-primary">GMP Certified</span>
-                <span className="trust-band-secondary">Schedule T Facility</span>
-              </div>
-            </div>
-
-            <div className="trust-band-divider" aria-hidden="true" />
-
-            <div className="trust-band-column">
-              <Certificate size={30} weight="duotone" className="trust-band-icon" aria-hidden="true" />
-              <div className="trust-band-text-group">
-                <span className="trust-band-primary">Govt. Licensed</span>
-                <span className="trust-band-secondary">R-1970/Ayur</span>
-              </div>
-            </div>
-
-            <div className="trust-band-divider" aria-hidden="true" />
-
-            <div className="trust-band-column">
-              <Plant size={30} weight="duotone" className="trust-band-icon" aria-hidden="true" />
-              <div className="trust-band-text-group">
-                <span className="trust-band-primary">Pure Botanical</span>
-                <span className="trust-band-secondary">Herbal Ingredients</span>
-              </div>
-            </div>
-
-            <div className="trust-band-divider" aria-hidden="true" />
-
-            <div className="trust-band-column">
-              <Flask size={30} weight="duotone" className="trust-band-icon" aria-hidden="true" />
-              <div className="trust-band-text-group">
-                <span className="trust-band-primary">Quality Tested</span>
-                <span className="trust-band-secondary">Batch &amp; Purity Controls</span>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
 
       {/* 7. Mission & Core Values Section (Editorial Two-Column Layout) */}
       <ScrollReveal animation="fade-up" delay={150}>

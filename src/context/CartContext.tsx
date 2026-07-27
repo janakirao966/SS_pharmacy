@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect, useRef, type ReactNode 
 import { useNavigate } from 'react-router-dom';
 import type { Product } from '../data/products';
 import { useToast } from './ToastContext';
+import { useAuth } from './AuthContext';
 import { trackEvent } from '../utils/analytics';
 
 export interface CartItem {
@@ -29,6 +30,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { user, openAuthModal } = useAuth();
   const isUserAction = useRef(false);
   
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
@@ -53,7 +55,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const openCheckout = () => {
     setIsCartOpen(false);
-    navigate('/checkout');
+    if (!user) {
+      openAuthModal('signup', '/checkout');
+    } else {
+      navigate('/checkout');
+    }
   };
 
   // Sync cart across tabs

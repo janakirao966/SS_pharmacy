@@ -255,8 +255,8 @@ export default function Navbar({
             <img
               src={`${import.meta.env.BASE_URL}products/logo/logo.webp`}
               alt="S.S. PHARMACY Logo"
-              width={48}
-              height={48}
+              width={44}
+              height={44}
               decoding="async"
               className="nav-logo-img overlay-logo"
             />
@@ -271,7 +271,7 @@ export default function Navbar({
             onClick={() => setIsOpen(false)}
             aria-label="Close navigation menu"
           >
-            <X size={24} />
+            <X size={22} weight="bold" />
           </button>
         </div>
 
@@ -281,7 +281,7 @@ export default function Navbar({
             {navItems.map((item, index) => (
               <li
                 key={item.id}
-                style={{ animationDelay: `${index * 60}ms` }}
+                style={{ animationDelay: `${index * 50}ms` }}
                 className={isOpen ? 'fade-in-slide' : ''}
               >
                 <Link
@@ -291,38 +291,41 @@ export default function Navbar({
                   aria-current={activeTab === item.id ? 'page' : undefined}
                 >
                   <span>{item.label}</span>
-                  {activeTab === item.id && <span className="mobile-active-indicator" />}
+                  {activeTab === item.id ? <span className="mobile-active-indicator" /> : <span className="text-[#C5A059] text-xs">&rarr;</span>}
                 </Link>
               </li>
             ))}
 
-            {/* Mobile Account Access */}
-            <li style={{ animationDelay: `${navItems.length * 60}ms` }} className={isOpen ? 'fade-in-slide' : ''}>
+            {/* Mobile Account Card */}
+            <li style={{ animationDelay: `${navItems.length * 50}ms` }} className={`mt-2 ${isOpen ? 'fade-in-slide' : ''}`}>
               {user ? (
                 <Link
                   to="/account"
-                  className={`nav-link-mobile-btn ${activeTab === 'account' ? 'active' : ''}`}
+                  className={`nav-mobile-account-card ${activeTab === 'account' ? 'active' : ''}`}
                   onClick={() => setIsOpen(false)}
-                  aria-current={activeTab === 'account' ? 'page' : undefined}
                 >
-                  <span className="flex items-center gap-2">
-                    <User size={18} weight="bold" />
-                    <span>My Account</span>
-                  </span>
-                  {activeTab === 'account' && <span className="mobile-active-indicator" />}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-full bg-[#1D3A28] text-white flex items-center justify-center font-bold text-xs border border-[#C5A059] shrink-0">
+                      <User size={18} weight="bold" />
+                    </div>
+                    <div className="text-left min-w-0 flex-1">
+                      <span className="block font-bold text-[#1D3A28] text-sm">My Account</span>
+                      <span className="block text-[11px] text-[#667068] truncate">{user.email}</span>
+                    </div>
+                  </div>
+                  <span className="text-[#C5A059] text-xs font-bold shrink-0 ml-2">Manage &rarr;</span>
                 </Link>
               ) : (
                 <button
                   type="button"
-                  className="nav-link-mobile-btn w-full text-left flex items-center gap-2 min-h-[44px]"
+                  className="nav-mobile-account-btn"
                   onClick={() => {
                     setIsOpen(false);
                     openAuthModal('login');
                   }}
-                  aria-label="Sign In to Account"
                 >
                   <User size={18} weight="bold" />
-                  <span>Sign In / Account</span>
+                  <span>Sign In / Register Account</span>
                 </button>
               )}
             </li>
@@ -333,9 +336,9 @@ export default function Navbar({
         <div className="mobile-overlay-footer">
           <a href="tel:+919494323211" className="mobile-footer-contact">
             <Phone size={14} weight="fill" />
-            <span>+91 94943 23211</span>
+            <span>Call / WhatsApp: +91 94943 23211</span>
           </a>
-          <span className="mobile-footer-lic">Mfg. Lic. No. R-1970/Ayur</span>
+          <span className="mobile-footer-lic">AYUSH Mfg. Lic. No. R-1970/Ayur</span>
         </div>
       </div>
 

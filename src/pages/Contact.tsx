@@ -260,11 +260,11 @@ export default function Contact() {
                 title="Call or WhatsApp"
                 className="contact-detail-card border border-[#D9C8A9]/70 bg-white hover:border-[#C5A059] transition-all"
               >
-                <div className="mt-3 flex flex-col space-y-2 text-sm">
-                  <a href="tel:+919494323211" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors inline-flex items-center gap-2 py-1 min-h-[44px]">
+                <div className="mt-3 flex flex-col space-y-1.5 text-sm">
+                  <a href="tel:+919494323211" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors flex items-center gap-2">
                     <span className="text-secondary font-normal">Primary:</span> +91 9494323211
                   </a>
-                  <a href="tel:+918563274701" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors inline-flex items-center gap-2 py-1 min-h-[44px]">
+                  <a href="tel:+918563274701" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors flex items-center gap-2">
                     <span className="text-secondary font-normal">Office:</span> +91 8563 274701
                   </a>
                 </div>
@@ -275,11 +275,11 @@ export default function Contact() {
                 title="Email Dispatch"
                 className="contact-detail-card border border-[#D9C8A9]/70 bg-white hover:border-[#C5A059] transition-all"
               >
-                <div className="mt-3 flex flex-col space-y-2 text-sm">
-                  <a href="mailto:info@sspharmacy.com" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors inline-flex items-center gap-2 py-1 min-h-[44px]">
+                <div className="mt-3 flex flex-col space-y-1.5 text-sm">
+                  <a href="mailto:info@sspharmacy.com" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors flex items-center gap-2">
                     <span className="text-secondary font-normal">General:</span> info@sspharmacy.com
                   </a>
-                  <a href="mailto:partners@sspharmacy.com" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors inline-flex items-center gap-2 py-1 min-h-[44px]">
+                  <a href="mailto:partners@sspharmacy.com" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors flex items-center gap-2">
                     <span className="text-secondary font-normal">Dealers:</span> partners@sspharmacy.com
                   </a>
                 </div>

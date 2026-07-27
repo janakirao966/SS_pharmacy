@@ -1,8 +1,6 @@
 import { useState, memo } from 'react';
 import type { Product } from '../../data/products';
-import CleanCard from './CleanCard';
-import Button from '../ui/Button';
-import { ShoppingBag, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, CheckCircle2, ShieldCheck, ArrowRight, Star } from 'lucide-react';
 import { renderAyurvedicText } from '../../utils/lang';
 import { useCart } from '../../context/CartContext';
 
@@ -12,10 +10,10 @@ interface ProductCardProps {
   onEnquire?: () => void;
 }
 
-// Helper to extract clean key active herb names from composition
+// Clean helper to extract herbal names with guaranteed spacing
 function getCleanIngredients(composition: string): string[] {
   if (!composition) return [];
-  const items = composition
+  const rawParts = composition
     .split(/[,/]/)
     .map((item) =>
       item
@@ -23,10 +21,15 @@ function getCleanIngredients(composition: string): string[] {
         .replace(/per \d+.*/gi, '')
         .replace(/as shown on label.*/gi, '')
         .replace(/Shuddha/gi, '')
+        .replace(/Purified/gi, '')
+        .replace(/Swarasa/gi, '')
+        .replace(/Churna/gi, '')
+        .replace(/Puvvu/gi, '')
         .trim()
     )
-    .filter((item) => item.length > 1 && item.length < 28);
-  return Array.from(new Set(items)).slice(0, 4);
+    .filter((item) => item.length > 1 && item.length < 24);
+
+  return Array.from(new Set(rawParts)).slice(0, 3);
 }
 
 const ProductCard = memo(function ProductCard({
@@ -41,30 +44,39 @@ const ProductCard = memo(function ProductCard({
   const activeIngredients = getCleanIngredients(product.composition);
 
   return (
-    <CleanCard
-      as="article"
-      variant="elevated"
-      interactive
+    <article
       onClick={() => onClick(product.id)}
-      className="product-card-modern product-catalog-card group"
+      className="product-card-luxury group cursor-pointer"
     >
-      {/* Top Media Showcase Container (Fixed 210px height for equal baseline alignment across grid) */}
-      <div className="product-image-wrapper relative flex items-center justify-center h-[210px] w-full p-4 bg-[#FAF7F2] rounded-t-xl overflow-hidden">
+      {/* 1. Image Media Container */}
+      <div className="product-card-media">
+        {/* Top Badges */}
+        <div className="product-badge-strip">
+          <span className="product-mfg-badge">
+            <ShieldCheck size={12} className="text-[#C5A059]" />
+            <span>Govt. Licensed</span>
+          </span>
+          <span className="product-rating-badge">
+            <Star size={11} className="fill-[#C5A059] text-[#C5A059]" />
+            <span>4.9</span>
+          </span>
+        </div>
+
         {imageLoading && <div className="shimmer-effect" />}
         {imageError ? (
           <div className="product-image-fallback">
-            <ShoppingBag className="product-fallback-icon" size={32} strokeWidth={1.5} />
-            <span className="product-fallback-name">{renderAyurvedicText(product.name)}</span>
+            <ShoppingBag size={32} className="text-[#1D3A28]" />
+            <span>{renderAyurvedicText(product.name)}</span>
           </div>
         ) : (
           <img
-            src={product.image}
+            src={product.transparentImage || product.image}
             alt={product.name}
             width={400}
             height={400}
             loading="lazy"
             decoding="async"
-            className="product-card-image max-h-[170px] w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+            className="product-card-img"
             onLoad={() => setImageLoading(false)}
             onError={() => {
               setImageLoading(false);
@@ -74,122 +86,105 @@ const ProductCard = memo(function ProductCard({
         )}
       </div>
 
-      {/* Main Content Info Block (Pixel-perfect 16px padding and flex alignment) */}
-      <div className="product-info flex flex-col flex-1 p-4.5">
-        <div className="flex items-center justify-between gap-2 mb-1.5">
-          <span className="product-category text-[10.5px] font-bold tracking-widest text-[#8A6B29] uppercase line-clamp-1">
+      {/* 2. Content Info Body */}
+      <div className="product-card-body">
+        {/* Category & Pack Size */}
+        <div className="product-header-row">
+          <span className="product-category-text">
             {renderAyurvedicText(product.category)}
           </span>
           {product.packSize && (
-            <span className="bg-[#1D3A28] text-white px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide flex-shrink-0">
+            <span className="product-pack-pill">
               {product.packSize}
             </span>
           )}
         </div>
 
-        <h3 className="product-title font-display text-lg font-semibold text-[#1D3A28] leading-snug mb-2.5 min-h-[2.6rem] line-clamp-2">
+        {/* Product Title */}
+        <h3 className="product-title-text">
           {renderAyurvedicText(product.name)}
         </h3>
 
-        {/* Key Actives Herbal Chips & Benefits Preview (Balanced Height Container for SF6-004) */}
-        <div className="product-card-middle-content min-h-[76px] flex flex-col justify-between mb-2.5">
-          {activeIngredients.length > 0 ? (
-            <div>
-              <span className="text-[9.5px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                Key Actives & Herbs
-              </span>
-              <div className="flex flex-wrap gap-1">
-                {activeIngredients.map((herb, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-flex items-center gap-1 text-[10.5px] font-medium bg-[#F4F7F4] text-[#2D5016] px-2 py-0.5 rounded-md border border-[#2D5016]/15"
-                  >
-                    <span className="w-1 h-1 rounded-full bg-[#C5A059]" />
-                    {herb}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div />
-          )}
-
-          {/* Benefits Preview */}
-          {product.benefits && product.benefits.length > 0 && (
-            <ul className="space-y-1 mt-1.5">
-              {product.benefits.slice(0, 2).map((benefit, idx) => (
-                <li key={idx} className="flex items-center gap-1.5 text-[11.5px] text-slate-600">
-                  <CheckCircle2 size={12} className="text-[#C5A059] flex-shrink-0" />
-                  <span className="line-clamp-1">{benefit}</span>
-                </li>
+        {/* Key Active Herbs */}
+        {activeIngredients.length > 0 && (
+          <div className="product-herbs-block">
+            <span className="product-herbs-label">Key Actives &amp; Herbs</span>
+            <div className="product-herbs-chips flex flex-wrap gap-1.5">
+              {activeIngredients.map((herb, idx) => (
+                <span key={idx} className="product-herb-chip">
+                  <span className="herb-dot" />
+                  {herb}
+                </span>
               ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="product-card-divider my-2.5 border-t border-slate-100 mt-auto" />
-
-        {/* Price & Guarantee Footer */}
-        <div className="product-footer flex items-center justify-between mb-3">
-          <div>
-            <span className="text-[9.5px] uppercase font-bold text-slate-400 tracking-wider block">Best Price (MRP)</span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-lg font-bold text-[#1D3A28]">₹{product.mrp}</span>
-              <span className="text-[10px] text-slate-400">Incl. taxes</span>
             </div>
           </div>
+        )}
 
-          <span className="text-[10.5px] font-semibold text-[#8A6B29] bg-[#FEFDF8] px-2 py-0.5 rounded border border-[#C5A059]/30">
-            Govt. Licensed
-          </span>
+        {/* Key Benefits Bullet List */}
+        {product.benefits && product.benefits.length > 0 && (
+          <ul className="product-benefits-list">
+            {product.benefits.slice(0, 2).map((benefit, idx) => (
+              <li key={idx} className="product-benefit-item">
+                <CheckCircle2 size={13} className="text-[#C5A059] shrink-0" />
+                <span>{benefit}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Price Row (Clean vertical center alignment for price & tax badge) */}
+        <div className="product-price-row">
+          <div>
+            <span className="product-price-label">Best Price (MRP)</span>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="product-price-val">₹{product.mrp}</span>
+              <span className="product-tax-badge">Incl. all taxes</span>
+            </div>
+          </div>
+          <span className="text-[#2D5016] text-[11px] font-bold">In Stock</span>
         </div>
 
-        {/* Action Buttons */}
-        <div className="product-actions grid grid-cols-2 gap-2 mt-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            rounded="md"
-            className="btn-add-cart flex items-center gap-1.5 justify-center text-xs font-medium border-[#1D3A28] text-[#1D3A28] hover:bg-[#1D3A28] hover:text-white transition-all py-1.5"
+        {/* Action Buttons: Add to Cart & Buy Now */}
+        <div className="product-cta-actions">
+          <button
+            type="button"
+            className="btn-card-add-cart"
             onClick={(e) => {
               e.stopPropagation();
               handleAddToCart(product, 1);
             }}
           >
-            <ShoppingBag size={13} strokeWidth={1.75} />
+            <ShoppingBag size={15} />
             <span>Add</span>
-          </Button>
+          </button>
 
-          <Button
-            variant="primary"
-            size="sm"
-            rounded="md"
-            className="btn-buy-now bg-[#1D3A28] hover:bg-[#2D5016] text-white text-xs font-medium shadow-sm transition-all py-1.5"
+          <button
+            type="button"
+            className="btn-card-buy-now"
             onClick={(e) => {
               e.stopPropagation();
               handleBuyNow(product);
             }}
           >
-            Buy Now
-          </Button>
-
-          {onEnquire && (
-            <Button
-              variant="secondary"
-              size="sm"
-              rounded="md"
-              className="btn-enquire col-span-2 mt-1 py-1.5 text-xs"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEnquire();
-              }}
-            >
-              Enquire Wholesale
-            </Button>
-          )}
+            <span>Buy Now</span>
+            <ArrowRight size={14} />
+          </button>
         </div>
+
+        {onEnquire && (
+          <button
+            type="button"
+            className="btn-card-enquire mt-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEnquire();
+            }}
+          >
+            Enquire B2B Wholesale
+          </button>
+        )}
       </div>
-    </CleanCard>
+    </article>
   );
 });
 

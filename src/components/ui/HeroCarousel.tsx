@@ -30,7 +30,7 @@ const heroSlides: SlideData[] = [
   {
     id: 'moon-cream',
     desktopImage: baseUrl + 'products/Hero%20section/hero-moon-desktop.webp',
-    mobileImage: baseUrl + 'products/Hero%20section/hero%20image%20testing%20image.png',
+    mobileImage: baseUrl + 'products/Hero%20section/hero-moon-mobile.webp',
     desktopPosition: 'center right',
     mobilePosition: 'bottom right',
     alt: 'Moon Light Cream – Pure Ayurvedic Skin Care',
@@ -47,7 +47,7 @@ const heroSlides: SlideData[] = [
   {
     id: 'pain-cream',
     desktopImage: baseUrl + 'products/Hero%20section/hero-pain-cream-desktop.webp',
-    mobileImage: baseUrl + 'products/Hero%20section/hero%20image%20testing%20image.png',
+    mobileImage: baseUrl + 'products/Hero%20section/hero-pain-cream-mobile.webp',
     desktopPosition: 'center right',
     mobilePosition: 'bottom right',
     alt: 'Dr. Lion Pain Relief Cream – S.S. Pharmacy',
@@ -64,7 +64,7 @@ const heroSlides: SlideData[] = [
   {
     id: 'brand-main',
     desktopImage: baseUrl + 'products/Hero%20section/hero-main-desktop.webp',
-    mobileImage: baseUrl + 'products/Hero%20section/hero%20image%20testing%20image.png',
+    mobileImage: baseUrl + 'products/Hero%20section/hero-main-mobile.webp',
     desktopPosition: 'center right',
     mobilePosition: 'bottom right',
     alt: 'Ayurvedic Solutions for Modern Wellness – S.S. Pharmacy',
@@ -81,7 +81,7 @@ const heroSlides: SlideData[] = [
   {
     id: 'pain-pills',
     desktopImage: baseUrl + 'products/Hero%20section/hero-pain-pills-desktop.webp',
-    mobileImage: baseUrl + 'products/Hero%20section/hero%20image%20testing%20image.png',
+    mobileImage: baseUrl + 'products/Hero%20section/hero-pain-pills-mobile.webp',
     desktopPosition: 'center right',
     mobilePosition: 'bottom right',
     alt: 'Dr. Lion Pain Pills – Traditional Herbal Remedy',

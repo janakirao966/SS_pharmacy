@@ -47,7 +47,8 @@ CREATE POLICY "Admin view report exports" ON public.analytics_report_exports FOR
 -- 3. POSTGRESQL ANALYTICS VIEWS
 
 -- DAILY SALES ANALYTICS VIEW
-CREATE OR REPLACE VIEW public.vw_sales_analytics_daily AS
+CREATE OR REPLACE VIEW public.vw_sales_analytics_daily
+WITH (security_invoker = true) AS
 SELECT
   o.created_at::date AS sales_date,
   COUNT(o.id) AS total_orders,
@@ -63,7 +64,8 @@ FROM public.orders o
 GROUP BY o.created_at::date;
 
 -- MONTHLY FINANCIAL & TAX SUMMARY VIEW
-CREATE OR REPLACE VIEW public.vw_financial_summary_monthly AS
+CREATE OR REPLACE VIEW public.vw_financial_summary_monthly
+WITH (security_invoker = true) AS
 WITH monthly_invoices AS (
   SELECT
     date_trunc('month', i.created_at)::date AS financial_month,
@@ -109,7 +111,8 @@ LEFT JOIN monthly_credit_notes mcn ON mcn.financial_month = mi.financial_month
 LEFT JOIN monthly_refunds mr ON mr.financial_month = mi.financial_month;
 
 -- HISTORICAL BATCH COGS MONTHLY VIEW
-CREATE OR REPLACE VIEW public.vw_historical_cogs_monthly AS
+CREATE OR REPLACE VIEW public.vw_historical_cogs_monthly
+WITH (security_invoker = true) AS
 SELECT
   date_trunc('month', o.created_at)::date AS sales_month,
   oiba.product_id,
@@ -122,7 +125,8 @@ WHERE oiba.status = 'committed' AND o.payment_status = 'paid'
 GROUP BY date_trunc('month', o.created_at)::date, oiba.product_id;
 
 -- GSTR-1 PREPARATION REPORT VIEW
-CREATE OR REPLACE VIEW public.vw_gst_r1_prep_report AS
+CREATE OR REPLACE VIEW public.vw_gst_r1_prep_report
+WITH (security_invoker = true) AS
 SELECT
   date_trunc('month', i.created_at)::date AS report_month,
   i.place_of_supply,
@@ -140,7 +144,8 @@ WHERE i.invoice_status = 'issued'
 GROUP BY date_trunc('month', i.created_at)::date, i.place_of_supply, ii.hsn_code, ii.gst_rate;
 
 -- INVENTORY EXPIRY RISK & ASSET VALUATION VIEW
-CREATE OR REPLACE VIEW public.vw_inventory_expiry_valuation AS
+CREATE OR REPLACE VIEW public.vw_inventory_expiry_valuation
+WITH (security_invoker = true) AS
 SELECT
   ib.product_id,
   ib.status AS batch_status,
@@ -157,7 +162,8 @@ FROM public.inventory_batches ib
 GROUP BY ib.product_id, ib.status;
 
 -- CUSTOMER COHORTS RFM VIEW (ANONYMIZED USER IDS ONLY)
-CREATE OR REPLACE VIEW public.vw_customer_cohorts_rfm AS
+CREATE OR REPLACE VIEW public.vw_customer_cohorts_rfm
+WITH (security_invoker = true) AS
 SELECT
   o.user_id,
   COUNT(o.id) AS total_orders_count,
