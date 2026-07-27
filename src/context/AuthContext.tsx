@@ -2,11 +2,17 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { supabase, type DatabaseProfile } from '../lib/supabase';
 import type { User, Session } from '@supabase/supabase-js';
 
+export type AuthModalMode = 'login' | 'signup' | 'forgot';
+
 interface AuthContextType {
   user: User | null;
   profile: DatabaseProfile | null;
   loading: boolean;
   isAdmin: boolean;
+  isAuthOpen: boolean;
+  authModalMode: AuthModalMode;
+  openAuthModal: (mode?: AuthModalMode) => void;
+  closeAuthModal: () => void;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
 }
@@ -18,6 +24,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<DatabaseProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<AuthModalMode>('login');
+
+  const openAuthModal = (mode: AuthModalMode = 'login') => {
+    setAuthModalMode(mode);
+    setIsAuthOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setIsAuthOpen(false);
+  };
 
   const fetchProfile = async (userId: string, email: string) => {
     try {
@@ -129,7 +146,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isAdmin, signOut, refreshSession }}>
+    <AuthContext.Provider value={{
+      user,
+      profile,
+      loading,
+      isAdmin,
+      isAuthOpen,
+      authModalMode,
+      openAuthModal,
+      closeAuthModal,
+      signOut,
+      refreshSession
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -51,6 +51,7 @@ export default function Checkout() {
   const [authMode, setAuthMode] = useState<'guest' | 'login' | 'signup'>(user ? 'guest' : 'login');
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
+  const [authConfirmPassword, setAuthConfirmPassword] = useState('');
   const [authName, setAuthName] = useState('');
   const [authPhone, setAuthPhone] = useState('');
 
@@ -102,6 +103,12 @@ export default function Checkout() {
           showToast('Signed in successfully!', 'success');
         }
       } else if (authMode === 'signup') {
+        if (authPassword !== authConfirmPassword) {
+          setError('Passwords do not match. Please re-enter your password.');
+          setLoading(false);
+          return;
+        }
+
         const { data, error: authError } = await supabase.auth.signUp({
           email: authEmail,
           password: authPassword,
@@ -389,6 +396,20 @@ export default function Checkout() {
                         placeholder="••••••••"
                       />
                     </div>
+
+                    {authMode === 'signup' && (
+                      <div className="form-field-group">
+                        <label>Confirm Password *</label>
+                        <input
+                          type="password"
+                          required
+                          value={authConfirmPassword}
+                          onChange={(e) => setAuthConfirmPassword(e.target.value)}
+                          className="form-input-field"
+                          placeholder="••••••••"
+                        />
+                      </div>
+                    )}
 
                     <button
                       type="submit"

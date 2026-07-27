@@ -53,31 +53,60 @@ SELECT
   COUNT(o.id) AS total_orders,
   COUNT(CASE WHEN o.payment_status = 'paid' THEN 1 END) AS paid_orders_count,
   COALESCE(SUM(CASE WHEN o.payment_status = 'paid' THEN o.total_amount ELSE 0 END), 0.00) AS net_paid_revenue,
-  COALESCE(SUM(o.subtotal_amount), 0.00) AS gross_merchandise_value,
-  COALESCE(SUM(o.discount_amount), 0.00) AS total_discounts,
-  COALESCE(SUM(o.delivery_fee), 0.00) AS delivery_revenue,
+  COALESCE(SUM(o.subtotal), 0.00) AS gross_merchandise_value,
+  0.00 AS total_discounts,
+  COALESCE(SUM(o.delivery_charge), 0.00) AS delivery_revenue,
   COALESCE(AVG(CASE WHEN o.payment_status = 'paid' THEN o.total_amount END), 0.00) AS average_order_value,
   COUNT(CASE WHEN o.payment_method = 'cod' THEN 1 END) AS cod_orders_count,
-  COUNT(CASE WHEN o.payment_method = 'razorpay' THEN 1 END) AS online_orders_count
+  COUNT(CASE WHEN o.payment_method IN ('online_razorpay', 'razorpay') THEN 1 END) AS online_orders_count
 FROM public.orders o
 GROUP BY o.created_at::date;
 
 -- MONTHLY FINANCIAL & TAX SUMMARY VIEW
 CREATE OR REPLACE VIEW public.vw_financial_summary_monthly AS
+WITH monthly_invoices AS (
+  SELECT
+    date_trunc('month', i.created_at)::date AS financial_month,
+    COUNT(i.id) AS invoice_count,
+    COALESCE(SUM(i.taxable_value), 0.00) AS gross_taxable_sales,
+    COALESCE(SUM(i.cgst_total), 0.00) AS total_cgst_collected,
+    COALESCE(SUM(i.sgst_total), 0.00) AS total_sgst_collected,
+    COALESCE(SUM(i.igst_total), 0.00) AS total_igst_collected,
+    COALESCE(SUM(i.cgst_total + i.sgst_total + i.igst_total), 0.00) AS total_gst_collected,
+    COALESCE(SUM(i.grand_total), 0.00) AS gross_invoice_value
+  FROM public.invoices i
+  WHERE i.invoice_status = 'issued'
+  GROUP BY date_trunc('month', i.created_at)::date
+),
+monthly_credit_notes AS (
+  SELECT
+    date_trunc('month', cn.created_at)::date AS financial_month,
+    COALESCE(SUM(cn.total_amount), 0.00) AS total_credit_notes_issued
+  FROM public.credit_notes cn
+  GROUP BY date_trunc('month', cn.created_at)::date
+),
+monthly_refunds AS (
+  SELECT
+    date_trunc('month', r.created_at)::date AS financial_month,
+    COALESCE(SUM(r.amount), 0.00) AS total_refunds_processed
+  FROM public.refunds r
+  WHERE r.status = 'processed'
+  GROUP BY date_trunc('month', r.created_at)::date
+)
 SELECT
-  date_trunc('month', i.created_at)::date AS financial_month,
-  COUNT(i.id) AS invoice_count,
-  COALESCE(SUM(i.taxable_amount), 0.00) AS gross_taxable_sales,
-  COALESCE(SUM(i.cgst_amount), 0.00) AS total_cgst_collected,
-  COALESCE(SUM(i.sgst_amount), 0.00) AS total_sgst_collected,
-  COALESCE(SUM(i.igst_amount), 0.00) AS total_igst_collected,
-  COALESCE(SUM(i.total_tax_amount), 0.00) AS total_gst_collected,
-  COALESCE(SUM(i.total_amount), 0.00) AS gross_invoice_value,
-  COALESCE((SELECT SUM(cn.total_amount) FROM public.credit_notes cn WHERE date_trunc('month', cn.created_at) = date_trunc('month', i.created_at)), 0.00) AS total_credit_notes_issued,
-  COALESCE((SELECT SUM(r.refund_amount) FROM public.refunds r WHERE r.status = 'processed' AND date_trunc('month', r.created_at) = date_trunc('month', i.created_at)), 0.00) AS total_refunds_processed
-FROM public.invoices i
-WHERE i.status = 'issued'
-GROUP BY date_trunc('month', i.created_at)::date;
+  mi.financial_month,
+  mi.invoice_count,
+  mi.gross_taxable_sales,
+  mi.total_cgst_collected,
+  mi.total_sgst_collected,
+  mi.total_igst_collected,
+  mi.total_gst_collected,
+  mi.gross_invoice_value,
+  COALESCE(mcn.total_credit_notes_issued, 0.00) AS total_credit_notes_issued,
+  COALESCE(mr.total_refunds_processed, 0.00) AS total_refunds_processed
+FROM monthly_invoices mi
+LEFT JOIN monthly_credit_notes mcn ON mcn.financial_month = mi.financial_month
+LEFT JOIN monthly_refunds mr ON mr.financial_month = mi.financial_month;
 
 -- HISTORICAL BATCH COGS MONTHLY VIEW
 CREATE OR REPLACE VIEW public.vw_historical_cogs_monthly AS
@@ -97,18 +126,18 @@ CREATE OR REPLACE VIEW public.vw_gst_r1_prep_report AS
 SELECT
   date_trunc('month', i.created_at)::date AS report_month,
   i.place_of_supply,
-  ii.hsn_code_snapshot AS hsn_code,
-  ii.gst_rate_snapshot AS gst_rate,
+  ii.hsn_code AS hsn_code,
+  ii.gst_rate AS gst_rate,
   SUM(ii.quantity) AS total_quantity,
-  SUM(ii.taxable_amount) AS total_taxable_value,
+  SUM(ii.taxable_value) AS total_taxable_value,
   SUM(ii.cgst_amount) AS total_cgst,
   SUM(ii.sgst_amount) AS total_sgst,
   SUM(ii.igst_amount) AS total_igst,
-  SUM(ii.total_amount) AS total_invoice_value
+  SUM(ii.line_total) AS total_invoice_value
 FROM public.invoice_items ii
 JOIN public.invoices i ON i.id = ii.invoice_id
-WHERE i.status = 'issued'
-GROUP BY date_trunc('month', i.created_at)::date, i.place_of_supply, ii.hsn_code_snapshot, ii.gst_rate_snapshot;
+WHERE i.invoice_status = 'issued'
+GROUP BY date_trunc('month', i.created_at)::date, i.place_of_supply, ii.hsn_code, ii.gst_rate;
 
 -- INVENTORY EXPIRY RISK & ASSET VALUATION VIEW
 CREATE OR REPLACE VIEW public.vw_inventory_expiry_valuation AS

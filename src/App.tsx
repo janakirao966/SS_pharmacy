@@ -60,6 +60,7 @@ const AdminSettings = lazy(() => import('./pages/AdminSettings'));
 const AdminProfile = lazy(() => import('./pages/AdminProfile'));
 const AdminSecurity = lazy(() => import('./pages/AdminSecurity'));
 const CustomerAccount = lazy(() => import('./pages/CustomerAccount'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const OrderSuccess = lazy(() => import('./pages/OrderSuccess'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -84,7 +85,6 @@ export default function App() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<string>('home');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const { isCartOpen, cartAnnouncement, setIsCartOpen } = useCart();
 
   // Global keyboard shortcuts: Ctrl/Cmd + K (Search), Ctrl/Cmd + B (Cart Toggle)
@@ -224,6 +224,7 @@ export default function App() {
               <Route path="/distributor" element={<ErrorBoundary><Distributor /></ErrorBoundary>} />
               <Route path="/track-order" element={<ErrorBoundary><TrackOrder /></ErrorBoundary>} />
               <Route path="/account" element={<ErrorBoundary><CustomerAccount /></ErrorBoundary>} />
+              <Route path="/reset-password" element={<ErrorBoundary><ResetPassword /></ErrorBoundary>} />
               <Route path="/checkout" element={<ErrorBoundary><Checkout /></ErrorBoundary>} />
               <Route path="/order-success/:orderNumber" element={<ErrorBoundary><OrderSuccess /></ErrorBoundary>} />
               <Route path="/admin/login" element={<ErrorBoundary><AdminLogin /></ErrorBoundary>} />
@@ -274,13 +275,8 @@ export default function App() {
           </div>
         </Suspense>
 
-
-
         {/* Customer Sign In / Sign Up Modal */}
-        <AuthModal
-          isOpen={isAuthOpen}
-          onClose={() => setIsAuthOpen(false)}
-        />
+        <AuthModal />
       </ErrorBoundary>
     </Layout>
   );

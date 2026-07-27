@@ -1,29 +1,45 @@
-import { useState } from 'react';
-import { X, ShieldCheck, Mail, Lock, User, Phone, ArrowRight, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, ShieldCheck, Mail, Lock, User, Phone, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Button from './Button';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../context/ToastContext';
+import { useAuth, type AuthModalMode } from '../../context/AuthContext';
 
 interface AuthModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
   onSuccess?: () => void;
+  initialMode?: AuthModalMode;
 }
 
-export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
+export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, onSuccess, initialMode }: AuthModalProps) {
   const { showToast } = useToast();
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const authCtx = useAuth();
+
+  const isModalOpen = propIsOpen !== undefined ? propIsOpen : authCtx.isAuthOpen;
+  const handleCloseModal = propOnClose || authCtx.closeAuthModal;
+  const activeMode = initialMode || authCtx.authModalMode || 'login';
+
+  const [mode, setMode] = useState<AuthModalMode>(activeMode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setMode(activeMode);
+    setError(null);
+    setSuccessMessage(null);
+  }, [activeMode, isModalOpen]);
+
+  if (!isModalOpen) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -32,6 +48,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null);
     setLoading(true);
 
     try {
@@ -46,9 +63,15 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         } else if (data.session) {
           showToast('Welcome back to S.S. PHARMACY!', 'success');
           if (onSuccess) onSuccess();
-          onClose();
+          handleCloseModal();
         }
-      } else {
+      } else if (mode === 'signup') {
+        if (formData.password !== formData.confirmPassword) {
+          setError('Passwords do not match. Please re-enter your password.');
+          setLoading(false);
+          return;
+        }
+
         const { data, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
@@ -65,14 +88,46 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         } else if (data.user) {
           showToast('Account created successfully!', 'success');
           if (onSuccess) onSuccess();
-          onClose();
+          handleCloseModal();
+        }
+      } else if (mode === 'forgot') {
+        if (!formData.email.trim()) {
+          setError('Please enter your email address.');
+          setLoading(false);
+          return;
+        }
+
+        // Base-path safe redirect URL to support both GitHub Pages (/SS_pharmacy/) and custom domain
+        const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+        const redirectUrl = `${window.location.origin}${baseUrl}#/reset-password`;
+
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(formData.email.trim(), {
+          redirectTo: redirectUrl
+        });
+
+        if (resetError) {
+          setError(resetError.message);
+        } else {
+          setSuccessMessage('Password reset link sent! Please check your email inbox.');
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Auth error:', err);
-      setError('An error occurred during authentication.');
+      setError(err?.message || 'An error occurred during authentication.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getTitle = () => {
+    switch (mode) {
+      case 'signup':
+        return 'Create Account';
+      case 'forgot':
+        return 'Reset Password';
+      case 'login':
+      default:
+        return 'Customer Sign In';
     }
   };
 
@@ -85,15 +140,16 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             <ShieldCheck size={20} className="text-[#C5A059]" />
             <div>
               <h3 className="font-display font-bold text-base tracking-wide">
-                {mode === 'login' ? 'Customer Sign In' : 'Create Account'}
+                {getTitle()}
               </h3>
               <p className="text-[10px] text-slate-300 font-sans">S.S. PHARMACY Member Portal</p>
             </div>
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleCloseModal}
             className="p-1 rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+            aria-label="Close authentication modal"
           >
             <X size={18} />
           </button>
@@ -103,8 +159,15 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
             <div className="p-2.5 bg-red-50 text-red-700 text-xs rounded-lg flex items-center gap-1.5 font-medium">
-              <AlertCircle size={14} />
+              <AlertCircle size={14} className="shrink-0" />
               <span>{error}</span>
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="p-2.5 bg-emerald-50 text-emerald-800 text-xs rounded-lg flex items-center gap-1.5 font-medium border border-emerald-200">
+              <CheckCircle2 size={14} className="shrink-0 text-emerald-600" />
+              <span>{successMessage}</span>
             </div>
           )}
 
@@ -160,21 +223,52 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             </div>
           )}
 
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-700 mb-1">Password *</label>
-            <div className="relative">
-              <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="password"
-                name="password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="••••••••"
-                className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#1D3A28]"
-              />
+          {mode !== 'forgot' && (
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-[11px] font-semibold text-slate-700">Password *</label>
+                {mode === 'login' && (
+                  <button
+                    type="button"
+                    onClick={() => setMode('forgot')}
+                    className="text-[10px] text-[#1D3A28] hover:underline font-medium"
+                  >
+                    Forgot Password?
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="password"
+                  name="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#1D3A28]"
+                />
+              </div>
             </div>
-          </div>
+          )}
+
+          {mode === 'signup' && (
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-700 mb-1">Confirm Password *</label>
+              <div className="relative">
+                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#1D3A28]"
+                />
+              </div>
+            </div>
+          )}
 
           <Button
             type="submit"
@@ -186,14 +280,16 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               <span>Processing...</span>
             ) : (
               <>
-                <span>{mode === 'login' ? 'Sign In' : 'Create Account'}</span>
+                <span>
+                  {mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
+                </span>
                 <ArrowRight size={14} />
               </>
             )}
           </Button>
 
           <div className="pt-2 text-center text-xs text-slate-500">
-            {mode === 'login' ? (
+            {mode === 'login' && (
               <span>
                 Don't have an account?{' '}
                 <button
@@ -204,7 +300,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                   Sign Up
                 </button>
               </span>
-            ) : (
+            )}
+            {mode === 'signup' && (
               <span>
                 Already registered?{' '}
                 <button
@@ -215,6 +312,15 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                   Sign In
                 </button>
               </span>
+            )}
+            {mode === 'forgot' && (
+              <button
+                type="button"
+                onClick={() => setMode('login')}
+                className="text-[#1D3A28] font-bold hover:underline"
+              >
+                Back to Sign In
+              </button>
             )}
           </div>
         </form>

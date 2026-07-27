@@ -2,7 +2,29 @@
 -- S.S. PHARMACY — MIGRATION 12: PRODUCTION RETURNS, RTO, REVERSE LOGISTICS & INVENTORY RECOVERY SYSTEM
 -- ==========================================
 
--- 1. Ensure system_settings key for return_window_days exists
+-- 1. Ensure system_settings table and return_window_days key exist
+CREATE TABLE IF NOT EXISTS public.system_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT,
+  description TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Enable Row Level Security on system_settings
+ALTER TABLE public.system_settings ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access to system_settings
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'system_settings' AND policyname = 'Allow public read access to system_settings'
+  ) THEN
+    CREATE POLICY "Allow public read access to system_settings" ON public.system_settings
+      FOR SELECT USING (true);
+  END IF;
+END $$;
+
 INSERT INTO public.system_settings (key, value, description)
 VALUES ('return_window_days', NULL, 'Return window duration in days. NULL means unconfigured.')
 ON CONFLICT (key) DO NOTHING;

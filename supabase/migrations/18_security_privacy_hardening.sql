@@ -150,13 +150,17 @@ $$;
 -- 6. STRICT RPC EXECUTE PERMISSION HARDENING
 REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA public FROM PUBLIC;
 
--- Public Guest Capabilities (anon, authenticated, service_role)
+-- Drop legacy overloaded signatures of create_checkout_order to prevent PostgreSQL 42725 function name ambiguity
+DROP FUNCTION IF EXISTS public.create_checkout_order(text, text, text, text, text, text, text, text, jsonb);
+DROP FUNCTION IF EXISTS public.create_checkout_order(text, text, text, text, text, text, text, text, jsonb, uuid);
+
+-- Public Guest & Checkout Capabilities (anon, authenticated, service_role)
 GRANT EXECUTE ON FUNCTION public.track_guest_order TO anon, authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.get_guest_order_receipt TO anon, authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.check_rate_limit TO anon, authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.create_checkout_order(text, text, text, text, text, text, text, text, jsonb, uuid, text) TO anon, authenticated, service_role;
 
 -- Authenticated Customer Capabilities
-GRANT EXECUTE ON FUNCTION public.create_checkout_order TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.anonymize_user_profile TO authenticated, service_role;
 
 -- Admin-Only Capabilities

@@ -4,9 +4,11 @@ import Button from '../components/ui/Button';
 import SEO from '../components/ui/SEO';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function CustomerAccount() {
   const { showToast } = useToast();
+  const { openAuthModal } = useAuth();
   const [user, setUser] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,13 +91,22 @@ export default function CustomerAccount() {
         <p className="text-xs text-slate-600">
           Please sign in to view your past orders, active shipment tracking, and delivery preferences.
         </p>
-        <Button
-          variant="primary"
-          onClick={() => (window.location.href = '/track-order')}
-          className="bg-[#1D3A28] hover:bg-[#2D5016] text-white py-2.5 px-6 rounded-xl font-bold text-xs"
-        >
-          Track Order Without Account
-        </Button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Button
+            variant="primary"
+            onClick={() => openAuthModal('login')}
+            className="bg-[#1D3A28] hover:bg-[#2D5016] text-white py-2.5 px-6 rounded-xl font-bold text-xs w-full sm:w-auto"
+          >
+            Sign In to Your Account
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => (window.location.href = '/#/track-order')}
+            className="border-slate-300 text-slate-700 hover:bg-slate-50 py-2.5 px-6 rounded-xl font-bold text-xs w-full sm:w-auto"
+          >
+            Track Order Without Account
+          </Button>
+        </div>
       </div>
     );
   }

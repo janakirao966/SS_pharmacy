@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { MagnifyingGlass, ShoppingCart, ArrowUpRight, X, List, WhatsappLogo, Phone } from '@phosphor-icons/react';
+import { MagnifyingGlass, ShoppingCart, ArrowUpRight, X, List, WhatsappLogo, Phone, User } from '@phosphor-icons/react';
 import SearchModal from '../ui/SearchModal';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface NavbarProps {
   activeTab: string;
@@ -24,6 +25,7 @@ export default function Navbar({
   });
 
   const { cartCount, setIsCartOpen } = useCart();
+  const { user, openAuthModal } = useAuth();
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -173,6 +175,28 @@ export default function Navbar({
               <MagnifyingGlass size={20} weight="bold" />
             </button>
 
+            {/* Desktop Account Button */}
+            {user ? (
+              <Link
+                to="/account"
+                className="cart-navbar-btn min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-[#C5A059] focus-visible:outline-none inline-flex items-center justify-center"
+                aria-label="My Account"
+                title="My Account"
+              >
+                <User size={20} weight="bold" className="text-[#1D3A28]" />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => openAuthModal('login')}
+                className="cart-navbar-btn min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-[#C5A059] focus-visible:outline-none inline-flex items-center justify-center"
+                aria-label="Sign In to Account"
+                title="Sign In to Account"
+              >
+                <User size={20} weight="bold" />
+              </button>
+            )}
+
             <Link
               to="/contact"
               className="btn-pill btn-pill-primary nav-cta"
@@ -280,7 +304,39 @@ export default function Navbar({
                 </Link>
               </li>
             ))}
+
+            {/* Mobile Account Access */}
             <li style={{ animationDelay: `${navItems.length * 60}ms` }} className={isOpen ? 'fade-in-slide' : ''}>
+              {user ? (
+                <Link
+                  to="/account"
+                  className={`nav-link-mobile-btn ${activeTab === 'account' ? 'active' : ''}`}
+                  onClick={() => setIsOpen(false)}
+                  aria-current={activeTab === 'account' ? 'page' : undefined}
+                >
+                  <span className="flex items-center gap-2">
+                    <User size={18} weight="bold" />
+                    <span>My Account</span>
+                  </span>
+                  {activeTab === 'account' && <span className="mobile-active-indicator" />}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className="nav-link-mobile-btn w-full text-left flex items-center gap-2 min-h-[44px]"
+                  onClick={() => {
+                    setIsOpen(false);
+                    openAuthModal('login');
+                  }}
+                  aria-label="Sign In to Account"
+                >
+                  <User size={18} weight="bold" />
+                  <span>Sign In / Account</span>
+                </button>
+              )}
+            </li>
+
+            <li style={{ animationDelay: `${(navItems.length + 1) * 60}ms` }} className={isOpen ? 'fade-in-slide' : ''}>
               <Link
                 to="/contact"
                 className="btn-pill btn-pill-primary w-full mt-4 justify-center"
