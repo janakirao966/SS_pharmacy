@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ChevronLeft, ChevronRight, Star, Leaf } from 'lucide-react';
+import { Leaf, ShieldCheck, MapPin, Phone, Mail, Clock, ArrowRight } from 'lucide-react';
 import Container from './Container';
-import Grid from './Grid';
+import { useToast } from '../../context/ToastContext';
 
 interface FooterProps {
   setActiveTab?: (tab: string) => void;
@@ -10,196 +10,279 @@ interface FooterProps {
 
 export default function Footer({ setActiveTab: _setActiveTab }: FooterProps) {
   const currentYear = new Date().getFullYear();
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const testimonials = [
-    {
-      text: "Dr. Lion Pain Cream really helped me with my knee pain. Very effective and completely herbal. Highly recommended!",
-      author: "Ramesh B."
-    },
-    {
-      text: "Moon Light Cream has worked wonders for my dark spots. My skin feels fresh, clear, and glowing naturally.",
-      author: "Sneha L."
-    },
-    {
-      text: "We have been distributing Dr. Lion products for over a year. Outstanding feedback and absolute quality consistency.",
-      author: "Venkatesh Pharmacy"
-    }
-  ];
-
-  // Auto-scroll testimonials every 6 seconds, pausing on hover/focus and resetting on slide change
-  useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [isPaused, activeTestimonial, testimonials.length]);
-
-  const handleNext = () => {
-    setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const handlePrev = () => {
-    setActiveTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
+  const { showToast } = useToast();
+  const [b2bEmail, setB2bEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleScrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleB2bSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!b2bEmail.trim()) return;
+
+    setIsSubmitting(true);
+    setTimeout(() => {
+      showToast('Thank you! Our B2B sales team will contact you shortly.', 'success');
+      setB2bEmail('');
+      setIsSubmitting(false);
+    }, 600);
+  };
+
   return (
-    <footer className="main-footer">
+    <footer className="footer-ayurvedic-root" role="contentinfo">
+      {/* 1. Top Quote Banner Strip */}
+      <div className="footer-top-quote-strip">
+        <Container>
+          <p className="footer-quote-text">
+            <Leaf size={18} className="text-[#A67C3D] shrink-0" aria-hidden="true" />
+            <span>Pure Ayurveda. <span className="gold-highlight">Trusted Healthcare & Statutory Quality</span> Since 1970.</span>
+            <Leaf size={18} className="text-[#A67C3D] shrink-0 transform scale-x-[-1]" aria-hidden="true" />
+          </p>
+        </Container>
+      </div>
+
       <Container>
-        <Grid cols={4} gap="lg" className="footer-main-grid">
-          {/* Column 1: About AYU S.S. Pharmacy */}
-          <div className="footer-links-group">
-            <h3>About AYU S.S. Pharmacy</h3>
-            <p className="text-sm leading-relaxed mb-6">
-              We are a trusted Ayurvedic company dedicated to providing safe, effective and natural healthcare solutions. S.S. PHARMACY manufactures premium government-licensed Ayurvedic formulations.
-            </p>
-            <Link
-              to="/about"
-              className="btn-pill border-light text-light text-xs py-2 px-5 hover:bg-white hover:text-[#2D5016]"
-              onClick={handleScrollTop}
-              style={{ display: 'inline-flex', backgroundColor: 'transparent', borderColor: 'rgba(255,255,255,0.4)', color: '#ffffff', borderWidth: '1px', borderStyle: 'solid' }}
-            >
-              Know More
-            </Link>
-          </div>
-
-          {/* Column 2: Manufacturing Excellence */}
-          <div className="footer-links-group">
-            <h3>Manufacturing Excellence</h3>
-            <ul className="footer-bullets-list">
-              <li className="footer-bullet-item">
-                <Check size={14} className="footer-bullet-check" />
-                <span>GMP Certified Manufacturing</span>
-              </li>
-              <li className="footer-bullet-item">
-                <Check size={14} className="footer-bullet-check" />
-                <span>Quality Control at Every Step</span>
-              </li>
-              <li className="footer-bullet-item">
-                <Check size={14} className="footer-bullet-check" />
-                <span>Pure & Natural Ingredients</span>
-              </li>
-              <li className="footer-bullet-item">
-                <Check size={14} className="footer-bullet-check" />
-                <span>Safe & Hygienic Packaging</span>
-              </li>
-            </ul>
-            <img
-              src={`${import.meta.env.BASE_URL}products/chemist_lab.webp`}
-              alt="Ayurvedic Chemist Facility"
-              className="footer-chemist-img"
-              width={800}
-              height={800}
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-
-          {/* Column 3: Our Mission */}
-          <div className="footer-links-group">
-            <h3>Our Mission</h3>
-            <p className="text-sm leading-relaxed mb-6">
-              To promote health and wellness through authentic Ayurvedic solutions that are effective, affordable and trusted by all.
-            </p>
-            <div className="flex mt-6 opacity-30 justify-start">
-              <Leaf className="text-white" size={48} />
-            </div>
-          </div>
-
-          {/* Column 4: What Our Customers Say (Testimonials) */}
-          <div className="footer-links-group">
-            <h3>What Our Customers Say</h3>
-            
-            <div
-              className="footer-testimonial-slider"
-              role="region"
-              aria-label="Customer testimonials"
-              onMouseEnter={() => setIsPaused(true)}
-              onMouseLeave={() => setIsPaused(false)}
-              onFocus={() => setIsPaused(true)}
-              onBlur={() => setIsPaused(false)}
-              aria-live="polite"
-            >
-              <div className="footer-testimonials-slider-track">
-              {testimonials.map((test, index) => (
-                <figure
-                  key={index}
-                  className={`footer-testimonial-slide ${activeTestimonial === index ? 'active' : ''}`}
-                >
-                  <div className="footer-stars-row" aria-hidden="true">
-                    <Star size={14} fill="currentColor" />
-                    <Star size={14} fill="currentColor" />
-                    <Star size={14} fill="currentColor" />
-                    <Star size={14} fill="currentColor" />
-                    <Star size={14} fill="currentColor" />
-                  </div>
-                  <blockquote className="footer-testimonial-quote">
-                    "{test.text}"
-                  </blockquote>
-                  <figcaption className="footer-testimonial-author">
-                    — {test.author}
-                  </figcaption>
-                </figure>
-              ))}
+        {/* 2. Main 5-Column Navigation & Info Grid */}
+        <div className="footer-main-grid-5col">
+          {/* Column 1: Brand Logo & Mission */}
+          <div className="footer-col-group">
+            <div className="flex items-center gap-4 mb-3">
+              <img
+                src={`${import.meta.env.BASE_URL}products/logo/logo.webp`}
+                alt="S.S. PHARMACY Brand Logo"
+                width={58}
+                height={58}
+                decoding="async"
+                className="footer-logo-img"
+              />
+              <div>
+                <h3 className="footer-brand-title">S.S. PHARMACY</h3>
+                <span className="footer-brand-tagline">Pure Ayurveda, Pure Life</span>
               </div>
             </div>
+            
+            <p className="footer-brand-desc">
+              Licensed Ayurvedic manufacturing facility operating in Yerraguntla, Andhra Pradesh. Crafting time-tested herbal formulations under strict Schedule T quality standards.
+            </p>
 
-            {/* Slider Controls */}
-            <div className="footer-slider-controls">
-              <button
-                type="button"
-                className="footer-slider-arrow"
-                onClick={handlePrev}
-                aria-label="Previous testimonial"
-                onFocus={() => setIsPaused(true)}
-                onBlur={() => setIsPaused(false)}
-              >
-                <ChevronLeft size={16} />
-              </button>
-              {testimonials.map((_, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  className={`footer-slider-dot ${activeTestimonial === idx ? 'active' : ''}`}
-                  onClick={() => setActiveTestimonial(idx)}
-                  aria-label={`Go to slide ${idx + 1} of ${testimonials.length}`}
-                  onFocus={() => setIsPaused(true)}
-                  onBlur={() => setIsPaused(false)}
-                />
-              ))}
-              <button
-                type="button"
-                className="footer-slider-arrow"
-                onClick={handleNext}
-                aria-label="Next testimonial"
-                onFocus={() => setIsPaused(true)}
-                onBlur={() => setIsPaused(false)}
-              >
-                <ChevronRight size={16} />
-              </button>
+            <div className="inline-flex items-center gap-2 p-2.5 rounded-xl bg-[#FCFAF5] border border-[#DCD2C1] text-xs text-[#57544E] shadow-xs">
+              <ShieldCheck size={16} className="shrink-0 text-[#A67C3D]" />
+              <span className="font-semibold text-[#57544E]">Mfg. Lic. Code: <strong className="text-[#183D2B]">R-1970/Ayur</strong></span>
             </div>
           </div>
-        </Grid>
 
-        {/* Footer Bottom Block */}
-        <div className="footer-bottom">
-          <p className="text-xs">
-            &copy; {currentYear} S.S. PHARMACY. All rights reserved. | Mfg. Lic. No. R-1970/Ayur
+          {/* Column 2: Company Navigation */}
+          <div className="footer-col-group">
+            <h4 className="footer-col-heading">Company</h4>
+            <ul className="footer-link-list">
+              <li>
+                <Link to="/about" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>About S.S. Pharmacy</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/manufacturing" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Manufacturing Facility</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/why-choose-us" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Why Choose Us</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/distributor" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Distributor Opportunities</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Contact Our Unit</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Formulations */}
+          <div className="footer-col-group">
+            <h4 className="footer-col-heading">Formulations</h4>
+            <ul className="footer-link-list">
+              <li>
+                <Link to="/products/dr-lion-pain-cream" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Dr. Lion Pain Cream</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/products/dr-lion-pain-pills" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Dr. Lion Pain Pills</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/products/moon-light-cream" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Moon Light Cream</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/products" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Full Product Catalog</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Support & Policies */}
+          <div className="footer-col-group">
+            <h4 className="footer-col-heading">Support &amp; Policies</h4>
+            <ul className="footer-link-list">
+              <li>
+                <Link to="/track-order" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Track Active Order</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/account/support" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Customer Support Portal</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>FAQ &amp; Product Info</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Privacy Policy</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Terms &amp; Conditions</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/accessibility" onClick={handleScrollTop} className="footer-nav-link">
+                  <ArrowRight size={12} className="text-[#A67C3D]" />
+                  <span>Accessibility Statement</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 5: Contact Facility */}
+          <div className="footer-col-group">
+            <h4 className="footer-col-heading">Contact Facility</h4>
+            <div className="footer-contact-item">
+              <MapPin size={16} className="footer-contact-icon" />
+              <span>D. No. 1-2-211 &amp; 1-2-212, Prakash Nagar, Yerraguntla, YSR Kadapa Dist., A.P. - 516309</span>
+            </div>
+            <div className="footer-contact-item">
+              <Phone size={16} className="footer-contact-icon" />
+              <a href="tel:+919494323211" className="hover:text-[#C5A059] transition-colors">+91 94943 23211</a>
+            </div>
+            <div className="footer-contact-item">
+              <Mail size={16} className="footer-contact-icon" />
+              <a href="mailto:info@sspharmacy.com" className="hover:text-[#C5A059] transition-colors">info@sspharmacy.com</a>
+            </div>
+            <div className="footer-contact-item">
+              <Clock size={16} className="footer-contact-icon" />
+              <span>Mon – Sat: 9:00 AM – 6:00 PM</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Newsletter & Social Links Strip */}
+        <div className="footer-b2b-social-strip">
+          <form onSubmit={handleB2bSubmit} className="footer-b2b-form-wrap">
+            <h5 className="footer-b2b-form-title">Wholesale &amp; B2B Partner Updates</h5>
+            <p className="footer-b2b-form-sub">Receive bulk pricing sheets and new distributor allocation alerts.</p>
+            <div className="footer-b2b-input-group">
+              <input
+                type="email"
+                required
+                value={b2bEmail}
+                onChange={(e) => setB2bEmail(e.target.value)}
+                placeholder="Enter your medical shop/email address..."
+                className="footer-b2b-input"
+                aria-label="Email address for B2B distributor updates"
+              />
+              <button type="submit" disabled={isSubmitting} className="footer-b2b-btn">
+                <span>{isSubmitting ? 'Sending...' : 'Subscribe'}</span>
+              </button>
+            </div>
+          </form>
+
+          <div className="footer-social-icons-group">
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-social-icon-btn"
+              aria-label="Follow S.S. PHARMACY on Instagram"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-social-icon-btn"
+              aria-label="Follow S.S. PHARMACY on Facebook"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+            </a>
+            <a
+              href="https://youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-social-icon-btn"
+              aria-label="Watch S.S. PHARMACY videos on YouTube"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+            </a>
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-social-icon-btn"
+              aria-label="Connect with S.S. PHARMACY on LinkedIn"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            </a>
+          </div>
+        </div>
+
+        {/* 5. Bottom Copyright & Legal Bar */}
+        <div className="footer-bottom-legal-bar">
+          <p className="m-0">
+            &copy; {currentYear} S.S. PHARMACY. All rights reserved. | Government Mfg. Lic. No. R-1970/Ayur
           </p>
-          <div className="footer-bottom-links">
+          <div className="footer-bottom-nav-links">
             <Link to="/track-order" onClick={handleScrollTop}>Track Order</Link>
-            <Link to="/terms" onClick={handleScrollTop}>Terms &amp; Conditions</Link>
-            <Link to="/privacy" onClick={handleScrollTop}>Privacy Policy</Link>
-            <Link to="/accessibility" onClick={handleScrollTop}>Accessibility Statement</Link>
+            <span className="text-white/20">•</span>
+            <Link to="/about" onClick={handleScrollTop}>Sitemap</Link>
+            <span className="text-white/20">•</span>
+            <Link to="/admin/login" onClick={handleScrollTop}>Admin Portal</Link>
           </div>
         </div>
       </Container>
     </footer>
   );
 }
+
+

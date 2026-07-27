@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { MagnifyingGlass, ShoppingCart, ArrowUpRight, X, List, WhatsappLogo, Phone, User } from '@phosphor-icons/react';
+import { MagnifyingGlass, ShoppingCart, X, List, WhatsappLogo, Phone, User } from '@phosphor-icons/react';
 import SearchModal from '../ui/SearchModal';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -175,7 +175,20 @@ export default function Navbar({
               <MagnifyingGlass size={20} weight="bold" />
             </button>
 
-            {/* Desktop Account Button */}
+            {/* Shopping Cart Button */}
+            <button
+              type="button"
+              onClick={() => setIsCartOpen(true)}
+              className="cart-navbar-btn nav-cart-btn"
+              aria-label="Open Shopping Cart"
+            >
+              <ShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
+              )}
+            </button>
+
+            {/* Desktop Account Button (To the right of Cart) */}
             {user ? (
               <Link
                 to="/account"
@@ -196,28 +209,6 @@ export default function Navbar({
                 <User size={20} weight="bold" />
               </button>
             )}
-
-            <Link
-              to="/contact"
-              className="btn-pill btn-pill-primary nav-cta"
-            >
-              Enquire Now
-              <span className="cta-icon-wrapper">
-                <ArrowUpRight className="cta-icon" size={14} weight="bold" />
-              </span>
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => setIsCartOpen(true)}
-              className="cart-navbar-btn nav-cart-btn"
-              aria-label="Open Shopping Cart"
-            >
-              <ShoppingCart size={20} />
-              {cartCount > 0 && (
-                <span className="cart-badge-count">{cartCount > 999 ? '999+' : cartCount}</span>
-              )}
-            </button>
           </div>
 
           {/* Mobile Actions Wrapper (Search, Cart, Menu Toggle) */}
@@ -334,17 +325,6 @@ export default function Navbar({
                   <span>Sign In / Account</span>
                 </button>
               )}
-            </li>
-
-            <li style={{ animationDelay: `${(navItems.length + 1) * 60}ms` }} className={isOpen ? 'fade-in-slide' : ''}>
-              <Link
-                to="/contact"
-                className="btn-pill btn-pill-primary w-full mt-4 justify-center"
-                onClick={() => setIsOpen(false)}
-              >
-                Enquire Now
-                <ArrowUpRight size={16} style={{ marginLeft: '4px' }} />
-              </Link>
             </li>
           </ul>
         </div>

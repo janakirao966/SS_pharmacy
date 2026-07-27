@@ -14,6 +14,7 @@ import SectionHeader from '../components/ui/SectionHeader';
 import { renderAyurvedicText } from '../utils/lang';
 import SEO from '../components/ui/SEO';
 import { useCart } from '../context/CartContext';
+import TrustBadgesBar from '../components/ui/TrustBadgesBar';
 
 interface ProductDetailProps {
   productId: string;
@@ -295,6 +296,8 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
                 </Button>
               </div>
 
+              {/* 5 Verified Trust Credentials Bar */}
+              <TrustBadgesBar className="mt-8" />
             </div>
           </div>
         </Container>

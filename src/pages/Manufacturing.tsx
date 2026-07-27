@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Award, Factory, ChevronLeft, ChevronRight, CheckCircle2, Shield, Sparkles, ArrowRight } from 'lucide-react';
+import { Award, Factory, ChevronLeft, ChevronRight, ArrowRight, Sparkles } from 'lucide-react';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Breadcrumbs from '../components/layout/Breadcrumbs';
 import SectionHeader from '../components/ui/SectionHeader';
 import SEO from '../components/ui/SEO';
+import TrustBadgesBar from '../components/ui/TrustBadgesBar';
 
 export default function Manufacturing() {
   const [activeCert, setActiveCert] = useState(0);
@@ -14,19 +15,22 @@ export default function Manufacturing() {
       pillar: "Pillar 01",
       title: "Authentic Formulation Sourcing",
       desc: "Our formulations adhere strictly to classic Ayurvedic recipes and time-tested herbal ratios. Every raw herb undergoes physical, identity, and moisture checks before entering processing to ensure uniform batch strength.",
-      image: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp"
+      image: import.meta.env.BASE_URL + "products/why_choose_us_image.webp",
+      badge: "Botanical Raw Material QA"
     },
     {
       pillar: "Pillar 02",
       title: "Hygienic Production Process",
       desc: "Our facility operates in sanitized, climate-controlled environments. Equipment and processing vessels undergo mandatory cleaning and sterilization checks between batches to maintain statutory purity standards.",
-      image: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp"
+      image: import.meta.env.BASE_URL + "products/chemist_lab.webp",
+      badge: "Sanitized Cleanroom Processing"
     },
     {
       pillar: "Pillar 03",
       title: "Quality Assurance & Lab Validation",
       desc: "We enforce multi-tiered validation checks. From raw botanical extraction to final bottle seals, every batch is tested to confirm identification metrics, safety, and consistent therapeutic support.",
-      image: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp"
+      image: import.meta.env.BASE_URL + "products/Moon-light/Moon cream Hero_section.webp",
+      badge: "Physico-Chemical Testing"
     }
   ];
 
@@ -82,43 +86,7 @@ export default function Manufacturing() {
           </div>
 
           {/* Trust Metrics / 5 Verified Claims Bar */}
-          <div className="manufacturing-trust-bar grid grid-cols-2 md:grid-cols-5 gap-3 mt-8 p-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-[#D9C8A9] shadow-sm">
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F5EFE3] border border-[#D9C8A9]/50">
-              <Award className="text-[#C5A059] shrink-0" size={22} />
-              <div>
-                <h6 className="text-xs font-bold text-[#1D3A28] leading-tight">GMP Certified</h6>
-                <p className="text-[11px] text-secondary leading-none mt-0.5">Audited Facility</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F5EFE3] border border-[#D9C8A9]/50">
-              <Factory className="text-[#C5A059] shrink-0" size={22} />
-              <div>
-                <h6 className="text-xs font-bold text-[#1D3A28] leading-tight">Govt. License</h6>
-                <p className="text-[11px] text-secondary leading-none mt-0.5">R-1970/Ayur</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F5EFE3] border border-[#D9C8A9]/50">
-              <Sparkles className="text-[#C5A059] shrink-0" size={22} />
-              <div>
-                <h6 className="text-xs font-bold text-[#1D3A28] leading-tight">100% Herbal</h6>
-                <p className="text-[11px] text-secondary leading-none mt-0.5">Pure Botanicals</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F5EFE3] border border-[#D9C8A9]/50">
-              <CheckCircle2 className="text-[#C5A059] shrink-0" size={22} />
-              <div>
-                <h6 className="text-xs font-bold text-[#1D3A28] leading-tight">Tested Safety</h6>
-                <p className="text-[11px] text-secondary leading-none mt-0.5">Lab Validated</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F5EFE3] border border-[#D9C8A9]/50 col-span-2 md:col-span-1">
-              <Shield className="text-[#C5A059] shrink-0" size={22} />
-              <div>
-                <h6 className="text-xs font-bold text-[#1D3A28] leading-tight">Zero Harm</h6>
-                <p className="text-[11px] text-secondary leading-none mt-0.5">Non-Toxic Formula</p>
-              </div>
-            </div>
-          </div>
+          <TrustBadgesBar className="mt-8" />
         </Container>
       </Section>
 
@@ -160,14 +128,20 @@ export default function Manufacturing() {
 
                 {/* Visual Block */}
                 <div className={`lg:col-span-5 ${i % 2 === 1 ? 'lg:order-1' : 'lg:order-2'}`}>
-                  <div className="rounded-2xl overflow-hidden border-2 border-[#D9C8A9] shadow-md bg-white group">
+                  <div className="mfg-card-frame group">
                     <img
                       src={std.image}
                       alt={std.title}
-                      className="w-full h-[240px] md:h-[280px] object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="mfg-card-img"
                       loading="lazy"
                       decoding="async"
                     />
+                    <div className="mfg-img-overlay">
+                      <span className="mfg-badge-tag">
+                        <Sparkles size={12} className="text-[#C5A059]" />
+                        <span>{std.badge}</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

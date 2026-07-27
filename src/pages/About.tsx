@@ -1,4 +1,4 @@
-import { Shield, Sparkles, MapPin, HeartHandshake, Award, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Shield, Sparkles, MapPin, HeartHandshake, ArrowRight, ShieldCheck, FileCheck } from 'lucide-react';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -6,6 +6,7 @@ import Breadcrumbs from '../components/layout/Breadcrumbs';
 import SectionHeader from '../components/ui/SectionHeader';
 import CleanCard from '../components/cards/CleanCard';
 import SEO from '../components/ui/SEO';
+import TrustBadgesBar from '../components/ui/TrustBadgesBar';
 
 export default function About() {
   return (
@@ -31,8 +32,8 @@ export default function About() {
           }
         }}
       />
-      {/* 1. Hero Header & Trust Badges */}
-      <Section className="pt-page-header pb-10 bg-gradient-to-b from-[#F9F6EE] to-[#FEFDF8] border-b border-[#E8E2D2]">
+      {/* 1. Hero Header & Trust Badges Bar */}
+      <Section className="pt-page-header pb-12 bg-gradient-to-b from-[#F9F6EE] via-[#FEFDF8] to-[#FEFDF8] border-b border-[#E8E2D2]">
         <Container>
           <Breadcrumbs items={[{ label: 'About Us' }]} className="mb-6" />
           <div className="about-header-block max-w-3xl">
@@ -43,71 +44,48 @@ export default function About() {
               align="left"
               isPageHeader
             />
-
-            {/* Quick Credentials Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-8 pt-6 border-t border-[#E8E2D2]">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/80 border border-[#D9C8A9]/60 shadow-xs">
-                <div className="w-10 h-10 rounded-full bg-[#1D3A28]/10 text-[#1D3A28] flex items-center justify-center shrink-0">
-                  <Shield size={20} className="text-[#C5A059]" />
-                </div>
-                <div>
-                  <h6 className="text-xs font-bold text-[#1D3A28]">Govt. Licensed</h6>
-                  <p className="text-[11px] text-secondary">Lic. R-1970/Ayur</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/80 border border-[#D9C8A9]/60 shadow-xs">
-                <div className="w-10 h-10 rounded-full bg-[#1D3A28]/10 text-[#1D3A28] flex items-center justify-center shrink-0">
-                  <Award size={20} className="text-[#C5A059]" />
-                </div>
-                <div>
-                  <h6 className="text-xs font-bold text-[#1D3A28]">GMP Certified</h6>
-                  <p className="text-[11px] text-secondary">Quality Audited Unit</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/80 border border-[#D9C8A9]/60 shadow-xs col-span-2 sm:col-span-1">
-                <div className="w-10 h-10 rounded-full bg-[#1D3A28]/10 text-[#1D3A28] flex items-center justify-center shrink-0">
-                  <CheckCircle2 size={20} className="text-[#C5A059]" />
-                </div>
-                <div>
-                  <h6 className="text-xs font-bold text-[#1D3A28]">100% Authentic</h6>
-                  <p className="text-[11px] text-secondary">Pure Botanicals</p>
-                </div>
-              </div>
-            </div>
           </div>
+
+          {/* 5 Verified Trust Credentials Bar */}
+          <TrustBadgesBar className="mt-8" />
         </Container>
       </Section>
 
       {/* 2. Brand Story / Storytelling */}
-      <Section className="about-story-section py-12 md:py-16">
+      <Section className="about-story-section py-14 md:py-20">
         <Container>
-          <div className="about-story-grid grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+          <div className="about-story-grid grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-14 items-center">
             {/* Story Visual Box */}
             <div className="lg:col-span-5 story-image-block">
-              <div className="relative rounded-2xl overflow-hidden border-2 border-[#D9C8A9] shadow-lg bg-white group">
+              <div className="relative rounded-2xl overflow-hidden border-2 border-[#D9C8A9] shadow-xl bg-white group">
                 <img
                   src={`${import.meta.env.BASE_URL}products/Moon-light/Moon cream Hero_section.webp`}
-                  alt="Ayurvedic herbs and formulation process"
-                  className="w-full h-[360px] md:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Ayurvedic herbs and formulation process at S.S. Pharmacy"
+                  className="w-full h-[380px] md:h-[440px] object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1D3A28]/80 via-transparent to-transparent flex items-end p-6">
-                  <div className="text-white">
-                    <span className="text-xs font-mono uppercase tracking-widest text-[#C5A059] font-bold">Ayurvedic Manufacturing</span>
-                    <h4 className="font-display text-lg text-white mt-1">Yerraguntla Facility, Andhra Pradesh</h4>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1D3A28]/85 via-[#1D3A28]/30 to-transparent flex items-end p-6 md:p-8">
+                  <div className="text-white space-y-1">
+                    <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-[#C5A059] bg-[#1D3A28]/80 border border-[#C5A059]/40 rounded-md backdrop-blur-sm">
+                      Ayurvedic Manufacturing Facility
+                    </span>
+                    <h4 className="font-display text-xl text-white font-bold tracking-wide">Yerraguntla Unit, Andhra Pradesh</h4>
+                    <p className="text-xs text-slate-200 font-sans">Mfg. License Code: R-1970/Ayur</p>
                   </div>
                 </div>
               </div>
             </div>
             
             {/* Story Text Content */}
-            <div className="lg:col-span-7 story-text-block space-y-5">
-              <span className="eyebrow-badge bg-[#1D3A28]/10 text-[#1D3A28] border border-[#1D3A28]/20">Company Profile</span>
-              <h2 className="font-display text-3xl md:text-4xl text-[#1D3A28] leading-tight">
-                One-Step Solution for Authentic Ayurvedic Remedies
+            <div className="lg:col-span-7 story-text-block space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1D3A28]/10 text-[#1D3A28] border border-[#1D3A28]/20 text-xs font-semibold">
+                <FileCheck size={14} className="text-[#C5A059]" />
+                <span>Company Profile & Statutory Credentials</span>
+              </div>
+
+              <h2 className="font-display text-3xl md:text-4xl text-[#1D3A28] leading-tight font-bold">
+                One-Stop Solution for Authentic Ayurvedic Remedies
               </h2>
               
               <p className="text-secondary text-base leading-relaxed">
@@ -119,17 +97,19 @@ export default function About() {
               </p>
 
               {/* Statutory License Card */}
-              <div className="about-license-card bg-gradient-to-r from-[#F5EFE3] to-[#FEFDF8] p-5 rounded-2xl border border-[#D9C8A9] shadow-sm flex items-start gap-4 mt-6">
-                <div className="license-badge-icon w-12 h-12 rounded-full bg-[#1D3A28] text-[#C5A059] flex items-center justify-center shrink-0 shadow-xs">
-                  <Shield size={24} />
+              <div className="about-license-card bg-gradient-to-r from-[#F5EFE3] via-[#FEFDF8] to-[#F5EFE3] p-5 md:p-6 rounded-2xl border border-[#D9C8A9] shadow-sm flex items-start gap-4 mt-6 hover:shadow-md transition-shadow">
+                <div className="license-badge-icon w-12 h-12 rounded-xl bg-[#1D3A28] text-[#C5A059] flex items-center justify-center shrink-0 shadow-sm border border-[#C5A059]/30">
+                  <ShieldCheck size={26} />
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h6 className="font-bold text-[#1D3A28] text-base">Government Licensed Ayurvedic Unit</h6>
-                    <span className="bg-[#1D3A28]/10 text-[#1D3A28] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#1D3A28]/20 uppercase">Approved</span>
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-display font-bold text-[#1D3A28] text-base md:text-lg">Government Licensed Ayurvedic Unit</h3>
+                    <span className="bg-[#C5A059]/20 text-[#7A6027] text-[10px] font-bold px-2.5 py-0.5 rounded-md border border-[#C5A059]/40 uppercase tracking-wider">
+                      Approved
+                    </span>
                   </div>
-                  <p className="text-secondary text-xs mt-1 font-medium leading-relaxed">
-                    Mfg. License No. <strong>R-1970/Ayur</strong> | Issued by the Licensing Authority of Andhra Pradesh for Ayurvedic Proprietary Medicines.
+                  <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
+                    Mfg. License No. <strong className="text-[#1D3A28]">R-1970/Ayur</strong> | Issued by the Licensing Authority of Andhra Pradesh for Ayurvedic Proprietary Medicines.
                   </p>
                 </div>
               </div>
@@ -139,7 +119,7 @@ export default function About() {
       </Section>
 
       {/* 3. Core Values Grid */}
-      <Section className="py-12 md:py-16 bg-[#F9F6EE] border-y border-[#E8E2D2]">
+      <Section className="py-14 md:py-20 bg-gradient-to-b from-[#F9F6EE] to-[#FEFDF8] border-y border-[#E8E2D2]">
         <Container>
           <SectionHeader
             eyebrow="Foundational Principles"
@@ -148,36 +128,36 @@ export default function About() {
           />
 
           <Grid cols={3} gap="lg" className="values-grid mt-12">
-            <CleanCard variant="default" className="h-full border border-[#D9C8A9]/70 hover:border-[#C5A059] transition-all duration-300 hover:shadow-md">
-              <div className="value-card p-2 flex flex-col h-full">
-                <div className="value-icon-box w-12 h-12 rounded-full bg-[#1D3A28] text-[#C5A059] flex items-center justify-center mb-5 shadow-xs">
+            <CleanCard variant="default" className="h-full border border-[#D9C8A9]/70 hover:border-[#C5A059] transition-all duration-300 hover:shadow-lg group">
+              <div className="value-card p-4 flex flex-col h-full">
+                <div className="value-icon-box w-12 h-12 rounded-xl bg-[#1D3A28] text-[#C5A059] flex items-center justify-center mb-5 shadow-xs border border-[#C5A059]/30 group-hover:scale-105 group-hover:bg-[#2D5016] transition-all">
                   <Sparkles size={24} />
                 </div>
-                <h4 className="font-display text-xl text-[#1D3A28] font-semibold">Authenticity</h4>
+                <h3 className="font-display text-xl text-[#1D3A28] font-bold group-hover:text-[#2D5016] transition-colors">Authenticity</h3>
                 <p className="mt-3 text-secondary text-sm leading-relaxed">
                   We strictly source genuine herbal raw materials and utilize traditional Ayurvedic formulation rules to maintain batch strength and purity.
                 </p>
               </div>
             </CleanCard>
 
-            <CleanCard variant="default" className="h-full border border-[#D9C8A9]/70 hover:border-[#C5A059] transition-all duration-300 hover:shadow-md">
-              <div className="value-card p-2 flex flex-col h-full">
-                <div className="value-icon-box w-12 h-12 rounded-full bg-[#1D3A28] text-[#C5A059] flex items-center justify-center mb-5 shadow-xs">
+            <CleanCard variant="default" className="h-full border border-[#D9C8A9]/70 hover:border-[#C5A059] transition-all duration-300 hover:shadow-lg group">
+              <div className="value-card p-4 flex flex-col h-full">
+                <div className="value-icon-box w-12 h-12 rounded-xl bg-[#1D3A28] text-[#C5A059] flex items-center justify-center mb-5 shadow-xs border border-[#C5A059]/30 group-hover:scale-105 group-hover:bg-[#2D5016] transition-all">
                   <Shield size={24} />
                 </div>
-                <h4 className="font-display text-xl text-[#1D3A28] font-semibold">Quality Assurance</h4>
+                <h3 className="font-display text-xl text-[#1D3A28] font-bold group-hover:text-[#2D5016] transition-colors">Quality Assurance</h3>
                 <p className="mt-3 text-secondary text-sm leading-relaxed">
                   Every production lot undergoes rigorous hygiene checks, sterile packaging protocols, and standardized quality validation before distribution.
                 </p>
               </div>
             </CleanCard>
 
-            <CleanCard variant="default" className="h-full border border-[#D9C8A9]/70 hover:border-[#C5A059] transition-all duration-300 hover:shadow-md">
-              <div className="value-card p-2 flex flex-col h-full">
-                <div className="value-icon-box w-12 h-12 rounded-full bg-[#1D3A28] text-[#C5A059] flex items-center justify-center mb-5 shadow-xs">
+            <CleanCard variant="default" className="h-full border border-[#D9C8A9]/70 hover:border-[#C5A059] transition-all duration-300 hover:shadow-lg group">
+              <div className="value-card p-4 flex flex-col h-full">
+                <div className="value-icon-box w-12 h-12 rounded-xl bg-[#1D3A28] text-[#C5A059] flex items-center justify-center mb-5 shadow-xs border border-[#C5A059]/30 group-hover:scale-105 group-hover:bg-[#2D5016] transition-all">
                   <HeartHandshake size={24} />
                 </div>
-                <h4 className="font-display text-xl text-[#1D3A28] font-semibold">Responsible Wording</h4>
+                <h3 className="font-display text-xl text-[#1D3A28] font-bold group-hover:text-[#2D5016] transition-colors">Responsible Wording</h3>
                 <p className="mt-3 text-secondary text-sm leading-relaxed">
                   We practice honest communication. We avoid unverified medical claims and present wellness benefits accurately according to regulations.
                 </p>
@@ -188,23 +168,23 @@ export default function About() {
       </Section>
 
       {/* 4. Geography / Facility Location Details */}
-      <Section className="about-location-section py-12 md:py-16">
+      <Section className="about-location-section py-14 md:py-20">
         <Container>
-          <div className="about-location-grid grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
-            <div className="lg:col-span-6 location-info-block space-y-4">
+          <div className="about-location-grid grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-14 items-center">
+            <div className="lg:col-span-6 location-info-block space-y-5">
               <span className="eyebrow-badge bg-[#C5A059]/15 text-[#7A6027] border border-[#C5A059]/30">Facility Headquarters</span>
-              <h2 className="font-display text-3xl md:text-4xl text-[#1D3A28]">Manufacturing Base in Andhra Pradesh</h2>
+              <h2 className="font-display text-3xl md:text-4xl text-[#1D3A28] font-bold">Manufacturing Base in Andhra Pradesh</h2>
               <p className="text-secondary text-base leading-relaxed">
                 Our state-approved manufacturing plant is located in Yerraguntla, Kadapa District, Andhra Pradesh. This hub manages raw material processing, quality control testing, batch bottling, and regional distribution dispatch.
               </p>
               
-              <div className="location-detail-row mt-6 p-4 rounded-2xl bg-[#F9F6EE] border border-[#D9C8A9]/60 flex items-start space-x-4">
-                <div className="p-2.5 rounded-xl bg-[#1D3A28] text-[#C5A059] shrink-0 mt-0.5">
-                  <MapPin size={20} />
+              <div className="location-detail-row mt-6 p-5 rounded-2xl bg-[#F9F6EE] border border-[#D9C8A9]/70 flex items-start space-x-4 shadow-sm">
+                <div className="p-3 rounded-xl bg-[#1D3A28] text-[#C5A059] shrink-0 mt-0.5 shadow-xs border border-[#C5A059]/30">
+                  <MapPin size={22} />
                 </div>
                 <address className="location-address not-italic">
-                  <h5 className="address-title font-display text-base font-semibold text-[#1D3A28]">S.S. PHARMACY Manufacturing Unit</h5>
-                  <p className="address-desc text-secondary text-sm mt-1 leading-relaxed">
+                  <h3 className="address-title font-display text-base font-bold text-[#1D3A28]">S.S. PHARMACY Manufacturing Unit</h3>
+                  <p className="address-desc text-slate-600 text-sm mt-1.5 leading-relaxed font-sans">
                     D. No. 1-2-211 and 1-2-212, Prakash Nagar,<br />
                     Yerraguntla Panchayati, YSR Kadapa District,<br />
                     Andhra Pradesh - 516309, India
@@ -214,8 +194,8 @@ export default function About() {
             </div>
 
             <div className="lg:col-span-6 location-visual-block">
-              <div className="w-full rounded-2xl overflow-hidden border-2 border-[#D9C8A9] shadow-md bg-white group flex flex-col">
-                <div className="relative w-full h-[220px] md:h-[260px] overflow-hidden bg-slate-100">
+              <div className="w-full rounded-2xl overflow-hidden border-2 border-[#D9C8A9] shadow-xl bg-white group flex flex-col">
+                <div className="relative w-full h-[240px] md:h-[280px] overflow-hidden bg-slate-100">
                   <img
                     src="https://maps.geoapify.com/v1/staticmap?style=osm-carto&width=900&height=420&center=lonlat:78.571027,14.755504&zoom=14&marker=lonlat:78.571027,14.755504;color:%232d5016;size:medium&apiKey=34036dd1e9ed4badb10aed72da04affb"
                     alt="S.S. PHARMACY Manufacturing Facility Map"
@@ -223,19 +203,19 @@ export default function About() {
                     loading="lazy"
                   />
                 </div>
-                <div className="p-4 bg-white border-t border-[#E8E2D2] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-3 h-3 rounded-full bg-emerald-600 animate-pulse flex-shrink-0" />
+                <div className="p-4 sm:p-5 bg-white border-t border-[#E8E2D2] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 animate-pulse flex-shrink-0" />
                     <div>
-                      <h5 className="font-display text-xs font-semibold text-[#1D3A28]">Registered Unit Location</h5>
-                      <p className="text-[11px] text-secondary">Yerraguntla, Kadapa Dist, AP - 516309</p>
+                      <h3 className="font-display text-xs font-bold text-[#1D3A28]">Registered Unit Location</h3>
+                      <p className="text-[11px] text-slate-500 font-sans">Yerraguntla, Kadapa Dist, AP - 516309</p>
                     </div>
                   </div>
                   <a
                     href="https://maps.app.goo.gl/UwgF81SSMDMUAEFV8"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#1D3A28] text-white text-xs font-semibold rounded-xl hover:bg-[#2D5016] shadow-sm transition-all duration-200 min-h-[44px] w-full sm:w-auto"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#1D3A28] text-white text-xs font-bold rounded-xl hover:bg-[#2D5016] shadow-sm transition-all duration-200 min-h-[44px] w-full sm:w-auto"
                   >
                     <MapPin size={14} className="text-[#C5A059]" />
                     <span>Open Maps Directions &rarr;</span>
@@ -248,27 +228,27 @@ export default function About() {
       </Section>
 
       {/* 5. Bottom Conversion CTA Banner */}
-      <Section className="about-cta-section bg-[#1D3A28] text-white py-14 border-t-2 border-[#C5A059]">
+      <Section className="about-cta-section bg-[#1D3A28] text-white py-16 border-t-2 border-[#C5A059]">
         <Container>
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 text-center lg:text-left">
             <div>
-              <span className="eyebrow-badge bg-[#C5A059]/20 text-[#C5A059] border border-[#C5A059]/40 mb-2 inline-block">Partner With S.S. PHARMACY</span>
-              <h3 className="font-display text-2xl md:text-3xl text-white mt-1">Looking for Wholesale or Distributorship?</h3>
-              <p className="text-emerald-100/80 text-sm md:text-base mt-2 max-w-2xl">
+              <span className="eyebrow-badge bg-[#C5A059]/20 text-[#C5A059] border border-[#C5A059]/40 mb-3 inline-block font-bold">Partner With S.S. PHARMACY</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-white mt-1">Looking for Wholesale or Distributorship?</h2>
+              <p className="text-emerald-100/80 text-sm md:text-base mt-2 max-w-2xl leading-relaxed">
                 We partner with medical shops, clinics, hospitals, and regional wholesale buyers. Gain exclusive regional distribution rights and full compliance collateral support.
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-4 shrink-0">
               <a
                 href={`${import.meta.env.BASE_URL}distributor`}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#C5A059] text-[#1D3A28] font-semibold rounded-xl hover:bg-[#d4b06a] transition-all min-h-[44px] shadow-sm text-sm"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#C5A059] text-[#1D3A28] font-bold rounded-xl hover:bg-[#d4b06a] transition-all min-h-[44px] shadow-md text-sm"
               >
                 <span>Apply for Distributorship</span>
                 <ArrowRight size={16} />
               </a>
               <a
                 href={`${import.meta.env.BASE_URL}products`}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 border border-white/20 transition-all min-h-[44px] text-sm"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-white/10 text-white font-bold rounded-xl hover:bg-white/20 border border-white/20 transition-all min-h-[44px] text-sm"
               >
                 View Product Range
               </a>
@@ -279,3 +259,4 @@ export default function About() {
     </div>
   );
 }
+

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { X, ShieldCheck, Mail, Lock, User, Phone, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
-import Button from './Button';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../context/ToastContext';
 import { useAuth, type AuthModalMode } from '../../context/AuthContext';
@@ -132,50 +131,48 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
   };
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-[#FEFDF8] rounded-2xl max-w-sm w-full border border-[#C5A059]/40 shadow-2xl overflow-hidden relative">
+    <div className="auth-modal-overlay" role="dialog" aria-modal="true" aria-label={getTitle()}>
+      <div className="auth-modal-card">
         {/* Header */}
-        <div className="bg-[#1D3A28] text-white p-5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={20} className="text-[#C5A059]" />
+        <div className="auth-modal-header">
+          <div className="auth-modal-header-left">
+            <ShieldCheck size={24} className="auth-modal-header-icon" />
             <div>
-              <h3 className="font-display font-bold text-base tracking-wide">
-                {getTitle()}
-              </h3>
-              <p className="text-[10px] text-slate-300 font-sans">S.S. PHARMACY Member Portal</p>
+              <h3 className="auth-modal-header-title">{getTitle()}</h3>
+              <p className="auth-modal-header-sub">S.S. PHARMACY Member Portal</p>
             </div>
           </div>
           <button
             type="button"
             onClick={handleCloseModal}
-            className="p-1 rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+            className="auth-modal-close-btn"
             aria-label="Close authentication modal"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         </div>
 
-        {/* Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="auth-modal-form">
           {error && (
-            <div className="p-2.5 bg-red-50 text-red-700 text-xs rounded-lg flex items-center gap-1.5 font-medium">
-              <AlertCircle size={14} className="shrink-0" />
+            <div className="auth-alert-error">
+              <AlertCircle size={16} className="shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {successMessage && (
-            <div className="p-2.5 bg-emerald-50 text-emerald-800 text-xs rounded-lg flex items-center gap-1.5 font-medium border border-emerald-200">
-              <CheckCircle2 size={14} className="shrink-0 text-emerald-600" />
+            <div className="auth-alert-success">
+              <CheckCircle2 size={16} className="shrink-0" />
               <span>{successMessage}</span>
             </div>
           )}
 
           {mode === 'signup' && (
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-700 mb-1">Full Name *</label>
-              <div className="relative">
-                <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <div className="auth-field-group">
+              <label className="auth-field-label">Full Name *</label>
+              <div className="auth-input-wrapper">
+                <User size={16} className="auth-input-icon" />
                 <input
                   type="text"
                   name="fullName"
@@ -183,33 +180,33 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="e.g. Ramesh Kumar"
-                  className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#1D3A28]"
+                  className="auth-input-field"
                 />
               </div>
             </div>
           )}
 
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-700 mb-1">Email Address *</label>
-            <div className="relative">
-              <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <div className="auth-field-group">
+            <label className="auth-field-label">Email Address *</label>
+            <div className="auth-input-wrapper">
+              <Mail size={16} className="auth-input-icon" />
               <input
-                type="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#1D3A28]"
+                  type="email"
+                  name="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  className="auth-input-field"
               />
             </div>
           </div>
 
           {mode === 'signup' && (
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-700 mb-1">Mobile Phone *</label>
-              <div className="relative">
-                <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <div className="auth-field-group">
+              <label className="auth-field-label">Mobile Phone *</label>
+              <div className="auth-input-wrapper">
+                <Phone size={16} className="auth-input-icon" />
                 <input
                   type="tel"
                   name="phone"
@@ -217,28 +214,28 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="10-digit mobile number"
-                  className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#1D3A28]"
+                  className="auth-input-field"
                 />
               </div>
             </div>
           )}
 
           {mode !== 'forgot' && (
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-[11px] font-semibold text-slate-700">Password *</label>
+            <div className="auth-field-group">
+              <div className="auth-field-header">
+                <label className="auth-field-label">Password *</label>
                 {mode === 'login' && (
                   <button
                     type="button"
                     onClick={() => setMode('forgot')}
-                    className="text-[10px] text-[#1D3A28] hover:underline font-medium"
+                    className="auth-forgot-btn"
                   >
                     Forgot Password?
                   </button>
                 )}
               </div>
-              <div className="relative">
-                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <div className="auth-input-wrapper">
+                <Lock size={16} className="auth-input-icon" />
                 <input
                   type="password"
                   name="password"
@@ -246,17 +243,17 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#1D3A28]"
+                  className="auth-input-field"
                 />
               </div>
             </div>
           )}
 
           {mode === 'signup' && (
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-700 mb-1">Confirm Password *</label>
-              <div className="relative">
-                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <div className="auth-field-group">
+              <label className="auth-field-label">Confirm Password *</label>
+              <div className="auth-input-wrapper">
+                <Lock size={16} className="auth-input-icon" />
                 <input
                   type="password"
                   name="confirmPassword"
@@ -264,17 +261,16 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#1D3A28]"
+                  className="auth-input-field"
                 />
               </div>
             </div>
           )}
 
-          <Button
+          <button
             type="submit"
-            variant="primary"
             disabled={loading}
-            className="w-full bg-[#1D3A28] hover:bg-[#2D5016] text-white py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-xs"
+            className="auth-submit-btn"
           >
             {loading ? (
               <span>Processing...</span>
@@ -283,19 +279,19 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
                 <span>
                   {mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
                 </span>
-                <ArrowRight size={14} />
+                <ArrowRight size={16} />
               </>
             )}
-          </Button>
+          </button>
 
-          <div className="pt-2 text-center text-xs text-slate-500">
+          <div className="auth-switch-text">
             {mode === 'login' && (
               <span>
                 Don't have an account?{' '}
                 <button
                   type="button"
                   onClick={() => setMode('signup')}
-                  className="text-[#1D3A28] font-bold hover:underline"
+                  className="auth-switch-btn"
                 >
                   Sign Up
                 </button>
@@ -307,7 +303,7 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
                 <button
                   type="button"
                   onClick={() => setMode('login')}
-                  className="text-[#1D3A28] font-bold hover:underline"
+                  className="auth-switch-btn"
                 >
                   Sign In
                 </button>
@@ -317,7 +313,7 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
               <button
                 type="button"
                 onClick={() => setMode('login')}
-                className="text-[#1D3A28] font-bold hover:underline"
+                className="auth-switch-btn"
               >
                 Back to Sign In
               </button>

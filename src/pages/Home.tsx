@@ -8,6 +8,7 @@ import ProductCard from '../components/cards/ProductCard';
 import HeroCarousel from '../components/ui/HeroCarousel';
 import SEO from '../components/ui/SEO';
 import ScrollReveal from '../components/ui/ScrollReveal';
+import TrustBadgesBar from '../components/ui/TrustBadgesBar';
 
 interface HomeProps {
   setActiveTab: (tab: string) => void;
@@ -198,6 +199,9 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
                 </div>
               </div>
             </div>
+
+            {/* 5 Verified Trust Credentials Bar */}
+            <TrustBadgesBar className="mt-10" />
           </Container>
         </Section>
       </ScrollReveal>
