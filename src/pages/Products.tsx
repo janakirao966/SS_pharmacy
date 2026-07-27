@@ -146,30 +146,30 @@ export default function Products({ setActiveTab, setSelectedProductId }: Product
         </Container>
       </Section>
 
-      {/* 3. Floating Comparison Bar */}
+      {/* 3. Floating Comparison Bar (SF6-005 Positioned above WhatsApp FAB on mobile with 44px Clear button) */}
       {compareList.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-[500px] bg-white border border-[#EBE6DC] shadow-lg rounded-full px-6 py-3 flex items-center justify-between animate-slideUp">
+        <div className="floating-compare-bar fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-[45] w-[90%] max-w-[500px] bg-white border border-[#EBE6DC] shadow-lg rounded-full px-5 py-2.5 flex items-center justify-between animate-slideUp">
           <div className="flex items-center space-x-3">
-            <span className="bg-[#2D5016] text-white text-xs font-mono font-bold w-6 h-6 rounded-full flex items-center justify-center">
+            <span className="bg-[#2D5016] text-white text-xs font-mono font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">
               {compareList.length}
             </span>
-            <span className="text-xs font-semibold text-[#2D5016] font-sans">
+            <span className="text-xs font-semibold text-[#2D5016] font-sans truncate">
               Formulation{compareList.length > 1 ? 's' : ''} Selected
             </span>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 shrink-0">
             <button
               type="button"
               onClick={() => setCompareList([])}
-              className="text-xs font-medium text-[#8B6914] hover:underline bg-transparent border-0 cursor-pointer px-2"
+              className="text-xs font-semibold text-[#8B6914] hover:underline bg-transparent border-0 cursor-pointer px-3 min-h-[44px] inline-flex items-center justify-center"
             >
               Clear
             </button>
             <button
               type="button"
               onClick={() => setIsCompareOpen(true)}
-              className="px-4 py-2 bg-[#2D5016] text-white text-xs font-semibold rounded-full border border-[#2D5016] hover:bg-white hover:text-[#2D5016] transition-all cursor-pointer"
+              className="px-4 py-2.5 bg-[#2D5016] text-white text-xs font-semibold rounded-full border border-[#2D5016] hover:bg-white hover:text-[#2D5016] transition-all cursor-pointer min-h-[44px] inline-flex items-center justify-center"
             >
               Compare Now
             </button>

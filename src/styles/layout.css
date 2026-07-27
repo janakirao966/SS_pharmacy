@@ -116,6 +116,7 @@
 
 .main-content-area {
   flex: 1 0 auto;
+  padding-top: var(--nav-total-height, var(--nav-height, 98px));
 }
 
 /* 10. Navigation Bar (Redesigned Solid Premium Ayurvedic Header) */
@@ -648,7 +649,7 @@
   .mobile-actions-wrapper {
     display: flex;
     align-items: center;
-    gap: 0.15rem;
+    gap: 0.5rem;
     flex-shrink: 0;
     margin-left: auto;
   }

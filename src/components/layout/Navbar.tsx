@@ -30,6 +30,12 @@ export default function Navbar({
     const header = headerRef.current;
     if (!header) return;
 
+    const updateHeight = () => {
+      const height = header.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--nav-total-height', `${height}px`);
+    };
+    updateHeight();
+
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const height = entry.borderBoxSize?.[0]?.blockSize ?? entry.target.getBoundingClientRect().height;

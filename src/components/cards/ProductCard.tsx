@@ -91,37 +91,41 @@ const ProductCard = memo(function ProductCard({
           {renderAyurvedicText(product.name)}
         </h3>
 
-        {/* Key Actives Herbal Chips */}
-        {activeIngredients.length > 0 && (
-          <div className="mb-2.5">
-            <span className="text-[9.5px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-              Key Actives & Herbs
-            </span>
-            <div className="flex flex-wrap gap-1">
-              {activeIngredients.map((herb, idx) => (
-                <span
-                  key={idx}
-                  className="inline-flex items-center gap-1 text-[10.5px] font-medium bg-[#F4F7F4] text-[#2D5016] px-2 py-0.5 rounded-md border border-[#2D5016]/15"
-                >
-                  <span className="w-1 h-1 rounded-full bg-[#C5A059]" />
-                  {herb}
-                </span>
-              ))}
+        {/* Key Actives Herbal Chips & Benefits Preview (Balanced Height Container for SF6-004) */}
+        <div className="product-card-middle-content min-h-[76px] flex flex-col justify-between mb-2.5">
+          {activeIngredients.length > 0 ? (
+            <div>
+              <span className="text-[9.5px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                Key Actives & Herbs
+              </span>
+              <div className="flex flex-wrap gap-1">
+                {activeIngredients.map((herb, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1 text-[10.5px] font-medium bg-[#F4F7F4] text-[#2D5016] px-2 py-0.5 rounded-md border border-[#2D5016]/15"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-[#C5A059]" />
+                    {herb}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div />
+          )}
 
-        {/* Benefits Preview */}
-        {product.benefits && product.benefits.length > 0 && (
-          <ul className="space-y-1 mb-3">
-            {product.benefits.slice(0, 2).map((benefit, idx) => (
-              <li key={idx} className="flex items-center gap-1.5 text-[11.5px] text-slate-600">
-                <CheckCircle2 size={12} className="text-[#C5A059] flex-shrink-0" />
-                <span className="line-clamp-1">{benefit}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+          {/* Benefits Preview */}
+          {product.benefits && product.benefits.length > 0 && (
+            <ul className="space-y-1 mt-1.5">
+              {product.benefits.slice(0, 2).map((benefit, idx) => (
+                <li key={idx} className="flex items-center gap-1.5 text-[11.5px] text-slate-600">
+                  <CheckCircle2 size={12} className="text-[#C5A059] flex-shrink-0" />
+                  <span className="line-clamp-1">{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <div className="product-card-divider my-2.5 border-t border-slate-100 mt-auto" />
 

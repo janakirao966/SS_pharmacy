@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
-import { Phone, Mail, Clock, MapPin, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Phone, Mail, Clock, MapPin, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 import { products } from '../data/products';
 import { useToast } from '../context/ToastContext';
 import Container from '../components/layout/Container';
@@ -17,11 +17,6 @@ import FormSelect from '../components/forms/FormSelect';
 import FormCheckbox from '../components/forms/FormCheckbox';
 import SEO from '../components/ui/SEO';
 import { supabase } from '../lib/supabase';
-
-// Reading this as: General enquiry form and contact details page for Ayurvedic facility, with a clean B2B responsive split layout, utilizing modular floating-label form controls and info detail cards.
-// DESIGN_VARIANCE: 6
-// MOTION_INTENSITY: 5
-// VISUAL_DENSITY: 3
 
 export default function Contact() {
   const { showToast } = useToast();
@@ -45,7 +40,6 @@ export default function Contact() {
 
   useEffect(() => {
     const timeouts = validationTimeouts.current;
-    // Cleanup timeouts on unmount
     return () => {
       Object.values(timeouts).forEach(clearTimeout);
     };
@@ -54,7 +48,7 @@ export default function Contact() {
   const validateField = (name: string, value: string) => {
     let error = '';
     if (name === 'name' && !value.trim()) {
-      error = "Name is required.";
+      error = "Full Name is required.";
     } else if (name === 'phone') {
       const digits = value.replace(/\D/g, '');
       const hasPlus = value.trim().startsWith('+');
@@ -69,14 +63,14 @@ export default function Contact() {
       }
     } else if (name === 'email') {
       if (!value.trim()) {
-        error = "Email is required.";
+        error = "Email Address is required.";
       } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value.trim())) {
         error = "Enter a valid email address (e.g. name@domain.com).";
       }
     } else if (name === 'location' && !value.trim()) {
-      error = "City and State are required.";
+      error = "Location (City, State) is required.";
     } else if (name === 'message' && !value.trim()) {
-      error = "Message details are required.";
+      error = "Enquiry Message is required.";
     }
 
     setErrors((prev) => ({ ...prev, [name]: error }));
@@ -86,7 +80,6 @@ export default function Contact() {
     const { name, value } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
 
-    // Auto-format phone input
     let finalValue = value;
     if (name === 'phone') {
       finalValue = value.replace(/[^\d\s\-()+]/g, '');
@@ -97,7 +90,6 @@ export default function Contact() {
 
     setFormData((prev) => ({ ...prev, [name]: finalValue }));
 
-    // Debounced inline validation
     if (validationTimeouts.current[name]) {
       clearTimeout(validationTimeouts.current[name]);
     }
@@ -120,22 +112,22 @@ export default function Contact() {
   const validateForm = () => {
     const tempErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) tempErrors.name = 'Full Name is required';
+    if (!formData.name.trim()) tempErrors.name = 'Full Name is required.';
     if (!formData.phone.trim()) {
-      tempErrors.phone = 'Phone Number is required';
+      tempErrors.phone = 'Phone Number is required.';
     } else if (!/^[6-9]\d{9}$/.test(formData.phone.replace(/\D/g, ''))) {
-      tempErrors.phone = 'Please enter a valid 10-digit mobile number';
+      tempErrors.phone = 'Please enter a valid 10-digit mobile number.';
     }
 
     if (!formData.email.trim()) {
-      tempErrors.email = 'Email Address is required';
+      tempErrors.email = 'Email Address is required.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      tempErrors.email = 'Please enter a valid email address';
+      tempErrors.email = 'Please enter a valid email address.';
     }
 
-    if (!formData.location.trim()) tempErrors.location = 'City / Location is required';
-    if (!formData.message.trim()) tempErrors.message = 'Enquiry Message is required';
-    if (!formData.consent) tempErrors.consent = 'You must consent to be contacted';
+    if (!formData.location.trim()) tempErrors.location = 'City / Location is required.';
+    if (!formData.message.trim()) tempErrors.message = 'Enquiry Message is required.';
+    if (!formData.consent) tempErrors.consent = 'You must consent to be contacted.';
 
     setErrors(tempErrors);
     setTouched({
@@ -147,7 +139,16 @@ export default function Contact() {
       consent: true
     });
 
-    return Object.keys(tempErrors).length === 0;
+    const isValid = Object.keys(tempErrors).length === 0;
+    if (!isValid) {
+      const firstErrorField = Object.keys(tempErrors)[0];
+      setTimeout(() => {
+        const el = document.getElementById(firstErrorField);
+        el?.focus();
+      }, 50);
+    }
+
+    return isValid;
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -207,7 +208,7 @@ export default function Contact() {
   }));
 
   return (
-    <div className="contact-page">
+    <div className="contact-page bg-[#FEFDF8]">
       <SEO
         title="Contact Us - S.S. PHARMACY"
         description="Get in touch with S.S. PHARMACY Kadapa headquarters for retail orders, clinic supply requests, and distributor program enquiries."
@@ -232,15 +233,15 @@ export default function Contact() {
           }
         }}
       />
-      {/* 1. Page Header & Navigation */}
-      <Section className="pt-page-header pb-8">
+      {/* 1. Page Header */}
+      <Section className="pt-page-header pb-10 bg-gradient-to-b from-[#F9F6EE] to-[#FEFDF8] border-b border-[#E8E2D2]">
         <Container>
           <Breadcrumbs items={[{ label: 'Contact' }]} className="mb-6" />
-          <div className="contact-header-block">
+          <div className="contact-header-block max-w-3xl">
             <SectionHeader
-              eyebrow="Connect"
+              eyebrow="Connect With Our Team"
               title="Contact S.S. PHARMACY"
-              subtitle="Submit general product inquiries, supply requests, or feedback to our team."
+              subtitle="Have questions about our Ayurvedic products, retail supply, or regional dealership opportunities? Send us your message or reach out directly."
               align="left"
               isPageHeader
             />
@@ -249,80 +250,119 @@ export default function Contact() {
       </Section>
 
       {/* 2. Contact Details & Form */}
-      <Section className="pt-6 md:pt-8 pb-12 md:pb-16 lg:pb-24">
+      <Section className="py-12 md:py-16">
         <Container>
-          <div className="contact-layout-grid">
+          <div className="contact-layout-grid grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
             {/* Info cards column */}
-            <div className="contact-info-cards-column flex flex-col space-y-4">
+            <div className="lg:col-span-4 contact-info-cards-column flex flex-col space-y-4">
               <InfoCard
-                icon={<Phone size={18} />}
+                icon={<Phone size={20} className="text-[#C5A059]" />}
                 title="Call or WhatsApp"
-                className="contact-detail-card"
+                className="contact-detail-card border border-[#D9C8A9]/70 bg-white hover:border-[#C5A059] transition-all"
               >
-                <p className="mt-1 text-secondary">Primary: +91 9494323211</p>
-                <p className="text-secondary">Office: +91 8563 274701</p>
+                <div className="mt-3 flex flex-col space-y-2 text-sm">
+                  <a href="tel:+919494323211" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors inline-flex items-center gap-2 py-1 min-h-[44px]">
+                    <span className="text-secondary font-normal">Primary:</span> +91 9494323211
+                  </a>
+                  <a href="tel:+918563274701" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors inline-flex items-center gap-2 py-1 min-h-[44px]">
+                    <span className="text-secondary font-normal">Office:</span> +91 8563 274701
+                  </a>
+                </div>
               </InfoCard>
 
               <InfoCard
-                icon={<Mail size={18} />}
+                icon={<Mail size={20} className="text-[#C5A059]" />}
                 title="Email Dispatch"
-                className="contact-detail-card"
+                className="contact-detail-card border border-[#D9C8A9]/70 bg-white hover:border-[#C5A059] transition-all"
               >
-                <p className="mt-1 text-secondary">General: info@sspharmacy.com</p>
-                <p className="text-secondary">Dealers: partners@sspharmacy.com</p>
+                <div className="mt-3 flex flex-col space-y-2 text-sm">
+                  <a href="mailto:info@sspharmacy.com" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors inline-flex items-center gap-2 py-1 min-h-[44px]">
+                    <span className="text-secondary font-normal">General:</span> info@sspharmacy.com
+                  </a>
+                  <a href="mailto:partners@sspharmacy.com" className="text-[#1D3A28] font-semibold hover:text-[#C5A059] transition-colors inline-flex items-center gap-2 py-1 min-h-[44px]">
+                    <span className="text-secondary font-normal">Dealers:</span> partners@sspharmacy.com
+                  </a>
+                </div>
               </InfoCard>
 
               <InfoCard
-                icon={<Clock size={18} />}
+                icon={<Clock size={20} className="text-[#C5A059]" />}
                 title="Business Hours"
-                className="contact-detail-card"
+                className="contact-detail-card border border-[#D9C8A9]/70 bg-white hover:border-[#C5A059] transition-all"
               >
-                <p className="mt-1 text-secondary">Monday to Saturday</p>
-                <p className="text-secondary">09:00 AM to 06:00 PM IST</p>
+                <div className="mt-3 text-sm text-secondary space-y-1">
+                  <p className="font-semibold text-[#1D3A28]">Monday to Saturday</p>
+                  <p>09:00 AM to 06:00 PM IST</p>
+                </div>
               </InfoCard>
 
               <InfoCard
-                icon={<MapPin size={18} />}
-                title="Manufacturing Unit"
-                className="contact-detail-card"
+                icon={<MapPin size={20} className="text-[#C5A059]" />}
+                title="Manufacturing Facility"
+                className="contact-detail-card border border-[#D9C8A9]/70 bg-white hover:border-[#C5A059] transition-all"
               >
-                <p className="mt-1 text-secondary">Prakash Nagar, Yerraguntla,</p>
-                <p className="text-secondary">YSR Kadapa Dist, AP - 516309</p>
+                <div className="mt-3 text-sm text-secondary space-y-1.5">
+                  <p className="font-semibold text-[#1D3A28]">D. No. 1-2-211 & 1-2-212, Prakash Nagar,</p>
+                  <p>Yerraguntla Panchayati, YSR Kadapa Dist, AP - 516309</p>
+                  <a
+                    href="https://maps.app.goo.gl/UwgF81SSMDMUAEFV8"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1D3A28] hover:text-[#C5A059] mt-3 min-h-[44px] transition-colors"
+                  >
+                    <MapPin size={14} className="text-[#C5A059]" />
+                    <span>View on Google Maps &rarr;</span>
+                  </a>
+                </div>
               </InfoCard>
             </div>
 
             {/* Form column */}
-            <div className="contact-form-column">
-              <CleanCard variant="elevated" innerClassName="contact-form-box">
+            <div className="lg:col-span-8 contact-form-column">
+              <CleanCard variant="elevated" innerClassName="contact-form-box p-6 sm:p-10 border-2 border-[#D9C8A9] bg-white shadow-lg">
                 {submitStatus === 'success' ? (
-                  <div className="form-success-box">
-                    <div className="success-icon-wrapper">
-                      <CheckCircle2 size={36} />
+                  <div className="form-success-box text-center py-8 max-w-md mx-auto">
+                    <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle2 size={40} />
                     </div>
-                    <h3>Enquiry Sent</h3>
-                    <p className="mt-4">
-                      Thank you for contacting S.S. PHARMACY. Our team will review your enquiry and respond with the relevant product details and next steps.
+                    <h3 className="font-display text-2xl font-semibold text-[#1D3A28]">Enquiry Sent Successfully!</h3>
+                    <p className="mt-3 text-secondary text-sm leading-relaxed">
+                      Thank you for contacting S.S. PHARMACY. Our team will review your enquiry and respond promptly with the requested details.
                     </p>
                     <Button
                       variant="secondary"
-                      className="mt-6"
+                      className="mt-6 min-h-[44px]"
                       onClick={() => setSubmitStatus('idle')}
                     >
                       Send Another Message
                     </Button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="form-layout-fields">
-                    <h3 className="bento-cell-title mb-6">General Enquiry Form</h3>
+                  <form onSubmit={handleSubmit} className="form-layout-fields space-y-5">
+                    <h3 className="bento-cell-title font-display text-2xl font-semibold text-[#1D3A28] mb-6">General Enquiry Form</h3>
 
                     {submitStatus === 'error' && (
                       <div className="form-error-alert flex items-center gap-2 bg-red-50 text-red-700 p-4 rounded-xl border border-red-200 mb-6">
                         <AlertCircle size={18} />
-                        <span className="text-sm font-semibold">Failed to deliver enquiry. Please try again.</span>
+                        <span className="text-sm font-semibold">Failed to deliver enquiry. Please check form input and try again.</span>
                       </div>
                     )}
 
-                    <Grid cols={2} gap="sm" className="mb-4">
+                    {Object.keys(errors).some(k => errors[k]) && Object.keys(touched).length > 0 && (
+                      <div className="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl mb-6 flex items-start gap-3 text-xs font-medium" role="alert" aria-live="assertive">
+                        <AlertCircle size={18} className="text-amber-700 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-bold text-amber-950 text-sm">Please correct the following errors:</p>
+                          <ul className="list-disc list-inside mt-1.5 space-y-1">
+                            {Object.entries(errors).filter(([, msg]) => msg).map(([field, msg]) => (
+                              <li key={field}>{msg}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+
+                    <Grid cols={2} gap="sm">
                       <FormInput
                         id="name"
                         name="name"
@@ -350,7 +390,7 @@ export default function Contact() {
                       />
                     </Grid>
 
-                    <Grid cols={2} gap="sm" className="mb-4">
+                    <Grid cols={2} gap="sm">
                       <FormInput
                         id="email"
                         name="email"
@@ -390,7 +430,7 @@ export default function Contact() {
                     <FormTextarea
                       id="message"
                       name="message"
-                      label="Message / Requirements"
+                      label="Message / Product Requirements"
                       value={formData.message}
                       onChange={handleInputChange}
                       error={errors.message}
@@ -406,7 +446,6 @@ export default function Contact() {
                       required
                     />
 
-                    {/* Honeypot field for Web3Forms to prevent bot spam */}
                     <input
                       type="checkbox"
                       name="botcheck"
@@ -421,12 +460,13 @@ export default function Contact() {
                     <Button
                       type="submit"
                       variant="primary"
-                      rounded="full"
-                      className="w-full py-4 justify-center"
+                      className="w-full py-4 justify-center bg-[#1D3A28] text-white hover:bg-[#2D5016] min-h-[44px] mt-4 font-semibold text-base"
                       loading={isSubmitting}
+                      disabled={isSubmitting}
                       aria-live="polite"
                     >
-                      {isSubmitting ? 'Sending Enquiry...' : 'Submit Enquiry'}
+                      <span>{isSubmitting ? 'Sending Enquiry...' : 'Submit Enquiry'}</span>
+                      <ArrowRight size={18} className="ml-2" />
                     </Button>
                   </form>
                 )}

@@ -460,7 +460,7 @@ textarea:focus-visible {
 
 /* Responsive padding for subpages header */
 .pt-page-header {
-  padding-top: calc(var(--nav-total-height, var(--nav-height)) + var(--space-8)) !important;
+  padding-top: var(--space-8, 2rem) !important;
 }
 
 /* Margins */
@@ -562,6 +562,7 @@ textarea:focus-visible {
 .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* Positioning */
+.relative { position: relative !important; }
 .absolute { position: absolute !important; }
 .fixed { position: fixed !important; }
 .inset-0 { top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important; }

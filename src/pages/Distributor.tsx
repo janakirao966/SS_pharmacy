@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
-import { Award, Briefcase, Map, CheckCircle2, AlertCircle, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Award, Briefcase, Map, CheckCircle2, AlertCircle, ChevronRight, ChevronLeft, ArrowRight } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { trackEvent } from '../utils/analytics';
-import { useABTest } from '../hooks/useABTest';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -19,26 +18,20 @@ import FormCheckbox from '../components/forms/FormCheckbox';
 import SEO from '../components/ui/SEO';
 import { supabase } from '../lib/supabase';
 
-// Reading this as: Multi-step B2B distributorship registration page with progress bar, benefits grid, and validation error messages.
-// DESIGN_VARIANCE: 6
-// MOTION_INTENSITY: 5
-// VISUAL_DENSITY: 3
-
 export default function Distributor() {
   const { showToast } = useToast();
-  const variant = useABTest('distributor_layout');
   const benefits = [
     {
-      title: "Consistent Supply",
-      desc: "Licensed facility batches ensure stock availability throughout target regions."
+      title: "Consistent Licensed Supply",
+      desc: "Direct batch dispatches from our Andhra Pradesh facility ensure stock availability for your target regions."
     },
     {
-      title: "Marketing Materials",
-      desc: "We supply brand leaflets, high-resolution visual packshots, and compliance copy templates."
+      title: "Marketing & Packshot Assets",
+      desc: "We supply brand leaflets, high-resolution visual packshots, and statutory compliance copy templates."
     },
     {
-      title: "Clear Pricing",
-      desc: "B2B wholesale pricing structures with clear retail profit margins."
+      title: "Transparent B2B Margins",
+      desc: "Competitive wholesale pricing structures with clear retail margins for medical shops and distributors."
     }
   ];
 
@@ -115,7 +108,6 @@ export default function Distributor() {
     const { name, value } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
 
-    // Auto-format phone input
     let finalValue = value;
     if (name === 'phone') {
       finalValue = value.replace(/[^\d\s\-()+]/g, '');
@@ -126,7 +118,6 @@ export default function Distributor() {
 
     setFormData((prev) => ({ ...prev, [name]: finalValue }));
 
-    // Debounced validation
     if (validationTimeouts.current[name]) {
       clearTimeout(validationTimeouts.current[name]);
     }
@@ -173,7 +164,6 @@ export default function Distributor() {
 
     setErrors(tempErrors);
     
-    // Mark elements in current step as touched
     const touchedFields: Record<string, boolean> = {};
     if (step === 1) {
       touchedFields.businessName = true;
@@ -238,7 +228,6 @@ export default function Distributor() {
         })
       });
 
-      // Store in Supabase DB for Admin Review
       try {
         await supabase.from('distributor_applications').insert([
           {
@@ -260,7 +249,7 @@ export default function Distributor() {
       const result = await response.json();
       if (result.success || response.status === 200) {
         setSubmitStatus('success');
-        showToast('Application submitted successfully! Our wholesale team will get in touch.', 'success');
+        showToast('Application submitted successfully! Our wholesale team will contact you.', 'success');
         trackEvent('Lead', 'Submit', formData.businessName);
         setFormData({
           businessName: '',
@@ -297,21 +286,21 @@ export default function Distributor() {
   ];
 
   return (
-    <div className="distributor-page">
+    <div className="distributor-page bg-[#FEFDF8]">
       <SEO
         title="Distributor & Dealer Application - S.S. PHARMACY"
         description="Apply for local distributorship or wholesale dealer account with S.S. PHARMACY, government licensed Ayurvedic manufacturing unit."
         canonical="https://sspharmacy.com/distributor"
       />
-      {/* 1. Page Header & Navigation */}
-      <Section className="pt-page-header pb-8">
+      {/* 1. Page Header */}
+      <Section className="pt-page-header pb-10 bg-gradient-to-b from-[#F9F6EE] to-[#FEFDF8] border-b border-[#E8E2D2]">
         <Container>
           <Breadcrumbs items={[{ label: 'Partnership' }]} className="mb-6" />
-          <div className="distributor-header-block">
+          <div className="distributor-header-block max-w-3xl">
             <SectionHeader
-              eyebrow="Partnership"
-              title="Distributor & Dealer Application"
-              subtitle="Partner with S.S. PHARMACY. We offer distribution opportunities for medical shops, clinics, hospitals, and wholesale buyers."
+              eyebrow="Wholesale & Dealership Program"
+              title="Distributor & Stockist Application"
+              subtitle="Partner with S.S. PHARMACY. We offer regional distribution programs for medical stores, Ayurvedic clinics, hospitals, and wholesale dealers."
               align="left"
               isPageHeader
             />
@@ -319,62 +308,59 @@ export default function Distributor() {
         </Container>
       </Section>
 
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {/* 2. Benefits Row */}
-        <div style={{ order: variant === 'A' ? 1 : 2 }}>
-          <Section className="pb-12 pt-4">
+      {/* 2. Benefits Grid */}
+      <Section className="py-10">
         <Container>
           <SectionHeader
-            eyebrow="Benefits"
-            title="Why Partner with Us?"
-            subtitle="We provide robust support systems to establish reliable local distribution operations."
+            eyebrow="Partnership Advantages"
+            title="Why Partner With S.S. PHARMACY?"
+            subtitle="We support your regional growth with dependable supply schedules and promotional collateral."
           />
 
-          <Grid cols={3} gap="lg" className="distributor-benefits-grid mt-12">
+          <Grid cols={3} gap="lg" className="distributor-benefits-grid mt-10">
             {benefits.map((benefit, i) => (
               <FeatureCard
                 key={i}
-                icon={i === 0 ? <Briefcase size={20} /> : i === 1 ? <Award size={20} /> : <Map size={20} />}
+                icon={i === 0 ? <Briefcase size={22} className="text-[#C5A059]" /> : i === 1 ? <Award size={22} className="text-[#C5A059]" /> : <Map size={22} className="text-[#C5A059]" />}
                 title={benefit.title}
                 description={benefit.desc}
+                className="border border-[#D9C8A9]/70 hover:border-[#C5A059] transition-all bg-white"
               />
             ))}
           </Grid>
         </Container>
-        </Section>
-        </div>
+      </Section>
 
-        {/* 3. Form Application Card */}
-        <div style={{ order: variant === 'A' ? 2 : 1 }}>
-          <Section className="pt-6 md:pt-8 pb-12 md:pb-16 lg:pb-24">
+      {/* 3. Multi-Step Form Card */}
+      <Section className="py-12 md:py-16">
         <Container>
-          <CleanCard variant="elevated" className="distributor-form-wrapper" innerClassName="p-8 md:p-12">
+          <CleanCard variant="elevated" className="distributor-form-wrapper max-w-4xl mx-auto border-2 border-[#D9C8A9] shadow-lg bg-white" innerClassName="p-6 sm:p-10 md:p-12">
             {submitStatus === 'success' ? (
-              <div className="form-success-box max-w-[600px] mx-auto text-center">
-                <div className="success-icon-wrapper">
-                  <CheckCircle2 size={36} />
+              <div className="form-success-box max-w-md mx-auto text-center py-8">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 size={40} />
                 </div>
-                <h3>Application Submitted</h3>
-                <p className="mt-4">
-                  Thank you for your interest in partnering with S.S. PHARMACY. Our team will review your application and contact you for the next discussion.
+                <h3 className="font-display text-2xl font-semibold text-[#1D3A28]">Application Submitted Successfully!</h3>
+                <p className="mt-3 text-secondary text-sm leading-relaxed">
+                  Thank you for applying for S.S. PHARMACY distributorship. Our wholesale partnership team will review your credentials and contact you within 1-2 business days.
                 </p>
                 <Button
                   variant="secondary"
-                  className="mt-6"
+                  className="mt-6 min-h-[44px]"
                   onClick={() => setSubmitStatus('idle')}
                 >
                   Submit Another Application
                 </Button>
               </div>
             ) : (
-              <div className="max-w-[800px] mx-auto">
-                <h3 className="bento-cell-title text-center mb-8">Distributor Registration Form</h3>
+              <div className="max-w-2xl mx-auto">
+                <h3 className="bento-cell-title text-center font-display text-2xl text-[#1D3A28] mb-8">Distributor Registration Form</h3>
 
                 {/* Progress Bar */}
-                <div className="step-progress-container mb-12">
-                  <div className="step-progress-line">
+                <div className="step-progress-container mb-10 relative">
+                  <div className="step-progress-line absolute top-5 left-8 right-8 h-1 bg-[#E8E2D2] z-0">
                     <div
-                      className="step-progress-fill"
+                      className="step-progress-fill h-full bg-[#1D3A28] transition-all duration-500"
                       style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
                     />
                   </div>
@@ -382,13 +368,15 @@ export default function Distributor() {
                     {steps.map((s) => (
                       <div key={s.number} className="flex flex-col items-center">
                         <div
-                          className={`step-bubble ${
-                            currentStep >= s.number ? 'active' : ''
+                          className={`step-bubble rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm transition-all ${
+                            currentStep >= s.number
+                              ? 'bg-[#1D3A28] text-white ring-4 ring-[#C5A059]/30'
+                              : 'bg-[#F5EFE3] text-secondary border border-[#D9C8A9]'
                           }`}
                         >
                           {s.number}
                         </div>
-                        <span className="step-label text-xs font-mono uppercase tracking-wider mt-2 hidden sm:inline">
+                        <span className={`step-label text-[11px] sm:text-xs font-semibold uppercase tracking-wider mt-2.5 ${currentStep === s.number ? 'text-[#1D3A28] font-bold' : 'text-secondary'}`}>
                           {s.title}
                         </span>
                       </div>
@@ -399,16 +387,30 @@ export default function Distributor() {
                 {submitStatus === 'error' && (
                   <div className="form-error-alert flex items-center gap-2 bg-red-50 text-red-700 p-4 rounded-xl border border-red-200 mb-6" role="alert">
                     <AlertCircle size={18} />
-                    <span className="text-sm font-semibold">Failed to submit application. Please try again.</span>
+                    <span className="text-sm font-semibold">Failed to submit application. Please check form inputs or try again.</span>
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="form-layout-fields">
+                {Object.keys(errors).some(k => errors[k]) && Object.keys(touched).length > 0 && (
+                  <div className="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl mb-6 flex items-start gap-3 text-xs font-medium" role="alert">
+                    <AlertCircle size={18} className="text-amber-700 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-amber-950 text-sm">Please correct the following fields:</p>
+                      <ul className="list-disc list-inside mt-1.5 space-y-1">
+                        {Object.entries(errors).filter(([, msg]) => msg).map(([field, msg]) => (
+                          <li key={field}>{msg}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="form-layout-fields space-y-6">
                   {/* Step 1 Content */}
                   {currentStep === 1 && (
-                    <div className="step-content-pane">
-                      <div className="form-panel-header mb-6">
-                        <h4 className="form-panel-title font-display text-lg text-brand-primary">1. Company & Contact Details</h4>
+                    <div className="step-content-pane space-y-4">
+                      <div className="form-panel-header mb-4 pb-2 border-b border-[#E8E2D2]">
+                        <h4 className="form-panel-title font-display text-lg font-semibold text-[#1D3A28]">1. Company & Contact Details</h4>
                       </div>
                       
                       <FormInput
@@ -437,7 +439,7 @@ export default function Distributor() {
                         autoComplete="name"
                       />
 
-                      <Grid cols={2} gap="sm" className="mb-4">
+                      <Grid cols={2} gap="sm">
                         <FormInput
                           id="phone"
                           name="phone"
@@ -469,9 +471,9 @@ export default function Distributor() {
 
                   {/* Step 2 Content */}
                   {currentStep === 2 && (
-                    <div className="step-content-pane">
-                      <div className="form-panel-header mb-6">
-                        <h4 className="form-panel-title font-display text-lg text-brand-primary">2. Business Credentials</h4>
+                    <div className="step-content-pane space-y-4">
+                      <div className="form-panel-header mb-4 pb-2 border-b border-[#E8E2D2]">
+                        <h4 className="form-panel-title font-display text-lg font-semibold text-[#1D3A28]">2. Business Credentials</h4>
                       </div>
 
                       <FormInput
@@ -495,17 +497,17 @@ export default function Distributor() {
                         onChange={handleInputChange}
                         error={errors.businessType}
                         options={[
-                          { value: 'medical-shop', label: 'Medical Shop' },
+                          { value: 'medical-shop', label: 'Medical Shop / Pharmacy' },
                           { value: 'ayurvedic-clinic', label: 'Ayurvedic Clinic' },
-                          { value: 'distributor', label: 'Distributor' },
-                          { value: 'wholesaler', label: 'Wholesaler' },
-                          { value: 'hospital', label: 'Hospital' },
-                          { value: 'other', label: 'Other Business Type' }
+                          { value: 'distributor', label: 'Regional Distributor' },
+                          { value: 'wholesaler', label: 'Wholesale Dealer' },
+                          { value: 'hospital', label: 'Hospital / Nursing Home' },
+                          { value: 'other', label: 'Other Business Entity' }
                         ]}
                         required
                       />
 
-                      <Grid cols={2} gap="sm" className="mb-4">
+                      <Grid cols={2} gap="sm">
                         <FormInput
                           id="yearsInBusiness"
                           name="yearsInBusiness"
@@ -538,16 +540,16 @@ export default function Distributor() {
 
                   {/* Step 3 Content */}
                   {currentStep === 3 && (
-                    <div className="step-content-pane">
-                      <div className="form-panel-header mb-6">
-                        <h4 className="form-panel-title font-display text-lg text-brand-primary">3. Scope & Partnership Details</h4>
+                    <div className="step-content-pane space-y-4">
+                      <div className="form-panel-header mb-4 pb-2 border-b border-[#E8E2D2]">
+                        <h4 className="form-panel-title font-display text-lg font-semibold text-[#1D3A28]">3. Scope & Partnership Details</h4>
                       </div>
 
                       <FormInput
                         id="capacity"
                         name="capacity"
                         type="text"
-                        label="Current Coverage / Business Capacity (Optional)"
+                        label="Current Business Capacity / Monthly Volume (Optional)"
                         value={formData.capacity}
                         onChange={handleInputChange}
                         success={touched.capacity && !errors.capacity && !!formData.capacity}
@@ -557,7 +559,7 @@ export default function Distributor() {
                       <FormTextarea
                         id="message"
                         name="message"
-                        label="Message / Partnership Notes"
+                        label="Partnership Notes / Special Requirements"
                         value={formData.message}
                         onChange={handleInputChange}
                         error={errors.message}
@@ -573,7 +575,6 @@ export default function Distributor() {
                         required
                       />
 
-                      {/* Honeypot field for Web3Forms to prevent bot spam */}
                       <input
                         type="checkbox"
                         name="botcheck"
@@ -587,20 +588,21 @@ export default function Distributor() {
                     </div>
                   )}
 
-                  {/* Form Navigation Controls */}
-                  <div className="form-steps-nav-buttons flex justify-between mt-10 border-t border-hairline pt-6">
+                  {/* Navigation Controls */}
+                  <div className="form-steps-nav-buttons flex justify-between items-center pt-6 border-t border-[#E8E2D2] mt-8">
                     {currentStep > 1 ? (
                       <Button
                         type="button"
                         variant="secondary"
                         onClick={handlePrevStep}
-                        className="flex items-center space-x-2"
+                        disabled={isSubmitting}
+                        className="flex items-center space-x-2 min-h-[44px] px-6"
                       >
                         <ChevronLeft size={16} />
                         <span>Back</span>
                       </Button>
                     ) : (
-                      <div /> // Spacer
+                      <div />
                     )}
 
                     {currentStep < 3 ? (
@@ -608,7 +610,8 @@ export default function Distributor() {
                         type="button"
                         variant="primary"
                         onClick={handleNextStep}
-                        className="flex items-center space-x-2"
+                        disabled={isSubmitting}
+                        className="flex items-center space-x-2 min-h-[44px] px-6 bg-[#1D3A28] text-white hover:bg-[#2D5016]"
                       >
                         <span>Next Step</span>
                         <ChevronRight size={16} />
@@ -618,10 +621,12 @@ export default function Distributor() {
                         type="submit"
                         variant="primary"
                         loading={isSubmitting}
-                        className="flex items-center space-x-2"
+                        disabled={isSubmitting}
+                        className="flex items-center space-x-2 min-h-[44px] px-8 bg-[#1D3A28] text-white hover:bg-[#2D5016]"
                         aria-live="polite"
                       >
                         <span>{isSubmitting ? 'Sending Application...' : 'Submit Application'}</span>
+                        <ArrowRight size={16} />
                       </Button>
                     )}
                   </div>
@@ -630,9 +635,7 @@ export default function Distributor() {
             )}
           </CleanCard>
         </Container>
-        </Section>
-        </div>
-      </div>
+      </Section>
     </div>
   );
 }

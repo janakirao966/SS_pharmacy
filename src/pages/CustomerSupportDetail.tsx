@@ -126,8 +126,8 @@ export default function CustomerSupportDetail() {
                   key={m.id}
                   className={`p-3.5 rounded-xl text-xs space-y-1 ${
                     m.sender_type === 'admin'
-                      ? 'bg-[#1D3A28] text-white ml-6'
-                      : 'bg-slate-100 text-slate-800 mr-6'
+                      ? 'bg-[#1D3A28] text-white ml-2 sm:ml-6'
+                      : 'bg-slate-100 text-slate-800 mr-2 sm:mr-6'
                   }`}
                 >
                   <div className="flex items-center justify-between text-[10px] opacity-80 border-b border-black/10 pb-1">

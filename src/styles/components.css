@@ -322,11 +322,35 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 1rem;
+  color: #3D3D3D;
 }
 
 .footer-copyright {
   font-size: 0.85rem;
-  color: var(--color-text-secondary);
+  color: #3D3D3D;
+}
+
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-bottom-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.5rem;
+  color: #3D3D3D;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footer-bottom-links a:hover {
+  color: #1D3A28;
+  text-decoration: underline;
 }
 
 .footer-bottom-link {
@@ -4315,7 +4339,8 @@
   position: relative;
   width: 100%;
   max-width: 480px;
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   background-color: #FAF8F5; /* Warm heritage cream background */
   border-left: 1px solid var(--color-border-hairline);
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.08);
@@ -4679,6 +4704,7 @@
 /* Calculations Footer */
 .cart-drawer-footer {
   padding: 1.5rem;
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--color-border-hairline);
   background-color: #FEFDF8;
 }
@@ -5136,6 +5162,12 @@
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows var(--transition-duration) var(--transition-bezier);
+}
+
+.accordion-header:focus-visible {
+  outline: 3px solid var(--color-brand-secondary, #C5A059) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.2) !important;
 }
 
 
@@ -9342,15 +9374,22 @@
 
 .checkout-grid-3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .checkout-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .checkout-payment-method {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  padding: 0.75rem;
+  padding: 0.875rem 1rem;
+  min-height: 48px;
   border-radius: 0.75rem;
   border: 1px solid #e2e8f0;
   cursor: pointer;
@@ -9909,5 +9948,106 @@
   font-size: 0.625rem;
   color: #94a3b8;
 }
+
+/* ==================================================
+   STOREFRONT PHASE 5 UTILITY STYLES
+   ================================================== */
+
+/* 1. Touch Target Enforcement (Minimum 44px Height) */
+.form-input,
+.form-select,
+.filter-pill-btn,
+.carousel-control-btn,
+.step-bubble,
+.contact-detail-card a,
+.gallery-filters-row button {
+  min-height: 44px;
+}
+
+.form-checkbox-group {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* 2. Certificate Carousel & Slide Indicators */
+.carousel-control-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline-offset: 2px;
+}
+
+.carousel-control-btn:focus-visible {
+  outline: 2px solid var(--color-gold);
+}
+
+/* 3. Gallery Lightbox & Filter Category Pills */
+.gallery-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.filter-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease-in-out;
+}
+
+/* 4. Section Padding Consistency Across Informational Pages */
+.about-page section,
+.manufacturing-page section,
+.distributor-page section,
+.contact-page section,
+.gallery-page section {
+  box-sizing: border-box;
+}
+
+/* SF6-003: Mobile Hero Fluid Height <= 768px */
+@media (max-width: 768px) {
+  .hero-slider-container {
+    min-height: auto !important;
+    height: auto !important;
+    padding-bottom: 2.5rem;
+  }
+  .mobile-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0;
+  }
+  .hero-cta-group {
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+}
+
+/* SF6-009: Narrow Mobile Stepper Label Corrections */
+@media (max-width: 400px) {
+  .grid-cols-4 span.text-\[10px\],
+  .grid-cols-4 span.text-xs {
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+}
+
+
 
 
