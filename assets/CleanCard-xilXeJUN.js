@@ -1,1 +1,0 @@
-import{pt as e}from"./vendor-react-core-BvIqyLI2.js";var t=e();function n({children:e,variant:n=`default`,interactive:r=!1,className:i=``,innerClassName:a=``,as:o=`div`,...s}){return(0,t.jsx)(o,{className:`clean-card clean-card-${n} ${r?`clean-card-interactive`:``} ${i}`,...s,children:(0,t.jsx)(`div`,{className:`clean-card-inner ${a}`,children:e})})}export{n as t};
