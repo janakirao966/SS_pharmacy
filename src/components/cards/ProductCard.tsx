@@ -1,4 +1,5 @@
 import { useState, memo } from 'react';
+import { Link } from 'react-router-dom';
 import type { Product } from '../../data/products';
 import { ShoppingBag, CheckCircle2, ShieldCheck, ArrowRight, Star } from 'lucide-react';
 import { renderAyurvedicText } from '../../utils/lang';
@@ -34,7 +35,7 @@ function getCleanIngredients(composition: string): string[] {
 
 const ProductCard = memo(function ProductCard({
   product,
-  onClick,
+  onClick: _onClick,
   onEnquire
 }: ProductCardProps) {
   const { handleAddToCart, handleBuyNow } = useCart();
@@ -44,115 +45,117 @@ const ProductCard = memo(function ProductCard({
   const activeIngredients = getCleanIngredients(product.composition);
 
   return (
-    <article
-      onClick={() => onClick(product.id)}
-      className="product-card-luxury group cursor-pointer"
-    >
-      {/* 1. Image Media Container */}
-      <div className="product-card-media">
-        {/* Top Badges */}
-        <div className="product-badge-strip">
-          <span className="product-mfg-badge">
-            <ShieldCheck size={12} className="text-[#C5A059]" />
-            <span>Govt. Licensed</span>
-          </span>
-          <span className="product-rating-badge">
-            <Star size={11} className="fill-[#C5A059] text-[#C5A059]" />
-            <span>4.9</span>
-          </span>
-        </div>
-
-        {imageLoading && <div className="shimmer-effect" />}
-        {imageError ? (
-          <div className="product-image-fallback">
-            <ShoppingBag size={32} className="text-[#1D3A28]" />
-            <span>{renderAyurvedicText(product.name)}</span>
-          </div>
-        ) : (
-          <img
-            src={product.transparentImage || product.image}
-            alt={product.name}
-            width={400}
-            height={400}
-            loading="lazy"
-            decoding="async"
-            className="product-card-img"
-            onLoad={() => setImageLoading(false)}
-            onError={() => {
-              setImageLoading(false);
-              setImageError(true);
-            }}
-          />
-        )}
-      </div>
-
-      {/* 2. Content Info Body */}
-      <div className="product-card-body">
-        {/* Category & Pack Size */}
-        <div className="product-header-row">
-          <span className="product-category-text">
-            {renderAyurvedicText(product.category)}
-          </span>
-          {product.packSize && (
-            <span className="product-pack-pill">
-              {product.packSize}
+    <article className="product-card-luxury group">
+      {/* Clickable details area */}
+      <Link
+        to={`/products/${product.id}`}
+        className="product-card-navigation-link block focus-visible:outline-none"
+      >
+        {/* 1. Image Media Container */}
+        <div className="product-card-media">
+          {/* Top Badges */}
+          <div className="product-badge-strip">
+            <span className="product-mfg-badge">
+              <ShieldCheck size={12} className="text-[#C5A059]" />
+              <span>Govt. Licensed</span>
             </span>
+            <span className="product-rating-badge">
+              <Star size={11} className="fill-[#C5A059] text-[#C5A059]" />
+              <span>4.9</span>
+            </span>
+          </div>
+
+          {imageLoading && <div className="shimmer-effect" />}
+          {imageError ? (
+            <div className="product-image-fallback">
+              <ShoppingBag size={32} className="text-[#1D3A28]" />
+              <span>{renderAyurvedicText(product.name)}</span>
+            </div>
+          ) : (
+            <img
+              src={product.transparentImage || product.image}
+              alt={product.name}
+              width={400}
+              height={400}
+              loading="lazy"
+              decoding="async"
+              className="product-card-img"
+              onLoad={() => setImageLoading(false)}
+              onError={() => {
+                setImageLoading(false);
+                setImageError(true);
+              }}
+            />
           )}
         </div>
 
-        {/* Product Title */}
-        <h3 className="product-title-text">
-          {renderAyurvedicText(product.name)}
-        </h3>
+        {/* 2. Content Info Body */}
+        <div className="product-card-body pb-0">
+          {/* Category & Pack Size */}
+          <div className="product-header-row">
+            <span className="product-category-text">
+              {renderAyurvedicText(product.category)}
+            </span>
+            {product.packSize && (
+              <span className="product-pack-pill">
+                {product.packSize}
+              </span>
+            )}
+          </div>
 
-        {/* Key Active Herbs */}
-        {activeIngredients.length > 0 && (
-          <div className="product-herbs-block">
-            <span className="product-herbs-label">Key Actives &amp; Herbs</span>
-            <div className="product-herbs-chips flex flex-wrap gap-1.5">
-              {activeIngredients.map((herb, idx) => (
-                <span key={idx} className="product-herb-chip">
-                  <span className="herb-dot" />
-                  {herb}
-                </span>
+          {/* Product Title */}
+          <h3 className="product-title-text">
+            {renderAyurvedicText(product.name)}
+          </h3>
+
+          {/* Key Active Herbs */}
+          {activeIngredients.length > 0 && (
+            <div className="product-herbs-block">
+              <span className="product-herbs-label">Key Actives &amp; Herbs</span>
+              <div className="product-herbs-chips flex flex-wrap gap-1.5">
+                {activeIngredients.map((herb, idx) => (
+                  <span key={idx} className="product-herb-chip">
+                    <span className="herb-dot" />
+                    {herb}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Key Benefits Bullet List */}
+          {product.benefits && product.benefits.length > 0 && (
+            <ul className="product-benefits-list">
+              {product.benefits.slice(0, 2).map((benefit, idx) => (
+                <li key={idx} className="product-benefit-item">
+                  <CheckCircle2 size={13} className="text-[#C5A059] shrink-0" />
+                  <span>{benefit}</span>
+                </li>
               ))}
-            </div>
-          </div>
-        )}
+            </ul>
+          )}
 
-        {/* Key Benefits Bullet List */}
-        {product.benefits && product.benefits.length > 0 && (
-          <ul className="product-benefits-list">
-            {product.benefits.slice(0, 2).map((benefit, idx) => (
-              <li key={idx} className="product-benefit-item">
-                <CheckCircle2 size={13} className="text-[#C5A059] shrink-0" />
-                <span>{benefit}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {/* Price Row (Clean vertical center alignment for price & tax badge) */}
-        <div className="product-price-row">
-          <div>
-            <span className="product-price-label">Best Price (MRP)</span>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="product-price-val">₹{product.mrp}</span>
-              <span className="product-tax-badge">Incl. all taxes</span>
+          {/* Price Row */}
+          <div className="product-price-row mb-1">
+            <div>
+              <span className="product-price-label">Best Price (MRP)</span>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="product-price-val">₹{product.mrp}</span>
+                <span className="product-tax-badge">Incl. all taxes</span>
+              </div>
             </div>
+            <span className="text-[#2D5016] text-[11px] font-bold">In Stock</span>
           </div>
-          <span className="text-[#2D5016] text-[11px] font-bold">In Stock</span>
         </div>
+      </Link>
 
-        {/* Action Buttons: Add to Cart & Buy Now */}
+      {/* 3. Action Buttons Wrapper (Siblings to prevent nested interactive controls) */}
+      <div className="product-card-actions-wrapper px-5 pb-5 mt-auto">
         <div className="product-cta-actions">
           <button
             type="button"
             className="btn-card-add-cart"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAddToCart(product, 1);
-            }}
+            onClick={() => handleAddToCart(product, 1)}
           >
             <ShoppingBag size={15} />
             <span>Add</span>
@@ -161,10 +164,7 @@ const ProductCard = memo(function ProductCard({
           <button
             type="button"
             className="btn-card-buy-now"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleBuyNow(product);
-            }}
+            onClick={() => handleBuyNow(product)}
           >
             <span>Buy Now</span>
             <ArrowRight size={14} />
@@ -174,11 +174,8 @@ const ProductCard = memo(function ProductCard({
         {onEnquire && (
           <button
             type="button"
-            className="btn-card-enquire mt-2"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEnquire();
-            }}
+            className="btn-card-enquire mt-2 w-full"
+            onClick={() => onEnquire()}
           >
             Enquire B2B Wholesale
           </button>

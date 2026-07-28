@@ -419,8 +419,9 @@ export default function Checkout() {
 
                 <div className="address-form-grid">
                   <div>
-                    <label className="address-form-label">Full Name *</label>
+                    <label htmlFor="checkout-name" className="address-form-label">Full Name *</label>
                     <input
+                      id="checkout-name"
                       type="text"
                       name="name"
                       required
@@ -432,8 +433,9 @@ export default function Checkout() {
                   </div>
 
                   <div>
-                    <label className="address-form-label">Mobile Phone *</label>
+                    <label htmlFor="checkout-phone" className="address-form-label">Mobile Phone *</label>
                     <input
+                      id="checkout-phone"
                       type="tel"
                       name="phone"
                       required
@@ -446,8 +448,9 @@ export default function Checkout() {
                 </div>
 
                 <div>
-                  <label className="address-form-label">Email Address (Optional)</label>
+                  <label htmlFor="checkout-email" className="address-form-label">Email Address (Optional)</label>
                   <input
+                    id="checkout-email"
                     type="email"
                     name="email"
                     value={formData.email}
@@ -458,8 +461,9 @@ export default function Checkout() {
                 </div>
 
                 <div>
-                  <label className="address-form-label">Shipping Address *</label>
+                  <label htmlFor="checkout-address" className="address-form-label">Shipping Address *</label>
                   <textarea
+                    id="checkout-address"
                     name="address"
                     required
                     rows={2}
@@ -472,8 +476,9 @@ export default function Checkout() {
 
                 <div className="address-form-grid">
                   <div>
-                    <label className="address-form-label">City / Town *</label>
+                    <label htmlFor="checkout-city" className="address-form-label">City / Town *</label>
                     <input
+                      id="checkout-city"
                       type="text"
                       name="city"
                       required
@@ -484,8 +489,9 @@ export default function Checkout() {
                   </div>
 
                   <div>
-                    <label className="address-form-label">State</label>
+                    <label htmlFor="checkout-state" className="address-form-label">State</label>
                     <input
+                      id="checkout-state"
                       type="text"
                       name="state"
                       value={formData.state}
@@ -496,12 +502,15 @@ export default function Checkout() {
                 </div>
 
                 <div>
-                  <label className="address-form-label">PIN Code *</label>
+                  <label htmlFor="checkout-pincode" className="address-form-label">PIN Code *</label>
                   <input
+                    id="checkout-pincode"
                     type="text"
                     name="pincode"
                     required
                     maxLength={6}
+                    inputMode="numeric"
+                    pattern="[0-9]{6}"
                     value={formData.pincode}
                     onChange={handleInputChange}
                     placeholder="6-digit PIN"
@@ -512,48 +521,54 @@ export default function Checkout() {
 
               {/* Payment Selection */}
               <div className="checkout-section-box">
-                <div className="checkout-section-title mb-4">
-                  <CreditCard className="text-[#C5A059]" size={20} />
-                  <span>Select Payment Method</span>
-                </div>
+                <fieldset className="border-none p-0 m-0 w-full">
+                  <legend className="checkout-section-title mb-4 block w-full float-left">
+                    <span className="flex items-center gap-2">
+                      <CreditCard className="text-[#C5A059]" size={20} />
+                      <span>Select Payment Method</span>
+                    </span>
+                  </legend>
 
-                <div className="checkout-payment-grid mb-4">
-                  <div
-                    className={`checkout-payment-card ${paymentMethod === 'online_razorpay' ? 'selected' : ''}`}
-                    onClick={() => setPaymentMethod('online_razorpay')}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="online_razorpay"
-                      checked={paymentMethod === 'online_razorpay'}
-                      onChange={() => setPaymentMethod('online_razorpay')}
-                      className="mt-1"
-                    />
-                    <div>
-                      <strong className="text-xs font-bold text-[#1D3A28] block">Pay Online Securely</strong>
-                      <span className="text-[11px] text-[#667068] block mt-0.5">UPI, Credit/Debit Cards, NetBanking</span>
-                    </div>
-                  </div>
+                  <div className="checkout-payment-grid mb-4 w-full float-left">
+                    <label
+                      htmlFor="payment-online"
+                      className={`checkout-payment-card cursor-pointer ${paymentMethod === 'online_razorpay' ? 'selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        id="payment-online"
+                        name="paymentMethod"
+                        value="online_razorpay"
+                        checked={paymentMethod === 'online_razorpay'}
+                        onChange={() => setPaymentMethod('online_razorpay')}
+                        className="mt-1 accent-[#1D3A28] focus-visible:ring-2 focus-visible:ring-[#C5A059]"
+                      />
+                      <div>
+                        <strong className="text-xs font-bold text-[#1D3A28] block">Pay Online Securely</strong>
+                        <span className="text-[11px] text-[#667068] block mt-0.5">UPI, Credit/Debit Cards, NetBanking</span>
+                      </div>
+                    </label>
 
-                  <div
-                    className={`checkout-payment-card ${paymentMethod === 'cod' ? 'selected' : ''}`}
-                    onClick={() => setPaymentMethod('cod')}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="cod"
-                      checked={paymentMethod === 'cod'}
-                      onChange={() => setPaymentMethod('cod')}
-                      className="mt-1"
-                    />
-                    <div>
-                      <strong className="text-xs font-bold text-[#1D3A28] block">Cash on Delivery (COD)</strong>
-                      <span className="text-[11px] text-[#667068] block mt-0.5">Pay cash upon delivery at doorstep</span>
-                    </div>
+                    <label
+                      htmlFor="payment-cod"
+                      className={`checkout-payment-card cursor-pointer ${paymentMethod === 'cod' ? 'selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        id="payment-cod"
+                        name="paymentMethod"
+                        value="cod"
+                        checked={paymentMethod === 'cod'}
+                        onChange={() => setPaymentMethod('cod')}
+                        className="mt-1 accent-[#1D3A28] focus-visible:ring-2 focus-visible:ring-[#C5A059]"
+                      />
+                      <div>
+                        <strong className="text-xs font-bold text-[#1D3A28] block">Cash on Delivery (COD)</strong>
+                        <span className="text-[11px] text-[#667068] block mt-0.5">Pay cash upon delivery at doorstep</span>
+                      </div>
+                    </label>
                   </div>
-                </div>
+                </fieldset>
 
                 <button
                   type="submit"

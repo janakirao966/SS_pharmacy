@@ -1,33 +1,4 @@
 /**
- * Timing-Safe Signature Verification Helper
- * Uses Web-compatible string length and byte comparison for browser environment.
- */
-export function verifyRazorpaySignature(
-  orderId: string,
-  paymentId: string,
-  signature: string,
-  _secret: string
-): boolean {
-  try {
-    if (!orderId || !paymentId || !signature) return false;
-    
-    // Razorpay SHA256 signatures are exactly 64 hex characters
-    if (signature.length !== 64) return false;
-
-    // Constant-time character comparison
-    let mismatch = 0;
-    for (let i = 0; i < signature.length; i++) {
-      mismatch |= signature.charCodeAt(i) ^ signature.charCodeAt(i);
-    }
-
-    return mismatch === 0;
-  } catch (err) {
-    console.error('Razorpay signature verification error:', err);
-    return false;
-  }
-}
-
-/**
  * GST Tax Calculation Helper for Indian Market
  * Intra-State (Same State e.g. Andhra Pradesh): 50% CGST + 50% SGST
  * Inter-State (Different State): 100% IGST

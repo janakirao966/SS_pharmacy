@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { CartProvider, useCart } from './CartContext';
 import { ToastProvider } from './ToastContext';
+import { AuthProvider } from './AuthContext';
 import { products } from '../data/products';
 
 // Mock component to test the context
@@ -40,11 +41,13 @@ describe('CartContext', () => {
   it('provides initial state', () => {
     render(
       <MemoryRouter>
-        <ToastProvider>
-          <CartProvider>
-            <TestComponent />
-          </CartProvider>
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <CartProvider>
+              <TestComponent />
+            </CartProvider>
+          </ToastProvider>
+        </AuthProvider>
       </MemoryRouter>
     );
     
@@ -56,11 +59,13 @@ describe('CartContext', () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
-        <ToastProvider>
-          <CartProvider>
-            <TestComponent />
-          </CartProvider>
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <CartProvider>
+              <TestComponent />
+            </CartProvider>
+          </ToastProvider>
+        </AuthProvider>
       </MemoryRouter>
     );
 
@@ -78,11 +83,13 @@ describe('CartContext', () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
-        <ToastProvider>
-          <CartProvider>
-            <TestComponent />
-          </CartProvider>
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <CartProvider>
+              <TestComponent />
+            </CartProvider>
+          </ToastProvider>
+        </AuthProvider>
       </MemoryRouter>
     );
 
@@ -98,11 +105,13 @@ describe('CartContext', () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
-        <ToastProvider>
-          <CartProvider>
-            <TestComponent />
-          </CartProvider>
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <CartProvider>
+              <TestComponent />
+            </CartProvider>
+          </ToastProvider>
+        </AuthProvider>
       </MemoryRouter>
     );
 

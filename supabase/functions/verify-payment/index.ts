@@ -23,9 +23,36 @@ serve(async (req) => {
       throw new Error('Missing payment validation identifiers')
     }
 
-    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET') ?? ''
+    // 1. Fetch matching local order to establish binding and verify details
+    const { data: order, error: fetchError } = await supabaseClient
+      .from('orders')
+      .select('id, user_id, payment_status, order_number')
+      .eq('razorpay_order_id', razorpay_order_id)
+      .maybeSingle()
 
-    // 1. Verify Razorpay Payment Signature
+    if (fetchError || !order) {
+      throw new Error(`Order binding not found for Razorpay Order ID: ${razorpay_order_id}`)
+    }
+
+    // 2. Enforce Ownership Protection (Authorization check)
+    if (order.user_id !== null) {
+      const authHeader = req.headers.get('Authorization')
+      if (!authHeader) {
+        throw new Error('Authorization credentials required to verify this order')
+      }
+      const token = authHeader.replace('Bearer ', '')
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token)
+      
+      if (authError || !user || user.id !== order.user_id) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Unauthorized: Cannot verify payment for another customer\'s order' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+    }
+
+    // 3. Cryptographically Verify Signature (DO NOT trust payment_status = paid before verifying)
+    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET') ?? ''
     const text = `${razorpay_order_id}|${razorpay_payment_id}`
     const encoder = new TextEncoder()
     const key = await crypto.subtle.importKey(
@@ -43,24 +70,33 @@ serve(async (req) => {
       throw new Error('Payment signature verification failed')
     }
 
-    // 2. Signature verified, update order status in DB
-    const { data: order, error } = await supabaseClient
+    // 4. Idempotency Check (If already marked paid, return success without double-committing stock)
+    if (order.payment_status === 'paid') {
+      return new Response(
+        JSON.stringify({ success: true, order_number: order.order_number, already_processed: true }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // 5. Update Order status to Paid
+    const { error: updateError } = await supabaseClient
       .from('orders')
       .update({
         payment_status: 'paid',
         razorpay_payment_id,
         razorpay_signature
       })
-      .eq('razorpay_order_id', razorpay_order_id)
-      .select('id, order_number')
-      .single()
+      .eq('id', order.id)
 
-    if (error || !order) {
-      throw new Error(`Order database update failed: ${error?.message || 'Order not found'}`)
+    if (updateError) {
+      throw new Error(`Order database update failed: ${updateError.message}`)
     }
 
-    // 3. Commit reserved inventory stock for paid order
-    await supabaseClient.rpc('commit_order_stock', { p_order_id: order.id });
+    // 6. Commit inventory stock for the order (Idempotency protected)
+    const { error: rpcError } = await supabaseClient.rpc('commit_order_stock', { p_order_id: order.id })
+    if (rpcError) {
+      throw new Error(`Inventory stock commitment failed: ${rpcError.message}`)
+    }
 
     return new Response(
       JSON.stringify({ success: true, order_number: order.order_number }),

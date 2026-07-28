@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   LogOut,
   ShoppingBag,
@@ -64,6 +64,9 @@ export default function CustomerAccount() {
     isDefault: false
   });
 
+  const addressModalRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedElement = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     async function loadSession() {
       try {
@@ -83,6 +86,64 @@ export default function CustomerAccount() {
     }
     loadSession();
   }, []);
+
+  // Focus management & Escape key close for Address Modal
+  useEffect(() => {
+    if (isAddressModalOpen) {
+      previouslyFocusedElement.current = document.activeElement as HTMLElement;
+      setTimeout(() => {
+        const firstInput = addressModalRef.current?.querySelector('input') as HTMLElement;
+        const closeBtn = addressModalRef.current?.querySelector('.address-close-btn') as HTMLElement;
+        (firstInput || closeBtn)?.focus();
+      }, 50);
+    } else {
+      if (previouslyFocusedElement.current) {
+        previouslyFocusedElement.current.focus();
+      }
+    }
+  }, [isAddressModalOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsAddressModalOpen(false);
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const container = addressModalRef.current;
+        if (!container) return;
+
+        const focusableElements = container.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    if (isAddressModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isAddressModalOpen]);
 
   const fetchUserProfile = async (userId: string) => {
     try {
@@ -111,67 +172,43 @@ export default function CustomerAccount() {
       if (!error && data) {
         const fetchedOrders = data as any[];
         setOrders(fetchedOrders);
-        initializeAddresses(fetchedOrders);
-      } else {
-        initializeAddresses([]);
       }
+      await fetchSavedAddresses(userId);
     } catch (err) {
       console.error('Fetch customer orders error:', err);
-      initializeAddresses([]);
+      await fetchSavedAddresses(userId);
     } finally {
       setLoading(false);
     }
   };
 
-  const initializeAddresses = (userOrders: any[]) => {
-    // 1. Check user metadata for saved_addresses
-    const metadataAddresses = user?.user_metadata?.saved_addresses;
-    if (Array.isArray(metadataAddresses) && metadataAddresses.length > 0) {
-      setSavedAddresses(metadataAddresses);
-      return;
-    }
-
-    // 2. Extract unique delivery locations from past orders if metadata is empty
-    if (userOrders && userOrders.length > 0) {
-      const extracted: SavedAddress[] = [];
-      const seenKeys = new Set<string>();
-
-      userOrders.forEach((ord, index) => {
-        const key = `${ord.shipping_address}-${ord.pincode}`.toLowerCase();
-        if (!seenKeys.has(key)) {
-          seenKeys.add(key);
-          extracted.push({
-            id: ord.id || `addr-${index}`,
-            name: ord.customer_name || profile?.full_name || 'Valued Customer',
-            phone: ord.customer_phone || profile?.phone || '',
-            address: ord.shipping_address,
-            city: ord.city,
-            state: ord.state || 'Andhra Pradesh',
-            pincode: ord.pincode,
-            tag: index === 0 ? 'Home' : 'Office',
-            isDefault: index === 0
-          });
-        }
-      });
-
-      setSavedAddresses(extracted);
-      return;
-    }
-
-    // 3. Zero hardcoded mock addresses if no history exists
-    setSavedAddresses([]);
-  };
-
-  const persistAddresses = async (updated: SavedAddress[]) => {
-    setSavedAddresses(updated);
+  const fetchSavedAddresses = async (userId: string) => {
     try {
-      await supabase.auth.updateUser({
-        data: {
-          saved_addresses: updated
-        }
-      });
+      const { data, error } = await supabase
+        .from('addresses')
+        .select('*')
+        .eq('profile_id', userId)
+        .order('is_default', { ascending: false });
+
+      if (!error && data) {
+        const mapped: SavedAddress[] = data.map((d: any) => ({
+          id: d.id,
+          name: d.name,
+          phone: d.phone,
+          address: d.address,
+          city: d.city,
+          state: d.state,
+          pincode: d.pincode,
+          tag: d.tag as 'Home' | 'Office' | 'Other',
+          isDefault: d.is_default
+        }));
+        setSavedAddresses(mapped);
+      } else {
+        setSavedAddresses([]);
+      }
     } catch (err) {
-      console.error('Persist address error:', err);
+      console.error('Fetch addresses error:', err);
+      setSavedAddresses([]);
     }
   };
 
@@ -227,50 +264,124 @@ export default function CustomerAccount() {
       return;
     }
 
-    let updated: SavedAddress[];
-    if (editingAddressId) {
-      updated = savedAddresses.map((item) =>
-        item.id === editingAddressId
-          ? { ...addressForm, id: editingAddressId }
-          : addressForm.isDefault
-          ? { ...item, isDefault: false }
-          : item
-      );
-      showToast('Delivery address updated', 'success');
-    } else {
-      const newAddr: SavedAddress = {
-        ...addressForm,
-        id: `addr-${Date.now()}`
-      };
-      if (addressForm.isDefault) {
-        updated = savedAddresses.map((item) => ({ ...item, isDefault: false }));
-        updated.unshift(newAddr);
-      } else {
-        updated = [...savedAddresses, newAddr];
-      }
-      showToast('New delivery address added', 'success');
-    }
+    setLoading(true);
+    try {
+      if (editingAddressId) {
+        // Update existing address details (leave is_default = false first to prevent index collision)
+        const { error } = await supabase
+          .from('addresses')
+          .update({
+            name: addressForm.name,
+            phone: addressForm.phone,
+            address: addressForm.address,
+            city: addressForm.city,
+            state: addressForm.state,
+            pincode: addressForm.pincode,
+            tag: addressForm.tag
+          })
+          .eq('id', editingAddressId);
 
-    await persistAddresses(updated);
-    setIsAddressModalOpen(false);
+        if (error) throw error;
+
+        // Perform transactional default toggling if selected
+        if (addressForm.isDefault) {
+          const { error: defaultError } = await supabase.rpc('set_default_address', {
+            p_address_id: editingAddressId
+          });
+          if (defaultError) throw defaultError;
+        }
+
+        showToast('Delivery address updated', 'success');
+      } else {
+        // Insert new address with is_default = false (to avoid index collision)
+        const { data: newAddr, error } = await supabase
+          .from('addresses')
+          .insert({
+            profile_id: user.id,
+            name: addressForm.name,
+            phone: addressForm.phone,
+            address: addressForm.address,
+            city: addressForm.city,
+            state: addressForm.state,
+            pincode: addressForm.pincode,
+            tag: addressForm.tag,
+            is_default: false
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Perform transactional default setting
+        if (addressForm.isDefault || savedAddresses.length === 0) {
+          const { error: defaultError } = await supabase.rpc('set_default_address', {
+            p_address_id: newAddr.id
+          });
+          if (defaultError) throw defaultError;
+        }
+
+        showToast('New delivery address added', 'success');
+      }
+
+      await fetchSavedAddresses(user.id);
+      setIsAddressModalOpen(false);
+    } catch (err: any) {
+      console.error('Save address error:', err);
+      showToast(err.message || 'Error saving address', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteAddress = async (id: string) => {
-    const updated = savedAddresses.filter((item) => item.id !== id);
-    if (updated.length > 0 && !updated.some((item) => item.isDefault)) {
-      updated[0].isDefault = true;
+    setLoading(true);
+    try {
+      const addressToDelete = savedAddresses.find((item) => item.id === id);
+      const wasDefault = addressToDelete?.isDefault;
+
+      const { error } = await supabase
+        .from('addresses')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      showToast('Delivery address removed', 'info');
+
+      // Unset/re-assign default address safely via server-side logic
+      const remaining = savedAddresses.filter((item) => item.id !== id);
+      if (wasDefault && remaining.length > 0) {
+        const { error: defaultError } = await supabase.rpc('set_default_address', {
+          p_address_id: remaining[0].id
+        });
+        if (defaultError) throw defaultError;
+      }
+
+      await fetchSavedAddresses(user.id);
+    } catch (err: any) {
+      console.error('Delete address error:', err);
+      showToast(err.message || 'Error deleting address', 'error');
+    } finally {
+      setLoading(false);
     }
-    await persistAddresses(updated);
-    showToast('Delivery address removed', 'info');
   };
 
   const handleSetDefaultAddress = async (id: string) => {
-    const updated = savedAddresses.map((item) => ({
-      ...item,
-      isDefault: item.id === id
-    }));
-    await persistAddresses(updated);
-    showToast('Primary delivery address updated', 'success');
+    setLoading(true);
+    try {
+      const { error } = await supabase.rpc('set_default_address', {
+        p_address_id: id
+      });
+      if (error) throw error;
+
+      showToast('Primary delivery address updated', 'success');
+      await fetchSavedAddresses(user.id);
+    } catch (err: any) {
+      console.error('Set default address error:', err);
+      showToast(err.message || 'Error setting default address', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDetectGPSLocation = () => {
@@ -901,10 +1012,10 @@ export default function CustomerAccount() {
 
       {/* LUXURY ADDRESS MODAL */}
       {isAddressModalOpen && (
-        <div className="address-modal-overlay">
+        <div ref={addressModalRef} className="address-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="address-modal-title">
           <div className="address-modal-card">
             <div className="address-modal-header">
-              <h3 className="address-modal-title">
+              <h3 className="address-modal-title" id="address-modal-title">
                 <MapPin size={20} className="text-[#C5A059]" />
                 <span>{editingAddressId ? 'Edit Delivery Location' : 'Add New Delivery Location'}</span>
               </h3>
@@ -933,8 +1044,9 @@ export default function CustomerAccount() {
               <form onSubmit={handleSaveAddress} className="space-y-4">
                 <div className="address-form-grid">
                   <div>
-                    <label className="address-form-label">Contact Name *</label>
+                    <label htmlFor="addr-name" className="address-form-label">Contact Name *</label>
                     <input
+                      id="addr-name"
                       type="text"
                       required
                       value={addressForm.name}
@@ -945,8 +1057,9 @@ export default function CustomerAccount() {
                   </div>
 
                   <div>
-                    <label className="address-form-label">Phone Number *</label>
+                    <label htmlFor="addr-phone" className="address-form-label">Phone Number *</label>
                     <input
+                      id="addr-phone"
                       type="tel"
                       required
                       value={addressForm.phone}
@@ -958,8 +1071,9 @@ export default function CustomerAccount() {
                 </div>
 
                 <div>
-                  <label className="address-form-label">Street Address / Flat / Building *</label>
+                  <label htmlFor="addr-street" className="address-form-label">Street Address / Flat / Building *</label>
                   <textarea
+                    id="addr-street"
                     required
                     rows={2}
                     value={addressForm.address}
@@ -971,8 +1085,9 @@ export default function CustomerAccount() {
 
                 <div className="address-form-grid">
                   <div>
-                    <label className="address-form-label">City / Town *</label>
+                    <label htmlFor="addr-city" className="address-form-label">City / Town *</label>
                     <input
+                      id="addr-city"
                       type="text"
                       required
                       value={addressForm.city}
@@ -983,11 +1098,14 @@ export default function CustomerAccount() {
                   </div>
 
                   <div>
-                    <label className="address-form-label">Pincode *</label>
+                    <label htmlFor="addr-pincode" className="address-form-label">Pincode *</label>
                     <input
+                      id="addr-pincode"
                       type="text"
                       required
                       maxLength={6}
+                      inputMode="numeric"
+                      pattern="[0-9]{6}"
                       value={addressForm.pincode}
                       onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value })}
                       placeholder="6-digit PIN"
@@ -998,8 +1116,9 @@ export default function CustomerAccount() {
 
                 <div className="address-form-grid">
                   <div>
-                    <label className="address-form-label">State</label>
+                    <label htmlFor="addr-state" className="address-form-label">State</label>
                     <input
+                      id="addr-state"
                       type="text"
                       value={addressForm.state}
                       onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
@@ -1009,8 +1128,9 @@ export default function CustomerAccount() {
                   </div>
 
                   <div>
-                    <label className="address-form-label">Address Tag</label>
+                    <label htmlFor="addr-tag" className="address-form-label">Address Tag</label>
                     <select
+                      id="addr-tag"
                       value={addressForm.tag}
                       onChange={(e) => setAddressForm({ ...addressForm, tag: e.target.value as any })}
                       className="address-form-select"

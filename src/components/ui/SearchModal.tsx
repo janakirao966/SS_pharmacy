@@ -268,6 +268,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             className="search-modal-input"
+            aria-label="Search formulations, pages, and FAQs"
           />
           <button
             type="button"

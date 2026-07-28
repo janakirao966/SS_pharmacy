@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, ShieldCheck, Mail, Lock, User, Phone, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -34,11 +34,78 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
     confirmPassword: ''
   });
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedElement = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     setMode(activeMode);
     setError(null);
     setSuccessMessage(null);
   }, [activeMode, isModalOpen]);
+
+  // Focus management & Escape key close
+  useEffect(() => {
+    if (isModalOpen) {
+      previouslyFocusedElement.current = document.activeElement as HTMLElement;
+      setTimeout(() => {
+        const firstInput = containerRef.current?.querySelector('input') as HTMLElement;
+        const closeBtn = containerRef.current?.querySelector('.auth-modal-close-btn') as HTMLElement;
+        (firstInput || closeBtn)?.focus();
+      }, 50);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      if (previouslyFocusedElement.current) {
+        previouslyFocusedElement.current.focus();
+      }
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleCloseModal();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const focusableElements = container.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    if (isModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isModalOpen, handleCloseModal]);
 
   if (!isModalOpen) return null;
 
@@ -143,7 +210,7 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
   };
 
   return (
-    <div className="auth-modal-overlay" role="dialog" aria-modal="true" aria-label={getTitle()}>
+    <div ref={containerRef} className="auth-modal-overlay" role="dialog" aria-modal="true" aria-label={getTitle()}>
       <div className="auth-modal-card">
         {/* Header */}
         <div className="auth-modal-header">
@@ -182,10 +249,11 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
 
           {mode === 'signup' && (
             <div className="auth-field-group">
-              <label className="auth-field-label">Full Name *</label>
+              <label htmlFor="auth-fullname" className="auth-field-label">Full Name *</label>
               <div className="auth-input-wrapper">
                 <User size={16} className="auth-input-icon" />
                 <input
+                  id="auth-fullname"
                   type="text"
                   name="fullName"
                   required
@@ -199,10 +267,11 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
           )}
 
           <div className="auth-field-group">
-            <label className="auth-field-label">Email Address *</label>
+            <label htmlFor="auth-email" className="auth-field-label">Email Address *</label>
             <div className="auth-input-wrapper">
               <Mail size={16} className="auth-input-icon" />
               <input
+                  id="auth-email"
                   type="email"
                   name="email"
                   required
@@ -216,10 +285,11 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
 
           {mode === 'signup' && (
             <div className="auth-field-group">
-              <label className="auth-field-label">Mobile Phone *</label>
+              <label htmlFor="auth-phone" className="auth-field-label">Mobile Phone *</label>
               <div className="auth-input-wrapper">
                 <Phone size={16} className="auth-input-icon" />
                 <input
+                  id="auth-phone"
                   type="tel"
                   name="phone"
                   required
@@ -235,7 +305,7 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
           {mode !== 'forgot' && (
             <div className="auth-field-group">
               <div className="auth-field-header">
-                <label className="auth-field-label">Password *</label>
+                <label htmlFor="auth-password" className="auth-field-label">Password *</label>
                 {mode === 'login' && (
                   <button
                     type="button"
@@ -249,6 +319,7 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
               <div className="auth-input-wrapper">
                 <Lock size={16} className="auth-input-icon" />
                 <input
+                  id="auth-password"
                   type="password"
                   name="password"
                   required
@@ -263,10 +334,11 @@ export default function AuthModal({ isOpen: propIsOpen, onClose: propOnClose, on
 
           {mode === 'signup' && (
             <div className="auth-field-group">
-              <label className="auth-field-label">Confirm Password *</label>
+              <label htmlFor="auth-confirmpassword" className="auth-field-label">Confirm Password *</label>
               <div className="auth-input-wrapper">
                 <Lock size={16} className="auth-input-icon" />
                 <input
+                  id="auth-confirmpassword"
                   type="password"
                   name="confirmPassword"
                   required

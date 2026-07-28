@@ -14069,8 +14069,8 @@
   }
 }
 
-
-
-
-
-
+.product-card-navigation-link:focus-visible {
+  outline: 2.5px solid #C5A059;
+  outline-offset: -4px;
+  border-radius: 20px 20px 0 0;
+}
