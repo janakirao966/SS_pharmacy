@@ -44,6 +44,18 @@ export default function AdminContent() {
           <p className="text-xs text-[#71717a] margin-0">Manage homepage hero copy, marketing banners, and Ayurvedic manufacturing trust statements</p>
         </div>
 
+        {/* CMS Preview Notice */}
+        <div className="admin-cms-preview-banner" role="status">
+          <div className="admin-cms-preview-banner-icon">💡</div>
+          <div>
+            <h4 className="admin-cms-preview-banner-title">Preview / CMS Simulation Mode</h4>
+            <p className="admin-cms-preview-banner-text">
+              Changes made to landing page editorial text, subtitles, or trust statements are stored in local session memory. 
+              These edits will not be published to the live storefront database in this phase.
+            </p>
+          </div>
+        </div>
+
         <AdminCard>
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Section 1: Hero Section */}

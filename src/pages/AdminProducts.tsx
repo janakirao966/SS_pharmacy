@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { products as initialProducts, type Product } from '../data/products';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
+import { supabase } from '../lib/supabase';
 import { 
   AdminCard, 
   AdminStatusBadge, 
@@ -10,8 +11,8 @@ import {
   AdminMobileRecord, 
   AdminFilterBar, 
   AdminPagination, 
-  PreviewModeBadge,
-  AdminEmptyState 
+  AdminEmptyState,
+  AdminSkeleton
 } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { Plus, Eye, Copy, Trash } from '@phosphor-icons/react';
@@ -20,26 +21,64 @@ export default function AdminProducts() {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [productList, setProductList] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   
   // Dialog state
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<{ type: 'archive' | 'duplicate'; productId: string } | null>(null);
+  const [isMutating, setIsMutating] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
 
-  useEffect(() => {
-    // Load products from sessionStorage if edited in session, or fall back to static list
-    const saved = sessionStorage.getItem('ssp-mock-products');
-    if (saved) {
-      setProductList(JSON.parse(saved));
-    } else {
-      setProductList(initialProducts);
-      sessionStorage.setItem('ssp-mock-products', JSON.stringify(initialProducts));
+  const fetchProducts = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, error: dbErr } = await supabase
+        .from('products')
+        .select('*')
+        .order('name', { ascending: true });
+      
+      if (dbErr) throw dbErr;
+
+      const mapped: Product[] = (data || []).map((dbP: any) => {
+        const staticP = initialProducts.find(p => p.id === dbP.id);
+        return {
+          id: dbP.id,
+          name: dbP.name || '',
+          category: dbP.category || '',
+          mrp: Number(dbP.mrp),
+          sellingPrice: Number(dbP.selling_price),
+          packSize: dbP.pack_size || '',
+          isActive: dbP.is_active,
+          composition: staticP?.composition || '',
+          benefits: staticP?.benefits || [],
+          usage: staticP?.usage || '',
+          shelfLife: staticP?.shelfLife || '3 Years',
+          safetyNote: staticP?.safetyNote || 'Ayurvedic formulation',
+          image: staticP?.image || undefined,
+          transparentImage: staticP?.transparentImage || undefined,
+          galleryImages: staticP?.galleryImages || []
+        };
+      });
+
+      setProductList(mapped);
+    } catch (err: any) {
+      console.error('Failed to load products:', err);
+      setError(err.message || 'Failed to fetch products from database.');
+      showToast('Error fetching products from database.', 'error');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchProducts();
   }, []);
 
   // Filter Categories list
@@ -74,31 +113,58 @@ export default function AdminProducts() {
     setIsConfirmOpen(true);
   };
 
-  const handleConfirmAction = () => {
+  const handleConfirmAction = async () => {
     if (!pendingAction) return;
     setIsConfirmOpen(false);
+    setIsMutating(true);
     const { type, productId } = pendingAction;
     const target = productList.find(p => p.id === productId);
-    if (!target) return;
-
-    if (type === 'duplicate') {
-      const copy: Product = {
-        ...target,
-        id: `${target.id}-copy-${Math.floor(100 + Math.random() * 900)}`,
-        name: `${target.name} (Copy)`
-      };
-      const updated = [...productList, copy];
-      setProductList(updated);
-      sessionStorage.setItem('ssp-mock-products', JSON.stringify(updated));
-      showToast(`Duplicated "${target.name}" in Preview Mode.`, 'success');
-    } else if (type === 'archive') {
-      const updated = productList.filter(p => p.id !== productId);
-      setProductList(updated);
-      sessionStorage.setItem('ssp-mock-products', JSON.stringify(updated));
-      showToast(`Archived "${target.name}" in Preview Mode.`, 'success');
+    
+    if (!target) {
+      setIsMutating(false);
+      setPendingAction(null);
+      return;
     }
 
-    setPendingAction(null);
+    try {
+      if (type === 'duplicate') {
+        const uniqueId = `${target.id}-copy-${Math.floor(100 + Math.random() * 900)}`;
+        const newName = `${target.name} (Copy)`;
+        
+        const { error: insertErr } = await supabase
+          .from('products')
+          .insert({
+            id: uniqueId,
+            name: newName,
+            category: target.category,
+            mrp: target.mrp || 249,
+            selling_price: target.sellingPrice || 199,
+            pack_size: target.packSize || '100g Jar',
+            is_active: true
+          });
+
+        if (insertErr) throw insertErr;
+
+        showToast(`Duplicated "${target.name}" successfully.`, 'success');
+        await fetchProducts();
+      } else if (type === 'archive') {
+        const { error: updateErr } = await supabase
+          .from('products')
+          .update({ is_active: false })
+          .eq('id', productId);
+
+        if (updateErr) throw updateErr;
+
+        showToast(`Archived "${target.name}" successfully.`, 'success');
+        await fetchProducts();
+      }
+    } catch (err: any) {
+      console.error(`Failed to execute ${type} action:`, err);
+      showToast(err.message || `Failed to execute ${type} action.`, 'error');
+    } finally {
+      setIsMutating(false);
+      setPendingAction(null);
+    }
   };
 
   const filterOptions = categories.map(cat => ({
@@ -114,7 +180,7 @@ export default function AdminProducts() {
           <img 
             src={p.image || `${import.meta.env.BASE_URL}products/logo/logo.webp`}
             alt={p.name} 
-            className="w-9 h-9 object-contain bg-[#ffffff] border border-[#e4e4e7] rounded-md p-1 shrink-0"
+            className="admin-product-thumb shrink-0"
           />
           <div>
             <span className="font-semibold text-[#000000] block text-xs">{p.name}</span>
@@ -124,9 +190,9 @@ export default function AdminProducts() {
       )
     },
     { header: 'Category', render: (p: Product) => <span className="text-xs text-[#71717a]">{p.category}</span> },
-    { header: 'Pack Size', render: (p: Product) => <span className="font-mono text-xs text-[#000000]">{p.packSize}</span> },
-    { header: 'MRP Price', render: (p: Product) => <span className="font-mono font-semibold text-[#000000]">₹{p.mrp?.toLocaleString('en-IN')}</span> },
-    { header: 'Status', render: () => <AdminStatusBadge status="active" /> },
+    { header: 'Pack Size', render: (p: Product) => <span className="font-mono text-xs text-[#000000]">{p.packSize || '100g Jar'}</span> },
+    { header: 'MRP Price', render: (p: Product) => <span className="font-mono font-semibold text-[#000000]">{p.mrp ? `₹${p.mrp.toLocaleString('en-IN')}` : '₹249'}</span> },
+    { header: 'Status', render: (p: Product) => <AdminStatusBadge status={p.isActive ? 'active' : 'archived'} /> },
     { 
       header: 'Actions', 
       render: (p: Product) => (
@@ -134,28 +200,32 @@ export default function AdminProducts() {
           <button 
             type="button" 
             onClick={() => navigate(`/admin/products/${p.id}`)}
-            className="admin-btn-outline !min-h-[30px] !py-1 !px-2 text-[0.7rem]"
+            disabled={isMutating}
+            className="admin-btn-outline !min-h-[44px] !min-w-[44px] !p-0 flex items-center justify-center text-[0.7rem]"
             title="Edit product formulation"
           >
-            <Eye size={13} />
-            <span>Edit</span>
+            <Eye size={16} />
           </button>
           <button 
             type="button" 
             onClick={(e) => handleActionClick('duplicate', p.id, e)}
-            className="admin-btn-icon"
+            disabled={isMutating}
+            className="admin-btn-icon !min-h-[44px] !min-w-[44px] !p-0 flex items-center justify-center"
             title="Duplicate product"
           >
-            <Copy size={13} />
+            <Copy size={16} />
           </button>
-          <button 
-            type="button" 
-            onClick={(e) => handleActionClick('archive', p.id, e)}
-            className="admin-btn-icon !border-[#dc2626] !text-[#dc2626] hover:!bg-[#fef2f2]"
-            title="Archive product"
-          >
-            <Trash size={13} />
-          </button>
+          {p.isActive && (
+            <button 
+              type="button" 
+              onClick={(e) => handleActionClick('archive', p.id, e)}
+              disabled={isMutating}
+              className="admin-btn-icon !min-h-[44px] !min-w-[44px] !p-0 flex items-center justify-center !border-[#dc2626] !text-[#dc2626] hover:!bg-[#fef2f2]"
+              title="Archive product"
+            >
+              <Trash size={16} />
+            </button>
+          )}
         </div>
       ),
       className: 'text-right'
@@ -170,7 +240,6 @@ export default function AdminProducts() {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[0.7rem] font-semibold text-[#71717a] uppercase tracking-wider">Catalog Workspace</span>
-              <PreviewModeBadge />
             </div>
             <p className="text-xs text-[#71717a] margin-0">Manage licensed Ayurvedic formulations, packshots, and prices</p>
           </div>
@@ -195,10 +264,24 @@ export default function AdminProducts() {
         </AdminCard>
 
         {/* Workspace Listings */}
-        {totalRecords === 0 ? (
+        {loading ? (
+          <AdminSkeleton type="table" rows={5} />
+        ) : error ? (
+          <AdminCard className="p-8 text-center border-[#dc2626] bg-[#fef2f2]">
+            <span className="text-sm font-semibold text-[#dc2626] block">Failed to load product catalog</span>
+            <p className="text-xs text-[#71717a] mt-1">{error}</p>
+            <button 
+              type="button" 
+              onClick={fetchProducts} 
+              className="admin-btn-secondary mt-4 text-xs"
+            >
+              Retry Sync
+            </button>
+          </AdminCard>
+        ) : totalRecords === 0 ? (
           <AdminEmptyState
             title="No Products Found"
-            description="No formulations match your search parameters. You can create a new formulation in Preview Mode."
+            description="No formulations match your search parameters. You can create a new formulation."
             actionLabel="Add Formulation"
             onActionClick={() => navigate('/admin/products/new')}
           />
@@ -223,8 +306,8 @@ export default function AdminProducts() {
                   key={p.id}
                   title={p.name}
                   subtitle={p.category}
-                  meta={`MRP: ₹${p.mrp} · ${p.packSize}`}
-                  badge={<AdminStatusBadge status="active" />}
+                  meta={`MRP: ${p.mrp ? `₹${p.mrp}` : '₹249'} · ${p.packSize || '100g Jar'}`}
+                  badge={<AdminStatusBadge status={p.isActive ? 'active' : 'archived'} />}
                   actionUrl={`/admin/products/${p.id}`}
                 />
               ))}
@@ -248,8 +331,8 @@ export default function AdminProducts() {
         title={pendingAction?.type === 'duplicate' ? 'Duplicate Formulation?' : 'Archive Formulation?'}
         message={
           pendingAction?.type === 'duplicate'
-            ? 'Are you sure you want to duplicate this formulation in local Preview Mode?'
-            : 'Are you sure you want to archive this formulation? It will be removed from your active session catalog.'
+            ? 'Are you sure you want to duplicate this formulation in the production database?'
+            : 'Are you sure you want to archive this formulation? This will deactivate it on the storefront without deleting historical order data.'
         }
         confirmLabel={pendingAction?.type === 'duplicate' ? 'Duplicate Product' : 'Archive Product'}
         cancelLabel="Cancel"

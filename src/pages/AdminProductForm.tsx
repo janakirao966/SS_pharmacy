@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { products as initialProducts, type Product } from '../data/products';
+import { products as initialProducts } from '../data/products';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, PreviewModeBadge } from '../components/admin/AdminPrimitives';
+import { supabase } from '../lib/supabase';
+import { AdminCard } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { CaretLeft, FloppyDisk } from '@phosphor-icons/react';
 
@@ -14,6 +15,8 @@ export default function AdminProductForm() {
   
   const isEditMode = Boolean(id);
   const [isDirty, setIsDirty] = useState(false);
+  const [loading, setLoading] = useState(isEditMode);
+  const [isMutating, setIsMutating] = useState(false);
   
   // Confirmation Dialog states
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
@@ -29,6 +32,8 @@ export default function AdminProductForm() {
     usage: '',
     packSize: '',
     mrp: '',
+    sellingPrice: '',
+    isActive: true,
     shelfLife: '',
     safetyNote: '',
     image: ''
@@ -39,29 +44,45 @@ export default function AdminProductForm() {
   useEffect(() => {
     if (!isEditMode) return;
 
-    // Load from sessionStorage catalog
-    const saved = sessionStorage.getItem('ssp-mock-products');
-    const list: Product[] = saved ? JSON.parse(saved) : initialProducts;
-    const target = list.find((p) => p.id === id);
+    const fetchProductDetails = async () => {
+      setLoading(true);
+      try {
+        const { data, error: dbErr } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .single();
 
-    if (target) {
-      setFormData({
-        id: target.id,
-        name: target.name,
-        category: target.category,
-        composition: target.composition,
-        benefits: target.benefits.join(', '),
-        usage: target.usage,
-        packSize: target.packSize || '',
-        mrp: String(target.mrp || 0),
-        shelfLife: target.shelfLife,
-        safetyNote: target.safetyNote,
-        image: target.image || ''
-      });
-    } else {
-      showToast('Formulation not found in local preview list.', 'error');
-      navigate('/admin/products');
-    }
+        if (dbErr) throw dbErr;
+
+        if (data) {
+          const staticP = initialProducts.find((p) => p.id === id);
+          setFormData({
+            id: data.id,
+            name: data.name || '',
+            category: data.category || '',
+            composition: staticP?.composition || '',
+            benefits: staticP?.benefits.join(', ') || '',
+            usage: staticP?.usage || '',
+            packSize: data.pack_size || '',
+            mrp: String(data.mrp || 0),
+            sellingPrice: String(data.selling_price || 0),
+            isActive: data.is_active ?? true,
+            shelfLife: staticP?.shelfLife || '',
+            safetyNote: staticP?.safetyNote || '',
+            image: staticP?.image || ''
+          });
+        }
+      } catch (err: any) {
+        console.error('Failed to load product details:', err);
+        showToast('Failed to load product details from database.', 'error');
+        navigate('/admin/products');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isEditMode]);
 
@@ -85,7 +106,18 @@ export default function AdminProductForm() {
     if (!formData.name.trim()) tempErrors.name = 'Formulation Title is required.';
     if (!formData.category.trim()) tempErrors.category = 'Category is required.';
     if (!formData.packSize.trim()) tempErrors.packSize = 'Pack size is required.';
-    if (!formData.mrp.trim() || isNaN(Number(formData.mrp))) tempErrors.mrp = 'MRP must be a valid number.';
+    
+    const mrpNum = Number(formData.mrp);
+    const sellingPriceNum = Number(formData.sellingPrice);
+
+    if (!formData.mrp.trim() || isNaN(mrpNum) || mrpNum <= 0) {
+      tempErrors.mrp = 'MRP must be a positive number.';
+    }
+    if (!formData.sellingPrice.trim() || isNaN(sellingPriceNum) || sellingPriceNum <= 0) {
+      tempErrors.sellingPrice = 'Selling Price must be a positive number.';
+    } else if (sellingPriceNum > mrpNum) {
+      tempErrors.sellingPrice = 'Selling Price cannot exceed MRP.';
+    }
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -108,46 +140,80 @@ export default function AdminProductForm() {
     setIsSubmitDialogOpen(true);
   };
 
-  const handleConfirmSubmit = () => {
+  const handleConfirmSubmit = async () => {
     setIsSubmitDialogOpen(false);
+    setIsMutating(true);
     
-    // Save to sessionStorage list
-    const saved = sessionStorage.getItem('ssp-mock-products');
-    const list: Product[] = saved ? JSON.parse(saved) : initialProducts;
-
-    const updatedProduct: Product = {
+    const payload = {
       id: formData.id.trim(),
       name: formData.name.trim(),
       category: formData.category.trim(),
-      composition: formData.composition.trim(),
-      benefits: formData.benefits.split(',').map((b) => b.trim()).filter(Boolean),
-      usage: formData.usage.trim(),
-      packSize: formData.packSize.trim(),
       mrp: Number(formData.mrp),
-      shelfLife: formData.shelfLife.trim(),
-      safetyNote: formData.safetyNote.trim(),
-      image: formData.image.trim() || undefined,
-      transparentImage: formData.image.trim() || undefined
+      selling_price: Number(formData.sellingPrice),
+      pack_size: formData.packSize.trim(),
+      is_active: formData.isActive
     };
 
-    let updatedList: Product[];
-    if (isEditMode) {
-      updatedList = list.map((p) => (p.id === id ? updatedProduct : p));
-      showToast(`Updated "${formData.name}" details in Preview Mode.`, 'success');
-    } else {
-      if (list.some((p) => p.id === updatedProduct.id)) {
-        setErrors((prev) => ({ ...prev, id: 'Product Slug/ID already exists in catalog.' }));
-        showToast('Slug conflict. Product Slug/ID must be unique.', 'error');
-        return;
-      }
-      updatedList = [...list, updatedProduct];
-      showToast(`Published "${formData.name}" to Preview catalog.`, 'success');
-    }
+    try {
+      if (isEditMode) {
+        const { error: updateErr } = await supabase
+          .from('products')
+          .update(payload)
+          .eq('id', id);
 
-    sessionStorage.setItem('ssp-mock-products', JSON.stringify(updatedList));
-    setIsDirty(false);
-    navigate('/admin/products');
+        if (updateErr) throw updateErr;
+        showToast(`Successfully updated product "${formData.name}".`, 'success');
+      } else {
+        const { error: insertErr } = await supabase
+          .from('products')
+          .insert(payload);
+
+        if (insertErr) throw insertErr;
+        showToast(`Successfully published product "${formData.name}".`, 'success');
+      }
+
+      setIsDirty(false);
+      navigate('/admin/products');
+    } catch (err: any) {
+      console.error('Failed to save product changes:', err);
+      showToast(err.message || 'Failed to save product changes.', 'error');
+    } finally {
+      setIsMutating(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '60vh',
+          fontFamily: '"Plus Jakarta Sans", sans-serif',
+          color: '#1A1A1A'
+        }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '4px solid #F5F0E8',
+            borderTop: '4px solid #2D5016',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            marginBottom: '20px'
+          }} />
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+          <p style={{ fontSize: '14px', fontWeight: 500, color: '#667068' }}>Loading product details...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -157,15 +223,11 @@ export default function AdminProductForm() {
           <button 
             type="button" 
             onClick={handleCancelClick}
-            className="admin-btn-icon"
+            className="admin-btn-icon !min-h-[44px] !min-w-[44px] !p-0 flex items-center justify-center"
             aria-label="Back to formulations list"
           >
             <CaretLeft size={16} weight="bold" />
           </button>
-          
-          <div className="flex items-center gap-2">
-            <PreviewModeBadge />
-          </div>
         </div>
 
         {/* Structured Form Container */}
@@ -258,6 +320,19 @@ export default function AdminProductForm() {
               </div>
 
               <div>
+                <label className="block font-semibold text-[#000000] mb-1">Selling Price (INR) *</label>
+                <input
+                  type="text"
+                  name="sellingPrice"
+                  value={formData.sellingPrice}
+                  onChange={handleInputChange}
+                  className={`w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000] ${errors.sellingPrice ? '!border-[#dc2626]' : ''}`}
+                  placeholder="e.g. 2499"
+                />
+                {errors.sellingPrice && <span className="text-[0.7rem] font-semibold text-[#dc2626] mt-0.5 block">{errors.sellingPrice}</span>}
+              </div>
+
+              <div>
                 <label className="block font-semibold text-[#000000] mb-1">Shelf Life Duration</label>
                 <input
                   type="text"
@@ -280,6 +355,24 @@ export default function AdminProductForm() {
                   placeholder="products/moonlight/hero.webp"
                 />
               </div>
+            </div>
+
+            <div className="flex items-center gap-3 bg-[#f8fafc] border border-[#e2e8f0] p-3.5 rounded-lg">
+              <input
+                type="checkbox"
+                id="is_active_toggle"
+                name="isActive"
+                checked={formData.isActive}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, isActive: e.target.checked }));
+                  setIsDirty(true);
+                }}
+                className="h-4.5 w-4.5 rounded border-gray-300 text-teal-600 focus:ring-teal-500 cursor-pointer"
+              />
+              <label htmlFor="is_active_toggle" className="text-xs font-bold text-slate-800 cursor-pointer select-none">
+                Storefront Active & Available (is_active)
+                <span className="block font-medium text-slate-500 text-[0.68rem] mt-0.5">When disabled, this product will be hidden from customer purchase catalog.</span>
+              </label>
             </div>
 
             <div className="text-xs">
@@ -344,12 +437,14 @@ export default function AdminProductForm() {
             <button
               type="button"
               onClick={handleCancelClick}
+              disabled={isMutating}
               className="admin-btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
+              disabled={isMutating}
               className="admin-btn-primary"
             >
               <FloppyDisk size={15} weight="bold" />
@@ -381,7 +476,7 @@ export default function AdminProductForm() {
         message={
           isEditMode
             ? `Confirm saving updated details for formulation "${formData.name}"?`
-            : `Confirm publishing formulation "${formData.name}" to local catalog?`
+            : `Confirm publishing formulation "${formData.name}" to production catalog?`
         }
         confirmLabel={isEditMode ? 'Save Changes' : 'Publish Product'}
         cancelLabel="Review Form"

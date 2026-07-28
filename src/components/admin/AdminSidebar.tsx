@@ -355,8 +355,44 @@ interface NavItemProps {
 }
 
 function NavItem({ href, icon, label, collapsed, pathname, onClick }: NavItemProps) {
-  // Matches exact dashboard or sub-pages under specific modules
-  const isActive = pathname === href || (href !== '/admin' && pathname.startsWith(href));
+  // All navigation routes defined in the sidebar to prevent multi-highlighting
+  const allRoutes = [
+    '/admin/analytics/gst',
+    '/admin/analytics',
+    '/admin/orders',
+    '/admin/returns',
+    '/admin/invoices',
+    '/admin/products',
+    '/admin/inventory/batches',
+    '/admin/inventory',
+    '/admin/expiry',
+    '/admin/suppliers',
+    '/admin/procurement',
+    '/admin/recalls',
+    '/admin/support',
+    '/admin/enquiries',
+    '/admin/distributors',
+    '/admin/content',
+    '/admin/testimonials',
+    '/admin/gallery',
+    '/admin/media',
+    '/admin/operations',
+    '/admin/security',
+    '/admin/settings',
+    '/admin/profile',
+    '/admin'
+  ];
+
+  const isPrefixMatch = pathname.startsWith(href) && (pathname.length === href.length || pathname[href.length] === '/');
+  
+  const hasMoreSpecificMatch = allRoutes.some(r => 
+    r !== href && 
+    r.length > href.length && 
+    pathname.startsWith(r) && 
+    (pathname.length === r.length || pathname[r.length] === '/')
+  );
+
+  const isActive = pathname === href || (href !== '/admin' && isPrefixMatch && !hasMoreSpecificMatch);
 
   return (
     <Link

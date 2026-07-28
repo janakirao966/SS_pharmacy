@@ -205,6 +205,18 @@ export default function AdminTestimonials() {
           </button>
         </div>
 
+        {/* CMS Preview Notice */}
+        <div className="admin-cms-preview-banner" role="status">
+          <div className="admin-cms-preview-banner-icon">💡</div>
+          <div>
+            <h4 className="admin-cms-preview-banner-title">Preview / CMS Simulation Mode</h4>
+            <p className="admin-cms-preview-banner-text">
+              Testimonial management operates in local session memory. 
+              New additions or deletion changes will not be written to the live storefront database in this phase.
+            </p>
+          </div>
+        </div>
+
         {/* Filter Bar */}
         <AdminCard>
           <AdminFilterBar
