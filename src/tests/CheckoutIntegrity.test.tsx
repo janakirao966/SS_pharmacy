@@ -6,6 +6,19 @@ import { ToastProvider } from '../context/ToastContext';
 import { CartProvider } from '../context/CartContext';
 import { AuthProvider } from '../context/AuthContext';
 
+// Mock ProductContext
+vi.mock('../context/ProductContext', () => ({
+  useProducts: () => ({
+    products: [
+      { id: 'dr-lion-pain-cream', name: 'Dr. Lion Pain Cream', mrp: 2999, sellingPrice: 2999, packSize: '500 gms', isActive: true, category: 'Ayurvedic External Pain Relief Cream', composition: '', benefits: [], usage: '', shelfLife: '', safetyNote: '' },
+      { id: 'dr-lion-pain-pills', name: 'Dr. Lion Pain Pills', mrp: 2999, sellingPrice: 2999, packSize: '60 Pills', isActive: true, category: 'Ayurvedic Proprietary Medicine', composition: '', benefits: [], usage: '', shelfLife: '', safetyNote: '' }
+    ],
+    loading: false,
+    error: null
+  }),
+  ProductProvider: ({ children }: any) => children
+}));
+
 // Mock matchMedia to prevent errors from any internal UI components
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

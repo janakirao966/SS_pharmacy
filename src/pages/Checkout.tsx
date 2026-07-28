@@ -188,8 +188,10 @@ export default function Checkout() {
       product_id: item.product.id,
       product_name: item.product.name,
       quantity: item.quantity,
-      unit_price: item.product.mrp,
-      total_price: item.product.mrp * item.quantity
+      unit_price: item.product.sellingPrice ?? item.product.mrp ?? 0,
+      total_price: (item.product.sellingPrice ?? item.product.mrp ?? 0) * item.quantity,
+      mrp_snapshot: item.product.mrp ?? 0,
+      pack_size_snapshot: item.product.packSize ?? '50 gms'
     }));
 
     await supabase.from('order_items').insert(itemsToInsert);
@@ -619,15 +621,15 @@ export default function Checkout() {
                       alt={item.product.name}
                       className="checkout-summary-item-thumb"
                     />
-                    <div className="checkout-summary-item-info">
+                    <div className="checkout-summary-item-info text-left">
                       <h4 className="checkout-summary-item-name">{item.product.name}</h4>
                       {item.product.packSize && (
                         <span className="checkout-summary-item-pack">{item.product.packSize}</span>
                       )}
-                      <span className="checkout-summary-item-qty">Qty: {item.quantity} × ₹{item.product.mrp}</span>
+                      <span className="checkout-summary-item-qty">Qty: {item.quantity} × ₹{item.product.sellingPrice ?? item.product.mrp ?? 0}</span>
                     </div>
                     <div className="checkout-summary-item-price">
-                      ₹{item.product.mrp * item.quantity}/-
+                      ₹{(item.product.sellingPrice ?? item.product.mrp ?? 0) * item.quantity}/-
                     </div>
                   </div>
                 ))}

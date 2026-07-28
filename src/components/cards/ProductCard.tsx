@@ -138,9 +138,17 @@ const ProductCard = memo(function ProductCard({
           {/* Price Row */}
           <div className="product-price-row mb-1">
             <div>
-              <span className="product-price-label">Best Price (MRP)</span>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="product-price-val">₹{product.mrp}</span>
+              <span className="product-price-label">Best Price</span>
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                <span className="product-price-val">₹{product.sellingPrice ?? product.mrp ?? 0}</span>
+                {product.mrp && product.sellingPrice && product.sellingPrice < product.mrp && (
+                  <>
+                    <span className="line-through text-xs text-stone-400">₹{product.mrp}</span>
+                    <span className="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded font-bold">
+                      {Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)}% OFF
+                    </span>
+                  </>
+                )}
                 <span className="product-tax-badge">Incl. all taxes</span>
               </div>
             </div>

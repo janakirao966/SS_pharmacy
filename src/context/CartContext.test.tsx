@@ -1,17 +1,32 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CartProvider, useCart } from './CartContext';
 import { ToastProvider } from './ToastContext';
 import { AuthProvider } from './AuthContext';
 import { products } from '../data/products';
 
+// Mock ProductContext to prevent network calls to Supabase in unit tests
+vi.mock('./ProductContext', () => ({
+  useProducts: () => ({
+    products: [
+      { id: 'dr-lion-pain-cream', name: 'Dr. Lion Pain Cream', mrp: 2999, sellingPrice: 2999, packSize: '500 gms', isActive: true, category: 'Ayurvedic External Pain Relief Cream', composition: '', benefits: [], usage: '', shelfLife: '', safetyNote: '' },
+      { id: 'dr-lion-pain-pills', name: 'Dr. Lion Pain Pills', mrp: 2999, sellingPrice: 2999, packSize: '60 Pills', isActive: true, category: 'Ayurvedic Proprietary Medicine', composition: '', benefits: [], usage: '', shelfLife: '', safetyNote: '' }
+    ],
+    loading: false,
+    error: null
+  }),
+  ProductProvider: ({ children }: any) => children
+}));
+
+const MOCK_MRP_1 = 2999;
+
 // Mock component to test the context
 function TestComponent() {
   const { cartItems, handleAddToCart, handleRemoveFromCart, isCartOpen, setIsCartOpen } = useCart();
   
-  const cartTotal = cartItems.reduce((total, item) => total + (item.product.mrp * item.quantity), 0);
+  const cartTotal = cartItems.reduce((total, item) => total + ((item.product.sellingPrice ?? item.product.mrp ?? 0) * item.quantity), 0);
 
   return (
     <div>
@@ -72,11 +87,11 @@ describe('CartContext', () => {
     await user.click(screen.getByText('Add Product 1'));
     
     expect(screen.getByTestId(`cart-item-${products[0].id}`)).toBeInTheDocument();
-    expect(screen.getByTestId('cart-total')).toHaveTextContent(products[0].mrp.toString());
+    expect(screen.getByTestId('cart-total')).toHaveTextContent(MOCK_MRP_1.toString());
     
     // Add same product again to increase quantity
     await user.click(screen.getByText('Add Product 1'));
-    expect(screen.getByTestId('cart-total')).toHaveTextContent((products[0].mrp * 2).toString());
+    expect(screen.getByTestId('cart-total')).toHaveTextContent((MOCK_MRP_1 * 2).toString());
   });
 
   it('removes items from the cart', async () => {

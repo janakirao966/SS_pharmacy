@@ -18,7 +18,7 @@ import {
   Star
 } from 'lucide-react';
 import { ImageViewer } from 'antd-mobile';
-import { products } from '../data/products';
+import { useProducts } from '../context/ProductContext';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -36,6 +36,7 @@ interface ProductDetailProps {
 
 export default function ProductDetail({ productId }: ProductDetailProps) {
   const { handleAddToCart, handleBuyNow } = useCart();
+  const { products } = useProducts();
   const navigate = useNavigate();
 
   // Find current product
@@ -58,7 +59,7 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
     }
   }, [productId, product]);
 
-  if (!product) {
+  if (!product || !product.isActive) {
     return (
       <Section className="pt-page-header pb-12 md:pb-16 lg:pb-24">
         <Container>
@@ -79,7 +80,7 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
   }
 
   // Find other products for recommendations
-  const relatedProducts = products.filter((p) => p.id !== productId).slice(0, 3);
+  const relatedProducts = products.filter((p) => p.id !== productId && p.isActive).slice(0, 3);
 
   const handleBackToCatalog = () => {
     navigate('/products');
@@ -256,15 +257,25 @@ export default function ProductDetail({ productId }: ProductDetailProps) {
 
               {/* Pricing & Pack Size Grid */}
               <div className="compact-price-pack-card">
-                <div className="compact-price-group">
-                  <span className="compact-price-label">MAXIMUM RETAIL PRICE</span>
-                  <div className="compact-price-val-wrap">
-                    <span className="compact-price-value">₹{product.mrp}/-</span>
+                <div className="compact-price-group text-left">
+                  <span className="compact-price-label">
+                    {product.sellingPrice && product.sellingPrice < (product.mrp || 0) ? 'BEST PRICE' : 'MAXIMUM RETAIL PRICE'}
+                  </span>
+                  <div className="compact-price-val-wrap flex items-baseline gap-2 flex-wrap">
+                    <span className="compact-price-value">₹{product.sellingPrice ?? product.mrp}/-</span>
+                    {product.mrp && product.sellingPrice && product.sellingPrice < product.mrp && (
+                      <>
+                        <span className="line-through text-stone-400 text-sm">MRP ₹{product.mrp}</span>
+                        <span className="text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded font-bold">
+                          {Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)}% OFF
+                        </span>
+                      </>
+                    )}
                   </div>
                   <span className="compact-price-tax">Inclusive of all taxes</span>
                 </div>
 
-                <div className="compact-pack-group">
+                <div className="compact-pack-group text-left">
                   <span className="compact-pack-label">PACK SIZE</span>
                   <span className="compact-pack-value">{product.packSize}</span>
                 </div>

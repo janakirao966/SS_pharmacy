@@ -52,8 +52,8 @@ export default function AdminProductForm() {
         composition: target.composition,
         benefits: target.benefits.join(', '),
         usage: target.usage,
-        packSize: target.packSize,
-        mrp: String(target.mrp),
+        packSize: target.packSize || '',
+        mrp: String(target.mrp || 0),
         shelfLife: target.shelfLife,
         safetyNote: target.safetyNote,
         image: target.image || ''

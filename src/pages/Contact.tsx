@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { Phone, Mail, Clock, MapPin, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
-import { products } from '../data/products';
+import { useProducts } from '../context/ProductContext';
 import { useToast } from '../context/ToastContext';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
@@ -202,7 +202,9 @@ export default function Contact() {
     }
   };
 
-  const productOptions = products.map((p) => ({
+  const { products } = useProducts();
+
+  const productOptions = products.filter(p => p.isActive).map((p) => ({
     value: p.name,
     label: p.name
   }));

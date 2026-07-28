@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Heart } from 'lucide-react';
-import { products } from '../data/products';
+import { useProducts } from '../context/ProductContext';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -23,6 +23,7 @@ interface ProductsProps {
 }
 
 export default function Products({ setActiveTab, setSelectedProductId }: ProductsProps) {
+  const { products } = useProducts();
   const [filter, setFilter] = useState('all');
   const { isFavorited } = useWishlist();
   const [compareList, setCompareList] = useState<string[]>([]);
@@ -35,8 +36,10 @@ export default function Products({ setActiveTab, setSelectedProductId }: Product
     { id: 'wishlist', label: 'Favorites' }
   ];
 
+  const activeProducts = useMemo(() => products.filter(p => p.isActive), [products]);
+
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    return activeProducts.filter((product) => {
       if (filter === 'all') return true;
       if (filter === 'wishlist') return isFavorited(product.id);
       if (filter === 'pain-relief') {
@@ -64,8 +67,8 @@ export default function Products({ setActiveTab, setSelectedProductId }: Product
           "@context": "https://schema.org",
           "@type": "ItemList",
           "name": "S.S. PHARMACY Ayurvedic Catalog",
-          "numberOfItems": products.length,
-          "itemListElement": products.map((prod, index) => ({
+          "numberOfItems": activeProducts.length,
+          "itemListElement": activeProducts.map((prod, index) => ({
             "@type": "ListItem",
             "position": index + 1,
             "url": `https://sspharmacy.com/products/${prod.id}`,

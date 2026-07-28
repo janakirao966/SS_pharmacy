@@ -36,11 +36,16 @@ serve(async (req) => {
       if (!dbProduct) {
         throw new Error(`Product ${item.id} not found in database`)
       }
-      subtotal += Number(dbProduct.mrp) * item.quantity
+      
+      if (!dbProduct.is_active) {
+        throw new Error(`Product ${dbProduct.name} is currently inactive and cannot be purchased`)
+      }
+
+      subtotal += Number(dbProduct.selling_price) * item.quantity
       verifiedItems.push({
         ...item,
         name: dbProduct.name,
-        price: Number(dbProduct.mrp)
+        price: Number(dbProduct.selling_price)
       })
     }
 

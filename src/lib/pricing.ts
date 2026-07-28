@@ -9,10 +9,10 @@ export const SHIPPING_THRESHOLD = 999;
 export const SHIPPING_CHARGE = 50;
 
 /**
- * Calculates order subtotal based on product MRPs.
+ * Calculates order subtotal based on product selling prices.
  */
 export function calculateSubtotal(items: CartItem[]): number {
-  return items.reduce((sum, item) => sum + (item.product.mrp * item.quantity), 0);
+  return items.reduce((sum, item) => sum + ((item.product.sellingPrice ?? item.product.mrp ?? 0) * item.quantity), 0);
 }
 
 /**

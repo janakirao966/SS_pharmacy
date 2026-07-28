@@ -22,8 +22,8 @@ import Button from '../components/ui/Button';
 import SEO from '../components/ui/SEO';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
-import { products } from '../data/products';
 import { useNavigate } from 'react-router-dom';
+import { useProducts } from '../context/ProductContext';
 import { UserProfileSidebar } from '../components/ui/UserProfileSidebar';
 
 interface SavedAddress {
@@ -41,6 +41,7 @@ interface SavedAddress {
 export default function CustomerAccount() {
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const { products } = useProducts();
 
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);

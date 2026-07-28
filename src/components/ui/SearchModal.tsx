@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Search, FileText, HelpCircle, Package, X, CornerDownLeft, History, Star } from 'lucide-react';
-import { products, type Product } from '../../data/products';
+import { useProducts } from '../../context/ProductContext';
+import { type Product } from '../../data/products';
 
 interface SearchItem {
   title: string;
@@ -32,6 +33,7 @@ const preprocessQuery = (q: string) => {
 };
 
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  const { products } = useProducts();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -65,7 +67,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     { title: 'FAQ', description: 'Frequently asked questions about licensing, usage, and logistics.', category: 'Page', url: '/faq' },
 
     // 2. Products
-    ...products.map((p: Product) => ({
+    ...products.filter((p: Product) => p.isActive).map((p: Product) => ({
       title: p.name,
       description: `${p.category} - ${p.composition.substring(0, 80)}...`,
       category: 'Product' as const,
@@ -77,7 +79,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     { title: 'Are formulations approved?', description: 'Licensed for Ayurvedic proprietary medicine manufacturing by the state drug licensing authority.', category: 'FAQ', url: '/faq' },
     { title: 'Can I buy products online?', description: 'Currently direct online checkout is not active. Submit contact or distributor forms.', category: 'FAQ', url: '/faq' },
     { title: 'What is your target shipping region?', description: 'Distributors, medical stores, and clinics across AP and neighbouring states.', category: 'FAQ', url: '/faq' }
-  ], []);
+  ], [products]);
 
   // Dynamically loaded Fuse.js instance state
   const [fuse, setFuse] = useState<any>(null);

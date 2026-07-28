@@ -5,8 +5,10 @@ export interface Product {
   composition: string;
   benefits: string[];
   usage: string;
-  packSize: string;
-  mrp: number;
+  packSize?: string;
+  mrp?: number;
+  sellingPrice?: number;
+  isActive?: boolean;
   shelfLife: string;
   safetyNote: string;
   image?: string; // Image path reference
@@ -27,8 +29,6 @@ export const products: Product[] = [
       "Easy external application"
     ],
     usage: "Apply an adequate amount to the affected area and gently massage until absorbed. Use as directed on label or by a qualified healthcare professional.",
-    packSize: "500 gms",
-    mrp: 2999,
     shelfLife: "3 Years",
     safetyNote: "Ayurvedic cream for external use only",
     image: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp",
@@ -51,8 +51,6 @@ export const products: Product[] = [
       "Supports skeletal muscle wellness"
     ],
     usage: "1–2 pills daily or as directed by a qualified healthcare professional.",
-    packSize: "60 Pills",
-    mrp: 2999,
     shelfLife: "2 Years",
     safetyNote: "Use only as directed. Consult a qualified healthcare professional for individual conditions.",
     image: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp",
@@ -75,8 +73,6 @@ export const products: Product[] = [
       "Suitable for daily skincare"
     ],
     usage: "Clean the skin and apply a small amount evenly. Use regularly as directed.",
-    packSize: "25 gms",
-    mrp: 199,
     shelfLife: "3 Years",
     safetyNote: "Ayurvedic cream for external use only",
     image: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp",

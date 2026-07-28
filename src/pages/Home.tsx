@@ -1,5 +1,5 @@
 import { Leaf, Factory, Handshake, ShieldCheck, Plant, Certificate, Flask } from '@phosphor-icons/react';
-import { products } from '../data/products';
+import { useProducts } from '../context/ProductContext';
 import Container from '../components/layout/Container';
 import Section from '../components/layout/Section';
 import Grid from '../components/layout/Grid';
@@ -15,6 +15,7 @@ interface HomeProps {
 }
 
 export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) {
+  const { products } = useProducts();
   const handleProductClick = (id: string) => {
     setSelectedProductId(id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -132,7 +133,7 @@ export default function Home({ setActiveTab, setSelectedProductId }: HomeProps) 
 
             <div className="home-portfolio-grid-wrapper">
               <Grid cols={3} gap="lg" className="products-catalogue-grid-container">
-                {products.map((product) => (
+                {products.filter(p => p.isActive).map((product) => (
                   <ProductCard
                     key={product.id}
                     product={product}

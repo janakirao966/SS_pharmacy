@@ -138,9 +138,14 @@ export default function CartDrawer() {
                     <Link to={`/products/${item.product.id}`} onClick={onClose} className="cart-item-link">
                       <h4 className="hover:underline">{item.product.name}</h4>
                     </Link>
-                    <span className="cart-item-pack">{item.product.packSize}</span>
-                    <div className="cart-item-footer-row">
-                      <span className="cart-item-price">₹{item.product.mrp * item.quantity}</span>
+                     <span className="cart-item-pack">{item.product.packSize}</span>
+                     <div className="cart-item-footer-row">
+                       <div className="flex flex-col text-left">
+                         <span className="cart-item-price font-semibold">₹{(item.product.sellingPrice ?? item.product.mrp ?? 0) * item.quantity}</span>
+                         {item.product.mrp && item.product.sellingPrice && item.product.sellingPrice < item.product.mrp && (
+                           <span className="line-through text-[11px] text-stone-400">₹{item.product.mrp * item.quantity}</span>
+                         )}
+                       </div>
                       <div className="quantity-adjuster">
                         <button
                           type="button"

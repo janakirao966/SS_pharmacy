@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Product } from '../data/products';
 import { useToast } from './ToastContext';
 import { useAuth } from './AuthContext';
+import { useProducts } from './ProductContext';
 import { trackEvent } from '../utils/analytics';
 
 export interface CartItem {
@@ -31,9 +32,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { user, openAuthModal } = useAuth();
+  const { products, loading } = useProducts();
   const isUserAction = useRef(false);
   
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartAnnouncement, setCartAnnouncement] = useState('');
+  const hasHydrated = useRef(false);
+
+  // Hydrate cart from localStorage once products are loaded
+  useEffect(() => {
+    if (loading || hasHydrated.current) return;
+
     try {
       const saved = localStorage.getItem('ss_cart');
       const savedTime = localStorage.getItem('ss_cart_timestamp');
@@ -41,17 +51,50 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const age = Date.now() - parseInt(savedTime, 10);
         const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
         if (age < maxAge) {
-          return JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          let priceChanged = false;
+          const hydrated: CartItem[] = [];
+
+          for (const item of parsed) {
+            // Support both new (id) and legacy (product object) format
+            const productId = item.id || (item.product && item.product.id);
+            const quantity = item.quantity;
+            if (!productId) continue;
+
+            const dbProduct = products.find((p) => p.id === productId);
+            // Verify product exists and is active
+            if (dbProduct && dbProduct.isActive) {
+              hydrated.push({
+                product: dbProduct,
+                quantity: quantity
+              });
+
+              // Check if price changed since it was added to cart
+              const savedPrice = item.priceOnAdd !== undefined
+                ? item.priceOnAdd
+                : (item.product && (item.product.sellingPrice !== undefined ? item.product.sellingPrice : item.product.mrp));
+
+              if (savedPrice !== undefined && savedPrice !== dbProduct.sellingPrice) {
+                priceChanged = true;
+              }
+            }
+          }
+
+          setCartItems(hydrated);
+
+          if (priceChanged) {
+            setTimeout(() => {
+              showToast("Some product prices have been updated to the latest prices.", "info");
+            }, 500);
+          }
         }
       }
     } catch (e) {
-      console.warn('CartContext: Could not access or parse localStorage', e);
+      console.warn('CartContext: Could not hydrate cart from localStorage', e);
+    } finally {
+      hasHydrated.current = true;
     }
-    return [];
-  });
-  
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartAnnouncement, setCartAnnouncement] = useState('');
+  }, [loading, products, showToast]);
 
   const openCheckout = () => {
     setIsCartOpen(false);
@@ -72,7 +115,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
         channel = new BroadcastChannel('ss_cart_channel');
         const handleMessage = (event: MessageEvent) => {
           if (event.data?.type === 'UPDATE_CART') {
-            setCartItems(event.data.cartItems);
+            // Map incoming channel products to the current dynamic context ones
+            const mappedItems: CartItem[] = [];
+            for (const item of event.data.cartItems) {
+              const dbProduct = products.find((p) => p.id === item.product.id);
+              if (dbProduct && dbProduct.isActive) {
+                mappedItems.push({
+                  product: dbProduct,
+                  quantity: item.quantity
+                });
+              }
+            }
+            setCartItems(mappedItems);
           }
         };
         channel.addEventListener('message', handleMessage);
@@ -85,12 +139,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch (e) {
       console.warn('CartContext: BroadcastChannel is not supported or restricted', e);
     }
-  }, []);
+  }, [products]);
 
-  // Save to localStorage when cart changes
+  // Save to localStorage when cart changes (only after hydration)
   useEffect(() => {
+    if (loading || !hasHydrated.current) return;
+
     try {
-      localStorage.setItem('ss_cart', JSON.stringify(cartItems));
+      const serialized = cartItems.map((item) => ({
+        id: item.product.id,
+        quantity: item.quantity,
+        priceOnAdd: item.product.sellingPrice
+      }));
+      localStorage.setItem('ss_cart', JSON.stringify(serialized));
       if (cartItems.length > 0) {
         localStorage.setItem('ss_cart_timestamp', Date.now().toString());
       } else {
@@ -114,7 +175,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore
     }
-  }, [cartItems]);
+  }, [cartItems, loading]);
 
   const handleAddToCart = (product: Product, quantity = 1) => {
     isUserAction.current = true;
