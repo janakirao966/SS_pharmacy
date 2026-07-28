@@ -5,12 +5,14 @@ import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
 import { 
   AdminCard, 
-  AdminSkeleton, 
   AdminStatusBadge, 
-  AdminFilterBar, 
-  AdminDataTable, 
-  AdminMobileRecord, 
-  AdminEmptyState 
+  AdminInput, 
+  AdminTextarea,
+  AdminFilterBar,
+  AdminDataTable,
+  AdminMobileRecord,
+  AdminEmptyState,
+  AdminSkeleton
 } from '../components/admin/AdminPrimitives';
 import { ArrowClockwise } from '@phosphor-icons/react';
 
@@ -258,8 +260,8 @@ export default function AdminInventory() {
                 <AdminDataTable
                   columns={columns}
                   data={filteredInventory}
-                  keyExtractor={(item) => item.id}
-                  onRowClick={(item) => navigate(`/admin/inventory/${item.product_id}`)}
+                  keyExtractor={(item: any) => item.id}
+                  onRowClick={(item: any) => navigate(`/admin/inventory/${item.product_id}`)}
                 />
               </AdminCard>
             </div>
@@ -300,30 +302,26 @@ export default function AdminInventory() {
               </div>
 
               <form onSubmit={handleAdjustSubmit} className="space-y-3 text-xs">
-                <div>
-                  <label className="block font-semibold text-[#000000] mb-1">Quantity Delta (+ / -) *</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="e.g. +10 or -5"
-                    value={adjustDelta}
-                    onChange={(e) => setAdjustDelta(Number(e.target.value))}
-                    className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
-                  />
-                  <span className="text-[0.68rem] text-[#71717a] mt-0.5 block">Use positive numbers to add stock, negative to reduce.</span>
-                </div>
+                <AdminInput
+                  label="Quantity Delta (+ / -)"
+                  type="number"
+                  required
+                  placeholder="e.g. +10 or -5"
+                  value={adjustDelta}
+                  onChange={(e) => setAdjustDelta(Number(e.target.value))}
+                  className="font-mono focus:outline-none focus:border-[#000000]"
+                  helperText="Use positive numbers to add stock, negative to reduce."
+                />
 
-                <div>
-                  <label className="block font-semibold text-[#000000] mb-1">Adjustment Reason (Mandatory) *</label>
-                  <textarea
-                    rows={2}
-                    required
-                    placeholder="State reason for stock adjustment..."
-                    value={adjustReason}
-                    onChange={(e) => setAdjustReason(e.target.value)}
-                    className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                  />
-                </div>
+                <AdminTextarea
+                  label="Adjustment Reason (Mandatory)"
+                  rows={2}
+                  required
+                  placeholder="State reason for stock adjustment..."
+                  value={adjustReason}
+                  onChange={(e) => setAdjustReason(e.target.value)}
+                  className="focus:outline-none focus:border-[#000000]"
+                />
 
                 <div className="flex justify-end gap-2 pt-2 border-t border-[#f4f4f0]">
                   <button

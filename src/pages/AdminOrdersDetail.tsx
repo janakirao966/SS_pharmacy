@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase, type DatabaseOrder, type DatabaseOrderItem, type DatabaseOrderHistoryEvent, type DatabaseShipment, type DatabaseRefund, type DatabaseNotification, type DatabaseInvoice } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton, AdminStatusBadge } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminSkeleton, AdminStatusBadge, AdminInput, AdminTextarea } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { 
   CaretLeft, 
@@ -1052,74 +1052,62 @@ export default function AdminOrdersDetail() {
               {shipment ? 'Edit Shipping Details' : 'Add Shipping Details'}
             </h3>
             <form onSubmit={handleSaveShipment} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Carrier Name *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Delhivery, Bluedart, Speed Post"
-                  value={shipmentForm.carrier}
-                  onChange={(e) => setShipmentForm({ ...shipmentForm, carrier: e.target.value })}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                />
-              </div>
+              <AdminInput
+                label="Carrier Name *"
+                type="text"
+                required
+                placeholder="e.g. Delhivery, Bluedart, Speed Post"
+                value={shipmentForm.carrier}
+                onChange={(e) => setShipmentForm({ ...shipmentForm, carrier: e.target.value })}
+                className="focus:outline-none focus:border-[#000000]"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Tracking Number *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. DEL123456789"
-                  value={shipmentForm.tracking_number}
-                  onChange={(e) => setShipmentForm({ ...shipmentForm, tracking_number: e.target.value })}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
-                />
-              </div>
+              <AdminInput
+                label="Tracking Number *"
+                type="text"
+                required
+                placeholder="e.g. DEL123456789"
+                value={shipmentForm.tracking_number}
+                onChange={(e) => setShipmentForm({ ...shipmentForm, tracking_number: e.target.value })}
+                className="font-mono focus:outline-none focus:border-[#000000]"
+              />
 
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-[#000000] mb-1">Service Name (Optional)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Surface Express"
-                    value={shipmentForm.service_name}
-                    onChange={(e) => setShipmentForm({ ...shipmentForm, service_name: e.target.value })}
-                    className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-[#000000] mb-1">AWB Number (Optional)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. AWB987654"
-                    value={shipmentForm.awb_number}
-                    onChange={(e) => setShipmentForm({ ...shipmentForm, awb_number: e.target.value })}
-                    className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Tracking URL (HTTPS Required)</label>
-                <input
-                  type="url"
-                  placeholder="https://track.delhivery.com/p/123456789"
-                  value={shipmentForm.tracking_url}
-                  onChange={(e) => setShipmentForm({ ...shipmentForm, tracking_url: e.target.value })}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
+                <AdminInput
+                  label="Service Name (Optional)"
+                  type="text"
+                  placeholder="e.g. Surface Express"
+                  value={shipmentForm.service_name}
+                  onChange={(e) => setShipmentForm({ ...shipmentForm, service_name: e.target.value })}
+                  className="focus:outline-none focus:border-[#000000]"
+                />
+                <AdminInput
+                  label="AWB Number (Optional)"
+                  type="text"
+                  placeholder="e.g. AWB987654"
+                  value={shipmentForm.awb_number}
+                  onChange={(e) => setShipmentForm({ ...shipmentForm, awb_number: e.target.value })}
+                  className="font-mono focus:outline-none focus:border-[#000000]"
                 />
               </div>
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Internal Admin Note (Optional)</label>
-                <textarea
-                  rows={2}
-                  placeholder="Internal notes regarding dispatch..."
-                  value={shipmentForm.admin_note}
-                  onChange={(e) => setShipmentForm({ ...shipmentForm, admin_note: e.target.value })}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                />
-              </div>
+              <AdminInput
+                label="Tracking URL (HTTPS Required)"
+                type="url"
+                placeholder="https://track.delhivery.com/p/123456789"
+                value={shipmentForm.tracking_url}
+                onChange={(e) => setShipmentForm({ ...shipmentForm, tracking_url: e.target.value })}
+                className="font-mono focus:outline-none focus:border-[#000000]"
+              />
+
+              <AdminTextarea
+                label="Internal Admin Note (Optional)"
+                rows={2}
+                placeholder="Internal notes regarding dispatch..."
+                value={shipmentForm.admin_note}
+                onChange={(e) => setShipmentForm({ ...shipmentForm, admin_note: e.target.value })}
+                className="focus:outline-none focus:border-[#000000]"
+              />
 
               <div className="flex justify-end gap-2 pt-2">
                 <button
@@ -1156,49 +1144,41 @@ export default function AdminOrdersDetail() {
             </p>
 
             <form onSubmit={handleCorrectShipment} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">New Carrier Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={correctionForm.carrier}
-                  onChange={(e) => setCorrectionForm({ ...correctionForm, carrier: e.target.value })}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                />
-              </div>
+              <AdminInput
+                label="New Carrier Name *"
+                type="text"
+                required
+                value={correctionForm.carrier}
+                onChange={(e) => setCorrectionForm({ ...correctionForm, carrier: e.target.value })}
+                className="focus:outline-none focus:border-[#000000]"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">New Tracking Number *</label>
-                <input
-                  type="text"
-                  required
-                  value={correctionForm.tracking_number}
-                  onChange={(e) => setCorrectionForm({ ...correctionForm, tracking_number: e.target.value })}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
-                />
-              </div>
+              <AdminInput
+                label="New Tracking Number *"
+                type="text"
+                required
+                value={correctionForm.tracking_number}
+                onChange={(e) => setCorrectionForm({ ...correctionForm, tracking_number: e.target.value })}
+                className="font-mono focus:outline-none focus:border-[#000000]"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">New Tracking URL (HTTPS Required)</label>
-                <input
-                  type="url"
-                  value={correctionForm.tracking_url}
-                  onChange={(e) => setCorrectionForm({ ...correctionForm, tracking_url: e.target.value })}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
-                />
-              </div>
+              <AdminInput
+                label="New Tracking URL (HTTPS Required)"
+                type="url"
+                value={correctionForm.tracking_url}
+                onChange={(e) => setCorrectionForm({ ...correctionForm, tracking_url: e.target.value })}
+                className="font-mono focus:outline-none focus:border-[#000000]"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#dc2626] mb-1">Correction Reason (min 10 chars) *</label>
-                <textarea
-                  rows={2}
-                  required
-                  placeholder="State why tracking info is being altered after dispatch..."
-                  value={correctionForm.reason}
-                  onChange={(e) => setCorrectionForm({ ...correctionForm, reason: e.target.value })}
-                  className="w-full p-2 border border-[#dc2626] rounded-lg text-xs focus:outline-none focus:border-[#dc2626]"
-                />
-              </div>
+              <AdminTextarea
+                label="Correction Reason (min 10 chars) *"
+                rows={2}
+                required
+                placeholder="State why tracking info is being altered after dispatch..."
+                value={correctionForm.reason}
+                onChange={(e) => setCorrectionForm({ ...correctionForm, reason: e.target.value })}
+                className="!border-[#dc2626] focus:outline-none focus:!border-[#dc2626]"
+              />
 
               <div className="flex justify-end gap-2 pt-2">
                 <button

@@ -98,28 +98,28 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="admin-app">
       <div className="admin-layout-root">
-        {/* Desktop Sidebar: stays inline on large viewports (z-30) */}
-        <div className="hidden lg:block sticky top-0 h-screen z-30">
+        {/* Desktop Sidebar: stays inline on large viewports */}
+        <div className="admin-sidebar-container-desktop">
           <AdminSidebar />
         </div>
 
-        {/* Mobile Sidebar Navigation Drawer Overlay (z-40 scrim, z-50 drawer) */}
+        {/* Mobile Sidebar Navigation Drawer Overlay */}
         {mobileOpen && (
-          <div className="lg:hidden fixed inset-0 z-40 flex" role="dialog" aria-modal="true" aria-label="Admin Navigation Menu">
+          <div className="admin-mobile-drawer-overlay" role="dialog" aria-modal="true" aria-label="Admin Navigation Menu">
             {/* Scrim */}
             <div
-              className="fixed inset-0 bg-black/60 transition-opacity"
+              className="admin-mobile-scrim"
               onClick={() => setMobileOpen(false)}
               aria-hidden="true"
             />
             {/* Drawer Container */}
-            <div className="relative z-50 w-[240px] h-full bg-[#18181b]">
+            <div className="admin-mobile-drawer">
               <AdminSidebar onMobileClose={() => setMobileOpen(false)} />
               {/* Close Button Inside Drawer Header area */}
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
-                className="absolute top-4 right-4 z-50 p-2 text-white/80 hover:text-white bg-[#27272a] rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="admin-mobile-close-btn"
                 aria-label="Close admin menu"
               >
                 <X size={18} weight="bold" />
@@ -130,13 +130,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* Main Administrative Workplace Area */}
         <div className="admin-workplace-container">
-          {/* Top Header Bar (z-20) */}
+          {/* Top Header Bar */}
           <header className="admin-topbar">
             <div className="admin-topbar-left">
               {/* Hamburger Button for Mobile Drawer Trigger */}
               <button
                 type="button"
-                className="lg:hidden admin-hamburger-btn"
+                className="admin-hamburger-btn"
                 onClick={() => setMobileOpen(true)}
                 aria-label="Open Admin Navigation Drawer"
                 aria-expanded={mobileOpen}
@@ -149,7 +149,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 {pageContext.group !== 'Overview' && (
                   <nav aria-label="Breadcrumb" className="admin-header-breadcrumb">
                     <span>{pageContext.group}</span>
-                    <CaretRight size={10} className="text-[#a1a1aa] mx-0.5" />
+                    <CaretRight size={10} className="admin-breadcrumb-icon" />
                     <span>{pageContext.title}</span>
                   </nav>
                 )}
@@ -164,7 +164,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               {/* Storefront view link */}
               <Link 
                 to="/" 
-                className="admin-topbar-web-link hidden md:inline-flex" 
+                className="admin-topbar-web-link" 
                 title="View storefront homepage"
               >
                 <span>Storefront</span>
@@ -172,16 +172,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </Link>
 
               {/* Mfg. License Badge */}
-              <div className="admin-topbar-license-badge hidden sm:inline-flex">
+              <div className="admin-topbar-license-badge">
                 <span>Lic. R-1970/Ayur</span>
               </div>
 
               {/* User Profile Badge */}
-              <Link to="/admin/profile" className="admin-topbar-profile-box no-underline" title="View Admin Profile">
-                <div className="w-7 h-7 rounded-full bg-[#f4f4f0] border border-[#e4e4e7] flex items-center justify-center text-[0.75rem] font-bold text-[#000000]">
+              <Link to="/admin/profile" className="admin-topbar-profile-box" title="View Admin Profile">
+                <div className="admin-topbar-avatar">
                   {userInitial}
                 </div>
-                <span className="admin-topbar-username hidden sm:inline">
+                <span className="admin-topbar-username">
                   {profile?.full_name || 'Administrator'}
                 </span>
               </Link>

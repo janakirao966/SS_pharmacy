@@ -31,6 +31,9 @@ export const products: Product[] = [
     usage: "Apply an adequate amount to the affected area and gently massage until absorbed. Use as directed on label or by a qualified healthcare professional.",
     shelfLife: "3 Years",
     safetyNote: "Ayurvedic cream for external use only",
+    packSize: "100g Jar",
+    mrp: 249,
+    sellingPrice: 199,
     image: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp",
     transparentImage: import.meta.env.BASE_URL + "products/Dr lion pain cream/Pain cream front view.webp",
     galleryImages: [
@@ -53,6 +56,9 @@ export const products: Product[] = [
     usage: "1–2 pills daily or as directed by a qualified healthcare professional.",
     shelfLife: "2 Years",
     safetyNote: "Use only as directed. Consult a qualified healthcare professional for individual conditions.",
+    packSize: "60 Pills Container",
+    mrp: 299,
+    sellingPrice: 249,
     image: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp",
     transparentImage: import.meta.env.BASE_URL + "products/Dr lion Pain pills/Pain_pills.webp",
     galleryImages: [
@@ -75,6 +81,9 @@ export const products: Product[] = [
     usage: "Clean the skin and apply a small amount evenly. Use regularly as directed.",
     shelfLife: "3 Years",
     safetyNote: "Ayurvedic cream for external use only",
+    packSize: "100g Jar",
+    mrp: 349,
+    sellingPrice: 299,
     image: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp",
     transparentImage: import.meta.env.BASE_URL + "products/Moon-light/Moon cream front view.webp",
     galleryImages: [

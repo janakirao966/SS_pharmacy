@@ -62,13 +62,13 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
   };
 
   return (
-    <div className="admin-app">
+    <>
       <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
         {/* Toggle Collapse Button (Desktop Only) */}
         <button
           type="button"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="admin-sidebar-toggle-btn hidden lg:flex"
+          className="admin-sidebar-toggle-btn"
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? <CaretRight size={12} weight="bold" /> : <CaretLeft size={12} weight="bold" />}
@@ -341,7 +341,7 @@ export function AdminSidebar({ onMobileClose }: AdminSidebarProps) {
         onConfirm={handleConfirmSignOut}
         onCancel={() => setIsSignOutDialogOpen(false)}
       />
-    </div>
+    </>
   );
 }
 

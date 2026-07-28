@@ -22,48 +22,50 @@ const Accessibility = lazy(() => import('./pages/Accessibility'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Distributor = lazy(() => import('./pages/Distributor'));
 const TrackOrder = lazy(() => import('./pages/TrackOrder'));
-const AdminOrders = lazy(() => import('./pages/AdminOrders'));
-const AdminOrdersDetail = lazy(() => import('./pages/AdminOrdersDetail'));
-const AdminInvoices = lazy(() => import('./pages/AdminInvoices'));
-const AdminInventory = lazy(() => import('./pages/AdminInventory'));
-const AdminInventoryDetail = lazy(() => import('./pages/AdminInventoryDetail'));
-const AdminReturns = lazy(() => import('./pages/AdminReturns'));
-const AdminReturnDetail = lazy(() => import('./pages/AdminReturnDetail'));
-const AdminOperations = lazy(() => import('./pages/AdminOperations'));
-const AdminExceptionDetail = lazy(() => import('./pages/AdminExceptionDetail'));
-const AdminSupport = lazy(() => import('./pages/AdminSupport'));
-const AdminSupportDetail = lazy(() => import('./pages/AdminSupportDetail'));
-const AdminSuppliers = lazy(() => import('./pages/AdminSuppliers'));
-const AdminProcurement = lazy(() => import('./pages/AdminProcurement'));
-const AdminInventoryBatches = lazy(() => import('./pages/AdminInventoryBatches'));
-const AdminExpiry = lazy(() => import('./pages/AdminExpiry'));
-const AdminRecalls = lazy(() => import('./pages/AdminRecalls'));
-const AdminAnalytics = lazy(() => import('./pages/AdminAnalytics'));
-const AdminGSTReport = lazy(() => import('./pages/AdminGSTReport'));
-const AdminSecurityCenter = lazy(() => import('./pages/AdminSecurityCenter'));
 const CustomerSupport = lazy(() => import('./pages/CustomerSupport'));
 const CustomerSupportNew = lazy(() => import('./pages/CustomerSupportNew'));
 const CustomerSupportDetail = lazy(() => import('./pages/CustomerSupportDetail'));
-const AdminLogin = lazy(() => import('./pages/AdminLogin'));
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const AdminProducts = lazy(() => import('./pages/AdminProducts'));
-const AdminProductForm = lazy(() => import('./pages/AdminProductForm'));
-const AdminEnquiries = lazy(() => import('./pages/AdminEnquiries'));
-const AdminEnquiryDetail = lazy(() => import('./pages/AdminEnquiryDetail'));
-const AdminDistributors = lazy(() => import('./pages/AdminDistributors'));
-const AdminDistributorsDetail = lazy(() => import('./pages/AdminDistributorsDetail'));
-const AdminContent = lazy(() => import('./pages/AdminContent'));
-const AdminTestimonials = lazy(() => import('./pages/AdminTestimonials'));
-const AdminGallery = lazy(() => import('./pages/AdminGallery'));
-const AdminMedia = lazy(() => import('./pages/AdminMedia'));
-const AdminSettings = lazy(() => import('./pages/AdminSettings'));
-const AdminProfile = lazy(() => import('./pages/AdminProfile'));
-const AdminSecurity = lazy(() => import('./pages/AdminSecurity'));
 const CustomerAccount = lazy(() => import('./pages/CustomerAccount'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const OrderSuccess = lazy(() => import('./pages/OrderSuccess'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+
+// Direct imports for Admin module to guarantee zero-latency transitions and eliminate white screen flashes
+import AdminOrders from './pages/AdminOrders';
+import AdminOrdersDetail from './pages/AdminOrdersDetail';
+import AdminInvoices from './pages/AdminInvoices';
+import AdminInventory from './pages/AdminInventory';
+import AdminInventoryDetail from './pages/AdminInventoryDetail';
+import AdminReturns from './pages/AdminReturns';
+import AdminReturnDetail from './pages/AdminReturnDetail';
+import AdminOperations from './pages/AdminOperations';
+import AdminExceptionDetail from './pages/AdminExceptionDetail';
+import AdminSupport from './pages/AdminSupport';
+import AdminSupportDetail from './pages/AdminSupportDetail';
+import AdminSuppliers from './pages/AdminSuppliers';
+import AdminProcurement from './pages/AdminProcurement';
+import AdminInventoryBatches from './pages/AdminInventoryBatches';
+import AdminExpiry from './pages/AdminExpiry';
+import AdminRecalls from './pages/AdminRecalls';
+import AdminAnalytics from './pages/AdminAnalytics';
+import AdminGSTReport from './pages/AdminGSTReport';
+import AdminSecurityCenter from './pages/AdminSecurityCenter';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminProducts from './pages/AdminProducts';
+import AdminProductForm from './pages/AdminProductForm';
+import AdminEnquiries from './pages/AdminEnquiries';
+import AdminEnquiryDetail from './pages/AdminEnquiryDetail';
+import AdminDistributors from './pages/AdminDistributors';
+import AdminDistributorsDetail from './pages/AdminDistributorsDetail';
+import AdminContent from './pages/AdminContent';
+import AdminTestimonials from './pages/AdminTestimonials';
+import AdminGallery from './pages/AdminGallery';
+import AdminMedia from './pages/AdminMedia';
+import AdminSettings from './pages/AdminSettings';
+import AdminProfile from './pages/AdminProfile';
+import AdminSecurity from './pages/AdminSecurity';
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
 import AuthModal from './components/ui/AuthModal';
 
@@ -171,7 +173,7 @@ export default function App() {
             <div className="w-6 h-6 border-2 border-[#1D3A28]/20 border-t-[#C5A059] rounded-full animate-spin" />
           </div>
         }>
-          <div key={location.pathname} className="animate-fadeIn">
+          <div className="animate-fadeIn">
             <Routes>
               <Route
                 path="/"

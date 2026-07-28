@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminInput } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { FloppyDisk } from '@phosphor-icons/react';
 
@@ -66,36 +66,30 @@ export default function AdminProfile() {
             </div>
 
             <div className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#71717a] mb-1">Email Account (Auth)</label>
-                <input
-                  type="text"
-                  value={profile?.email || ''}
-                  disabled
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg font-mono bg-[#f4f4f0] text-[#71717a] cursor-not-allowed"
-                />
-              </div>
+              <AdminInput
+                label="Email Account (Auth)"
+                type="text"
+                value={profile?.email || ''}
+                disabled
+                className="font-mono bg-[#f4f4f0] text-[#71717a] cursor-not-allowed"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Display Full Name</label>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={handleNameChange}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-semibold text-[#000000]"
-                  placeholder="e.g. Admin User"
-                />
-              </div>
+              <AdminInput
+                label="Display Full Name"
+                type="text"
+                value={fullName}
+                onChange={handleNameChange}
+                className="font-semibold text-[#000000]"
+                placeholder="e.g. Admin User"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#71717a] mb-1">System Privilege Level</label>
-                <input
-                  type="text"
-                  value={profile?.is_admin ? 'Super Administrator (Full RLS Override)' : 'Member'}
-                  disabled
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg font-semibold bg-[#f4f4f0] text-[#000000] cursor-not-allowed"
-                />
-              </div>
+              <AdminInput
+                label="System Privilege Level"
+                type="text"
+                value={profile?.is_admin ? 'Super Administrator (Full RLS Override)' : 'Member'}
+                disabled
+                className="font-semibold bg-[#f4f4f0] text-[#000000] cursor-not-allowed"
+              />
             </div>
 
             <div className="flex justify-end pt-3 border-t border-[#f4f4f0]">

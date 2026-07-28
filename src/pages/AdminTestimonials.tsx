@@ -8,7 +8,9 @@ import {
   AdminMobileRecord,
   AdminFilterBar,
   AdminPagination,
-  AdminEmptyState 
+  AdminEmptyState,
+  AdminInput,
+  AdminTextarea
 } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { Plus, EyeSlash, Trash, Star } from '@phosphor-icons/react';
@@ -290,51 +292,39 @@ export default function AdminTestimonials() {
             </div>
 
             <form onSubmit={handleAddReviewSubmit} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Author / Person Name *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Dr. A. Prasad"
-                  value={newAuthor}
-                  onChange={(e) => setNewAuthor(e.target.value)}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminInput
+                label="Author / Person Name *"
+                type="text"
+                placeholder="e.g. Dr. A. Prasad"
+                value={newAuthor}
+                onChange={(e) => setNewAuthor(e.target.value)}
+              />
 
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-[#000000] mb-1">Partner Role / Title</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Clinic Lead"
-                    value={newRole}
-                    onChange={(e) => setNewRole(e.target.value)}
-                    className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                  />
-                </div>
+                <AdminInput
+                  label="Partner Role / Title"
+                  type="text"
+                  placeholder="e.g. Clinic Lead"
+                  value={newRole}
+                  onChange={(e) => setNewRole(e.target.value)}
+                />
 
-                <div>
-                  <label className="block font-semibold text-[#000000] mb-1">Location</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Tirupati, AP"
-                    value={newLocation}
-                    onChange={(e) => setNewLocation(e.target.value)}
-                    className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Testimonial Quote *</label>
-                <textarea
-                  rows={3}
-                  placeholder="State the customer or distributor review statement..."
-                  value={newQuote}
-                  onChange={(e) => setNewQuote(e.target.value)}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
+                <AdminInput
+                  label="Location"
+                  type="text"
+                  placeholder="e.g. Tirupati, AP"
+                  value={newLocation}
+                  onChange={(e) => setNewLocation(e.target.value)}
                 />
               </div>
+
+              <AdminTextarea
+                label="Testimonial Quote *"
+                rows={3}
+                placeholder="State the customer or distributor review statement..."
+                value={newQuote}
+                onChange={(e) => setNewQuote(e.target.value)}
+              />
 
               <div className="flex justify-end gap-2 pt-2 border-t border-[#f4f4f0]">
                 <button

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminStatusBadge, AdminEmptyState } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminStatusBadge, AdminEmptyState, AdminInput, AdminSelect } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { Plus, EyeSlash, Trash, Image } from '@phosphor-icons/react';
 
@@ -171,30 +171,25 @@ export default function AdminGallery() {
             </div>
 
             <form onSubmit={handleUploadSubmit} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Image Title / Caption *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Manufacturing Facility Batch Line"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminInput
+                label="Image Title / Caption *"
+                type="text"
+                placeholder="e.g. Manufacturing Facility Batch Line"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Asset Category</label>
-                <select
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs bg-[#ffffff]"
-                >
-                  <option value="Packaging">Packaging</option>
-                  <option value="Facility">Facility & Plant</option>
-                  <option value="Formulation">Formulation</option>
-                  <option value="Certificate">Certificate / License</option>
-                </select>
-              </div>
+              <AdminSelect
+                label="Asset Category"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                options={[
+                  { value: 'Packaging', label: 'Packaging' },
+                  { value: 'Facility', label: 'Facility & Plant' },
+                  { value: 'Formulation', label: 'Formulation' },
+                  { value: 'Certificate', label: 'Certificate / License' },
+                ]}
+              />
 
               {/* Upload Dropzone */}
               <div className="p-4 border-2 border-dashed border-[#e4e4e7] rounded-xl text-center bg-[#fbfbf5] space-y-1">

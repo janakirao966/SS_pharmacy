@@ -195,14 +195,14 @@ export function AdminMobileRecord({
     <div className="admin-mobile-record-body space-y-2 p-3">
       <div className="flex justify-between items-start gap-2">
         <div>
-          <h4 className="font-semibold text-xs text-[#000000] m-0">{title}</h4>
-          {subtitle && <p className="text-[0.68rem] text-[#71717a] m-0 mt-0.5">{subtitle}</p>}
+          <h4 className="font-semibold text-xs text-[var(--admin-text-primary)] m-0">{title}</h4>
+          {subtitle && <p className="text-[var(--admin-font-xs)] text-[var(--admin-text-secondary)] m-0 mt-0.5">{subtitle}</p>}
         </div>
         {badge && <div className="shrink-0">{badge}</div>}
       </div>
-      <div className="flex justify-between items-center pt-2 border-t border-[#f4f4f0] text-[0.68rem] text-[#71717a]">
+      <div className="flex justify-between items-center pt-2 border-t border-[#f4f4f0] text-[var(--admin-font-xs)] text-[var(--admin-text-secondary)]">
         <div>{meta}</div>
-        <Eye size={14} className="text-[#71717a]" />
+        <Eye size={14} className="text-[var(--admin-text-secondary)]" />
       </div>
     </div>
   );
@@ -210,11 +210,11 @@ export function AdminMobileRecord({
   return (
     <AdminCard className="p-0 overflow-hidden">
       {actionUrl ? (
-        <Link to={actionUrl} className="block hover:bg-[#fbfbf5]">
+        <Link to={actionUrl} className="block hover:bg-[var(--admin-surface-subtle)]">
           {CardContent}
         </Link>
       ) : onClick ? (
-        <button type="button" onClick={onClick} className="block text-left w-full hover:bg-[#fbfbf5]">
+        <button type="button" onClick={onClick} className="block text-left w-full hover:bg-[var(--admin-surface-subtle)]">
           {CardContent}
         </button>
       ) : (
@@ -253,23 +253,24 @@ export function AdminFilterBar({
 }: AdminFilterBarProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-      <div className="relative flex-1 max-w-md">
-        <MagnifyingGlass className="absolute left-3 top-3 text-[#71717a]" size={15} />
+      <div className="admin-search-input-box relative flex-1 max-w-md">
+        <MagnifyingGlass className="absolute left-3 top-3.5 text-[var(--admin-text-secondary)] pointer-events-none" size={15} />
         <input
           type="text"
           placeholder={searchPlaceholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-9 pr-3 py-2 border border-[#e4e4e7] rounded-lg text-xs min-h-[44px]"
+          className="w-full !pl-9 pr-3 py-2 border border-[var(--admin-border)] rounded-lg text-xs min-h-[44px]"
+          style={{ paddingLeft: '2.5rem' }}
         />
       </div>
 
       <div className="flex items-center gap-2 self-start sm:self-auto">
-        <span className="font-semibold text-[#71717a] shrink-0">{filterLabel}:</span>
+        <span className="font-semibold text-[var(--admin-text-secondary)] shrink-0">{filterLabel}:</span>
         <select
           value={selectedFilter}
           onChange={(e) => onFilterChange(e.target.value)}
-          className="p-2 border border-[#e4e4e7] rounded-lg text-xs bg-[#ffffff] font-semibold text-[#000000] min-h-[44px]"
+          className="p-2 border border-[var(--admin-border)] rounded-lg text-xs bg-[var(--admin-surface)] font-semibold text-[var(--admin-text-primary)] min-h-[44px]"
         >
           {filterOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -307,8 +308,8 @@ export function AdminPagination({
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-2">
-      <p className="text-[#71717a] m-0">
-        Showing <span className="font-mono font-semibold text-[#000000]">{startRecord}</span> to <span className="font-mono font-semibold text-[#000000]">{endRecord}</span> of <span className="font-mono font-semibold text-[#000000]">{totalRecords}</span> entries
+      <p className="text-[var(--admin-text-secondary)] m-0">
+        Showing <span className="font-mono font-semibold text-[var(--admin-text-primary)]">{startRecord}</span> to <span className="font-mono font-semibold text-[var(--admin-text-primary)]">{endRecord}</span> of <span className="font-mono font-semibold text-[var(--admin-text-primary)]">{totalRecords}</span> entries
       </p>
 
       <div className="flex items-center gap-1">
@@ -329,8 +330,8 @@ export function AdminPagination({
             onClick={() => onPageChange(page)}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-colors ${
               currentPage === page
-                ? 'bg-[#000000] text-[#ffffff]'
-                : 'bg-[#f4f4f0] text-[#71717a] hover:bg-[#e4e4e7]'
+                ? 'bg-[var(--admin-primary-accent)] text-[#ffffff]'
+                : 'bg-[var(--admin-surface-subtle)] text-[var(--admin-text-secondary)] hover:bg-[#e4e4e7]'
             }`}
             aria-current={currentPage === page ? 'page' : undefined}
           >
@@ -364,17 +365,17 @@ interface AdminInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export function AdminInput({ label, helperText, error, className = '', ...props }: AdminInputProps) {
   return (
     <div className="space-y-1 text-xs">
-      {label && <label className="block font-semibold text-[#000000]">{label} {props.required && <span className="text-[#dc2626]">*</span>}</label>}
+      {label && <label className="block font-semibold text-[var(--admin-text-primary)]">{label} {props.required && <span className="text-[var(--admin-status-danger-text)]">*</span>}</label>}
       <input
         {...props}
         className={`w-full p-2.5 border rounded-lg text-xs min-h-[44px] ${
-          error ? 'border-[#dc2626] bg-[#fbfbf5]' : 'border-[#e4e4e7] bg-[#ffffff]'
+          error ? 'border-[#dc2626] bg-[var(--admin-surface-subtle)]' : 'border-[var(--admin-border)] bg-[var(--admin-surface)]'
         } ${className}`}
       />
       {error ? (
-        <p className="text-[0.68rem] text-[#dc2626] font-semibold m-0">{error}</p>
+        <p className="text-[var(--admin-font-xs)] text-[var(--admin-status-danger-text)] font-semibold m-0">{error}</p>
       ) : helperText ? (
-        <p className="text-[0.68rem] text-[#71717a] m-0">{helperText}</p>
+        <p className="text-[var(--admin-font-xs)] text-[var(--admin-text-secondary)] m-0">{helperText}</p>
       ) : null}
     </div>
   );
@@ -390,11 +391,11 @@ interface AdminSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement>
 export function AdminSelect({ label, helperText, error, options, className = '', ...props }: AdminSelectProps) {
   return (
     <div className="space-y-1 text-xs">
-      {label && <label className="block font-semibold text-[#000000]">{label} {props.required && <span className="text-[#dc2626]">*</span>}</label>}
+      {label && <label className="block font-semibold text-[var(--admin-text-primary)]">{label} {props.required && <span className="text-[var(--admin-status-danger-text)]">*</span>}</label>}
       <select
         {...props}
-        className={`w-full p-2.5 border rounded-lg text-xs min-h-[44px] bg-[#ffffff] font-semibold text-[#000000] ${
-          error ? 'border-[#dc2626]' : 'border-[#e4e4e7]'
+        className={`w-full p-2.5 border rounded-lg text-xs min-h-[44px] bg-[var(--admin-surface)] font-semibold text-[var(--admin-text-primary)] ${
+          error ? 'border-[#dc2626]' : 'border-[var(--admin-border)]'
         } ${className}`}
       >
         {options.map((opt) => (
@@ -404,9 +405,9 @@ export function AdminSelect({ label, helperText, error, options, className = '',
         ))}
       </select>
       {error ? (
-        <p className="text-[0.68rem] text-[#dc2626] font-semibold m-0">{error}</p>
+        <p className="text-[var(--admin-font-xs)] text-[var(--admin-status-danger-text)] font-semibold m-0">{error}</p>
       ) : helperText ? (
-        <p className="text-[0.68rem] text-[#71717a] m-0">{helperText}</p>
+        <p className="text-[var(--admin-font-xs)] text-[var(--admin-text-secondary)] m-0">{helperText}</p>
       ) : null}
     </div>
   );
@@ -421,17 +422,17 @@ interface AdminTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaEl
 export function AdminTextarea({ label, helperText, error, className = '', ...props }: AdminTextareaProps) {
   return (
     <div className="space-y-1 text-xs">
-      {label && <label className="block font-semibold text-[#000000]">{label} {props.required && <span className="text-[#dc2626]">*</span>}</label>}
+      {label && <label className="block font-semibold text-[var(--admin-text-primary)]">{label} {props.required && <span className="text-[var(--admin-status-danger-text)]">*</span>}</label>}
       <textarea
         {...props}
         className={`w-full p-2.5 border rounded-lg text-xs ${
-          error ? 'border-[#dc2626] bg-[#fbfbf5]' : 'border-[#e4e4e7] bg-[#ffffff]'
+          error ? 'border-[#dc2626] bg-[var(--admin-surface-subtle)]' : 'border-[var(--admin-border)] bg-[var(--admin-surface)]'
         } ${className}`}
       />
       {error ? (
-        <p className="text-[0.68rem] text-[#dc2626] font-semibold m-0">{error}</p>
+        <p className="text-[var(--admin-font-xs)] text-[var(--admin-status-danger-text)] font-semibold m-0">{error}</p>
       ) : helperText ? (
-        <p className="text-[0.68rem] text-[#71717a] m-0">{helperText}</p>
+        <p className="text-[var(--admin-font-xs)] text-[var(--admin-text-secondary)] m-0">{helperText}</p>
       ) : null}
     </div>
   );
@@ -450,7 +451,7 @@ export function AdminSkeleton({ type = 'line', rows = 3 }: AdminSkeletonProps) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, idx) => (
-          <div key={idx} className="p-4 bg-[#f4f4f0] rounded-xl animate-pulse space-y-2">
+          <div key={idx} className="p-4 bg-[var(--admin-surface-subtle)] rounded-xl animate-pulse space-y-2">
             <div className="h-3 w-24 bg-[#e4e4e7] rounded" />
             <div className="h-6 w-16 bg-[#e4e4e7] rounded" />
           </div>
@@ -461,24 +462,24 @@ export function AdminSkeleton({ type = 'line', rows = 3 }: AdminSkeletonProps) {
 
   if (type === 'card') {
     return (
-      <div className="p-5 bg-[#ffffff] border border-[#e4e4e7] rounded-xl animate-pulse space-y-3">
-        <div className="h-4 w-40 bg-[#f4f4f0] rounded" />
-        <div className="h-3 w-64 bg-[#f4f4f0] rounded" />
-        <div className="h-20 w-full bg-[#f4f4f0] rounded mt-2" />
+      <div className="p-5 bg-[var(--admin-surface)] border border-[var(--admin-border)] rounded-xl animate-pulse space-y-3">
+        <div className="h-4 w-40 bg-[var(--admin-surface-subtle)] rounded" />
+        <div className="h-3 w-64 bg-[var(--admin-surface-subtle)] rounded" />
+        <div className="h-20 w-full bg-[var(--admin-surface-subtle)] rounded mt-2" />
       </div>
     );
   }
 
   if (type === 'table') {
     return (
-      <div className="bg-[#ffffff] border border-[#e4e4e7] rounded-xl overflow-hidden">
-        <div className="h-10 bg-[#f4f4f0] border-b border-[#e4e4e7]" />
+      <div className="bg-[var(--admin-surface)] border border-[var(--admin-border)] rounded-xl overflow-hidden">
+        <div className="h-10 bg-[var(--admin-surface-subtle)] border-b border-[var(--admin-border)]" />
         <div className="p-4 space-y-3">
           {Array.from({ length: rows }).map((_, idx) => (
             <div key={idx} className="flex justify-between items-center py-2 border-b border-[#f4f4f0] last:border-0">
-              <div className="h-3 w-28 bg-[#f4f4f0] rounded" />
-              <div className="h-3 w-36 bg-[#f4f4f0] rounded" />
-              <div className="h-3 w-20 bg-[#f4f4f0] rounded" />
+              <div className="h-3 w-28 bg-[var(--admin-surface-subtle)] rounded" />
+              <div className="h-3 w-36 bg-[var(--admin-surface-subtle)] rounded" />
+              <div className="h-3 w-20 bg-[var(--admin-surface-subtle)] rounded" />
             </div>
           ))}
         </div>
@@ -489,7 +490,7 @@ export function AdminSkeleton({ type = 'line', rows = 3 }: AdminSkeletonProps) {
   return (
     <div className="space-y-2">
       {Array.from({ length: rows }).map((_, idx) => (
-        <div key={idx} className="h-3 w-full bg-[#f4f4f0] rounded animate-pulse" />
+        <div key={idx} className="h-3 w-full bg-[var(--admin-surface-subtle)] rounded animate-pulse" />
       ))}
     </div>
   );
@@ -513,9 +514,9 @@ export function AdminEmptyState({
 }: AdminEmptyStateProps) {
   return (
     <AdminCard className="text-center py-10">
-      <WarningCircle size={40} className="text-[#71717a] mx-auto mb-2" weight="light" />
-      <h3 className="font-bold text-xs text-[#000000] m-0">{title}</h3>
-      <p className="text-xs text-[#71717a] max-w-sm mx-auto mt-1 m-0">{description}</p>
+      <WarningCircle size={40} className="text-[var(--admin-text-secondary)] mx-auto mb-2" weight="light" />
+      <h3 className="font-bold text-xs text-[var(--admin-text-primary)] m-0">{title}</h3>
+      <p className="text-xs text-[var(--admin-text-secondary)] max-w-sm mx-auto mt-1 m-0">{description}</p>
       {actionLabel && onActionClick && (
         <button
           type="button"
@@ -550,18 +551,18 @@ export function AdminQuickAction({
   const ActionContent = (
     <div className="flex items-center justify-between gap-3 p-3">
       <div className="flex items-center gap-3">
-        <div className="p-2 bg-[#f4f4f0] text-[#000000] rounded-lg shrink-0">{icon}</div>
+        <div className="p-2.5 bg-[#ccfbf1] text-[var(--admin-primary-accent)] rounded-lg shrink-0 flex items-center justify-center">{icon}</div>
         <div>
-          <h4 className="font-semibold text-xs text-[#000000] m-0">{title}</h4>
-          <p className="text-[0.68rem] text-[#71717a] m-0 mt-0.5">{description}</p>
+          <h4 className="font-semibold text-xs text-[var(--admin-text-primary)] m-0">{title}</h4>
+          <p className="text-[var(--admin-font-xs)] text-[var(--admin-text-secondary)] m-0 mt-0.5">{description}</p>
         </div>
       </div>
-      <ArrowRight size={14} className="text-[#71717a] shrink-0" weight="bold" />
+      <ArrowRight size={14} className="text-[var(--admin-primary-accent)] shrink-0" weight="bold" />
     </div>
   );
 
   return (
-    <AdminCard className="p-0 overflow-hidden hover:bg-[#fbfbf5] transition-colors">
+    <AdminCard className="p-0 overflow-hidden hover:border-[#14b8a6] hover:bg-[#f0fdfa] transition-all">
       {url ? (
         <Link to={url} className="block">
           {ActionContent}
@@ -592,15 +593,15 @@ export function AdminAttentionItem({
   badgeType = 'warning'
 }: AdminAttentionItemProps) {
   return (
-    <Link to={actionUrl} className="flex items-center justify-between p-2.5 rounded-lg border border-[#e4e4e7] hover:bg-[#fbfbf5] text-xs transition-colors">
+    <Link to={actionUrl} className="flex items-center justify-between p-3 rounded-lg border border-[var(--admin-border)] bg-[var(--admin-surface)] hover:border-[#14b8a6] hover:bg-[#f0fdfa] text-xs transition-all">
       <div className="flex items-center gap-2">
-        <span className="font-semibold text-[#000000]">{label}</span>
+        <span className="font-semibold text-[var(--admin-text-primary)]">{label}</span>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         {badgeText && (
           <AdminStatusBadge status={badgeText} type={badgeType} />
         )}
-        <ArrowRight className="text-[#71717a]" size={14} weight="bold" />
+        <ArrowRight className="text-[var(--admin-text-secondary)]" size={14} weight="bold" />
       </div>
     </Link>
   );
@@ -611,7 +612,7 @@ export function AdminAttentionItem({
 // ==========================================
 export function PreviewModeBadge() {
   return (
-    <span className="bg-[#f4f4f0] text-[#71717a] text-[0.65rem] font-mono font-semibold px-2 py-0.5 rounded uppercase" title="Local Preview Mode">
+    <span className="bg-[var(--admin-surface-subtle)] text-[var(--admin-text-secondary)] text-[var(--admin-font-xs)] font-mono font-semibold px-2 py-0.5 rounded uppercase" title="Local Preview Mode">
       Preview Mode
     </span>
   );

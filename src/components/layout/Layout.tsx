@@ -46,7 +46,7 @@ export default function Layout({
 
   if (isAdminRoute) {
     return (
-      <div className="admin-standalone-wrapper min-h-screen bg-[#F9F8F3]">
+      <div className="admin-standalone-wrapper min-h-screen bg-[#fafafa]">
         <main id="main-content" className="w-full">
           {children}
         </main>

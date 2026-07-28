@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton, AdminStatusBadge } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminSkeleton, AdminStatusBadge, AdminTextarea } from '../components/admin/AdminPrimitives';
 import { CaretLeft } from '@phosphor-icons/react';
 
 export default function AdminExceptionDetail() {
@@ -188,16 +188,14 @@ export default function AdminExceptionDetail() {
             </div>
           ) : (
             <div className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Mandatory Resolution Note *</label>
-                <textarea
-                  rows={2}
-                  placeholder="State investigation findings or resolution reason..."
-                  value={resolutionNote}
-                  onChange={(e) => setResolutionNote(e.target.value)}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminTextarea
+                label="Mandatory Resolution Note"
+                required
+                rows={2}
+                placeholder="State investigation findings or resolution reason..."
+                value={resolutionNote}
+                onChange={(e) => setResolutionNote(e.target.value)}
+              />
 
               <div className="flex flex-wrap items-center gap-2">
                 <button

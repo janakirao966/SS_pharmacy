@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton, AdminStatusBadge } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminStatusBadge, AdminInput, AdminSelect, AdminSkeleton } from '../components/admin/AdminPrimitives';
 import { CaretLeft, Check, X, ClipboardText, CreditCard } from '@phosphor-icons/react';
 
 export default function AdminReturnDetail() {
@@ -427,37 +427,33 @@ export default function AdminReturnDetail() {
                 <div key={it.id} className="space-y-2 p-3 bg-[#fbfbf5] rounded-lg border border-[#e4e4e7]">
                   <span className="font-semibold text-[#000000] block">{it.products?.name} (Qty: {it.quantity})</span>
                   <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold">Condition</label>
-                      <select
-                        value={itemDispositions[it.id]?.condition}
-                        onChange={(e) => setItemDispositions({
-                          ...itemDispositions,
-                          [it.id]: { ...itemDispositions[it.id], condition: e.target.value }
-                        })}
-                        className="w-full p-1.5 border border-[#e4e4e7] rounded text-xs bg-[#ffffff]"
-                      >
-                        <option value="UNOPENED">Unopened</option>
-                        <option value="DAMAGED_TRANSIT">Damaged in Transit</option>
-                        <option value="EXPIRED">Expired</option>
-                        <option value="TAMPERED">Tampered</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold font-sans">Disposition</label>
-                      <select
-                        value={itemDispositions[it.id]?.disposition}
-                        onChange={(e) => setItemDispositions({
-                          ...itemDispositions,
-                          [it.id]: { ...itemDispositions[it.id], disposition: e.target.value }
-                        })}
-                        className="w-full p-1.5 border border-[#e4e4e7] rounded text-xs bg-[#ffffff]"
-                      >
-                        <option value="restock">Restock to Inventory</option>
-                        <option value="quarantine">Quarantine Batch</option>
-                        <option value="scrap">Scrap / Destroy</option>
-                      </select>
-                    </div>
+                    <AdminSelect
+                      label="Condition"
+                      value={itemDispositions[it.id]?.condition}
+                      onChange={(e) => setItemDispositions({
+                        ...itemDispositions,
+                        [it.id]: { ...itemDispositions[it.id], condition: e.target.value }
+                      })}
+                      options={[
+                        { label: "Unopened", value: "UNOPENED" },
+                        { label: "Damaged in Transit", value: "DAMAGED_TRANSIT" },
+                        { label: "Expired", value: "EXPIRED" },
+                        { label: "Tampered", value: "TAMPERED" }
+                      ]}
+                    />
+                    <AdminSelect
+                      label="Disposition"
+                      value={itemDispositions[it.id]?.disposition}
+                      onChange={(e) => setItemDispositions({
+                        ...itemDispositions,
+                        [it.id]: { ...itemDispositions[it.id], disposition: e.target.value }
+                      })}
+                      options={[
+                        { label: "Restock to Inventory", value: "restock" },
+                        { label: "Quarantine Batch", value: "quarantine" },
+                        { label: "Scrap / Destroy", value: "scrap" }
+                      ]}
+                    />
                   </div>
                 </div>
               ))}
@@ -488,77 +484,64 @@ export default function AdminReturnDetail() {
           <div className="bg-[#ffffff] border border-[#e4e4e7] rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl">
             <h3 className="font-bold text-sm text-[#000000]">Record COD Refund Payout</h3>
             <form onSubmit={handleSaveCodPayout} className="space-y-3 text-xs">
-              <div>
-                <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">Payout Method</label>
-                <select
-                  value={payoutMethod}
-                  onChange={(e) => setPayoutMethod(e.target.value as any)}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg bg-[#ffffff]"
-                >
-                  <option value="BANK_TRANSFER">NEFT / RTGS Bank Transfer</option>
-                  <option value="UPI">UPI Instant Payout</option>
-                </select>
-              </div>
+              <AdminSelect
+                label="Payout Method"
+                value={payoutMethod}
+                onChange={(e) => setPayoutMethod(e.target.value as any)}
+                options={[
+                  { label: "NEFT / RTGS Bank Transfer", value: "BANK_TRANSFER" },
+                  { label: "UPI Instant Payout", value: "UPI" }
+                ]}
+              />
 
-              <div>
-                <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">Beneficiary Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Customer Full Name"
-                  value={beneficiaryName}
-                  onChange={(e) => setBeneficiaryName(e.target.value)}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminInput
+                label="Beneficiary Name"
+                type="text"
+                placeholder="e.g. Customer Full Name"
+                value={beneficiaryName}
+                onChange={(e) => setBeneficiaryName(e.target.value)}
+              />
 
               {payoutMethod === 'BANK_TRANSFER' ? (
                 <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">Account Last 4 Digits</label>
-                    <input
-                      type="text"
-                      maxLength={4}
-                      placeholder="e.g. 5678"
-                      value={accountLast4}
-                      onChange={(e) => setAccountLast4(e.target.value)}
-                      className="w-full p-2 border border-[#e4e4e7] rounded-lg font-mono text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">IFSC Code</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. SBIN0001234"
-                      value={ifscCode}
-                      onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
-                      className="w-full p-2 border border-[#e4e4e7] rounded-lg font-mono text-xs uppercase"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">UPI VPA ID</label>
-                  <input
+                  <AdminInput
+                    label="Account Last 4 Digits"
                     type="text"
-                    placeholder="e.g. customer@upi"
-                    value={upiId}
-                    onChange={(e) => setUpiId(e.target.value)}
-                    className="w-full p-2 border border-[#e4e4e7] rounded-lg font-mono text-xs"
+                    maxLength={4}
+                    placeholder="e.g. 5678"
+                    value={accountLast4}
+                    onChange={(e) => setAccountLast4(e.target.value)}
+                    className="font-mono"
+                  />
+                  <AdminInput
+                    label="IFSC Code"
+                    type="text"
+                    placeholder="e.g. SBIN0001234"
+                    value={ifscCode}
+                    onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
+                    className="font-mono uppercase"
                   />
                 </div>
+              ) : (
+                <AdminInput
+                  label="UPI VPA ID"
+                  type="text"
+                  placeholder="e.g. customer@upi"
+                  value={upiId}
+                  onChange={(e) => setUpiId(e.target.value)}
+                  className="font-mono"
+                />
               )}
 
-              <div>
-                <label className="text-[0.68rem] text-[#71717a] block uppercase font-semibold mb-1">Bank Reference / UTR Number *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. UTR123456789"
-                  value={referenceNumber}
-                  onChange={(e) => setReferenceNumber(e.target.value)}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg font-mono text-xs"
-                />
-              </div>
+              <AdminInput
+                label="Bank Reference / UTR Number *"
+                type="text"
+                required
+                placeholder="e.g. UTR123456789"
+                value={referenceNumber}
+                onChange={(e) => setReferenceNumber(e.target.value)}
+                className="font-mono"
+              />
 
               <div className="flex justify-end gap-2 pt-2">
                 <button

@@ -4,7 +4,7 @@ import { products as initialProducts } from '../data/products';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
 import { supabase } from '../lib/supabase';
-import { AdminCard } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminInput, AdminTextarea } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { CaretLeft, FloppyDisk } from '@phosphor-icons/react';
 
@@ -244,59 +244,47 @@ export default function AdminProductForm() {
               <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">1. Basic Product Identity</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Formulation Slug / ID *</label>
-                <input
-                  type="text"
-                  name="id"
-                  value={formData.id}
-                  onChange={handleInputChange}
-                  disabled={isEditMode}
-                  className={`w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000] ${errors.id ? '!border-[#dc2626]' : ''}`}
-                  placeholder="e.g. moon-light-cream"
-                />
-                {errors.id && <span className="text-[0.7rem] font-semibold text-[#dc2626] mt-0.5 block">{errors.id}</span>}
-                <span className="text-[0.68rem] text-[#71717a] mt-0.5 block">Unique URL identifier. Cannot be edited after creation.</span>
-              </div>
+              <AdminInput
+                label="Formulation Slug / ID *"
+                type="text"
+                name="id"
+                value={formData.id}
+                onChange={handleInputChange}
+                disabled={isEditMode}
+                placeholder="e.g. moon-light-cream"
+                error={errors.id}
+              />
+              <span className="text-[0.68rem] text-[#71717a] mt-0.5 block">Unique URL identifier. Cannot be edited after creation.</span>
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Formulation Title *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000] ${errors.name ? '!border-[#dc2626]' : ''}`}
-                  placeholder="e.g. Moon Light Cream"
-                />
-                {errors.name && <span className="text-[0.7rem] font-semibold text-[#dc2626] mt-0.5 block">{errors.name}</span>}
-              </div>
+              <AdminInput
+                label="Formulation Title *"
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="e.g. Moon Light Cream"
+                error={errors.name}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Ayurvedic Category *</label>
-                <input
-                  type="text"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000] ${errors.category ? '!border-[#dc2626]' : ''}`}
-                  placeholder="e.g. Ayurvedic Skin Care Cream"
-                />
-                {errors.category && <span className="text-[0.7rem] font-semibold text-[#dc2626] mt-0.5 block">{errors.category}</span>}
-              </div>
+              <AdminInput
+                label="Ayurvedic Category *"
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                placeholder="e.g. Ayurvedic Skin Care Cream"
+                error={errors.category}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Pack Size (Volume / Count) *</label>
-                <input
-                  type="text"
-                  name="packSize"
-                  value={formData.packSize}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000] ${errors.packSize ? '!border-[#dc2626]' : ''}`}
-                  placeholder="e.g. 50 gms / 60 Pills"
-                />
-                {errors.packSize && <span className="text-[0.7rem] font-semibold text-[#dc2626] mt-0.5 block">{errors.packSize}</span>}
-              </div>
+              <AdminInput
+                label="Pack Size (Volume / Count) *"
+                type="text"
+                name="packSize"
+                value={formData.packSize}
+                onChange={handleInputChange}
+                placeholder="e.g. 50 gms / 60 Pills"
+                error={errors.packSize}
+              />
             </div>
           </AdminCard>
 
@@ -306,55 +294,46 @@ export default function AdminProductForm() {
               <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">2. Pricing & Technical Specifications</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Maximum Retail Price (INR MRP) *</label>
-                <input
-                  type="text"
-                  name="mrp"
-                  value={formData.mrp}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000] ${errors.mrp ? '!border-[#dc2626]' : ''}`}
-                  placeholder="e.g. 2999"
-                />
-                {errors.mrp && <span className="text-[0.7rem] font-semibold text-[#dc2626] mt-0.5 block">{errors.mrp}</span>}
-              </div>
+              <AdminInput
+                label="Maximum Retail Price (INR MRP) *"
+                type="text"
+                name="mrp"
+                value={formData.mrp}
+                onChange={handleInputChange}
+                className="font-mono"
+                placeholder="e.g. 2999"
+                error={errors.mrp}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Selling Price (INR) *</label>
-                <input
-                  type="text"
-                  name="sellingPrice"
-                  value={formData.sellingPrice}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000] ${errors.sellingPrice ? '!border-[#dc2626]' : ''}`}
-                  placeholder="e.g. 2499"
-                />
-                {errors.sellingPrice && <span className="text-[0.7rem] font-semibold text-[#dc2626] mt-0.5 block">{errors.sellingPrice}</span>}
-              </div>
+              <AdminInput
+                label="Selling Price (INR) *"
+                type="text"
+                name="sellingPrice"
+                value={formData.sellingPrice}
+                onChange={handleInputChange}
+                className="font-mono"
+                placeholder="e.g. 2499"
+                error={errors.sellingPrice}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Shelf Life Duration</label>
-                <input
-                  type="text"
-                  name="shelfLife"
-                  value={formData.shelfLife}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                  placeholder="e.g. 36 Months from Mfg Date"
-                />
-              </div>
+              <AdminInput
+                label="Shelf Life Duration"
+                type="text"
+                name="shelfLife"
+                value={formData.shelfLife}
+                onChange={handleInputChange}
+                placeholder="e.g. 36 Months from Mfg Date"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Product Media Image URL</label>
-                <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs font-mono focus:outline-none focus:border-[#000000]"
-                  placeholder="products/moonlight/hero.webp"
-                />
-              </div>
+              <AdminInput
+                label="Product Media Image URL"
+                type="text"
+                name="image"
+                value={formData.image}
+                onChange={handleInputChange}
+                className="font-mono"
+                placeholder="products/moonlight/hero.webp"
+              />
             </div>
 
             <div className="flex items-center gap-3 bg-[#f8fafc] border border-[#e2e8f0] p-3.5 rounded-lg">
@@ -375,17 +354,14 @@ export default function AdminProductForm() {
               </label>
             </div>
 
-            <div className="text-xs">
-              <label className="block font-semibold text-[#000000] mb-1">Ayurvedic Composition Details</label>
-              <textarea
-                rows={3}
-                name="composition"
-                value={formData.composition}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                placeholder="e.g. Aloe Vera, Turmeric, Chandan, Kesar Extracts..."
-              />
-            </div>
+            <AdminTextarea
+              label="Ayurvedic Composition Details"
+              rows={3}
+              name="composition"
+              value={formData.composition}
+              onChange={handleInputChange}
+              placeholder="e.g. Aloe Vera, Turmeric, Chandan, Kesar Extracts..."
+            />
           </AdminCard>
 
           {/* Section 3: Indications & Directions */}
@@ -394,41 +370,32 @@ export default function AdminProductForm() {
               <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">3. Indications & Guidance</h3>
             </div>
             <div className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Key Indications & Benefits (Comma-separated)</label>
-                <input
-                  type="text"
-                  name="benefits"
-                  value={formData.benefits}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                  placeholder="Moisturizes skin, Enhances glow, Soothes inflammation"
-                />
-              </div>
+              <AdminInput
+                label="Key Indications & Benefits (Comma-separated)"
+                type="text"
+                name="benefits"
+                value={formData.benefits}
+                onChange={handleInputChange}
+                placeholder="Moisturizes skin, Enhances glow, Soothes inflammation"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Directions for Use / Dosage</label>
-                <textarea
-                  rows={2}
-                  name="usage"
-                  value={formData.usage}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                  placeholder="Apply gently over affected skin areas twice daily."
-                />
-              </div>
+              <AdminTextarea
+                label="Directions for Use / Dosage"
+                rows={2}
+                name="usage"
+                value={formData.usage}
+                onChange={handleInputChange}
+                placeholder="Apply gently over affected skin areas twice daily."
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Safety & Storage Precaution Note</label>
-                <input
-                  type="text"
-                  name="safetyNote"
-                  value={formData.safetyNote}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                  placeholder="For external application only. Store in a cool, dry place."
-                />
-              </div>
+              <AdminInput
+                label="Safety & Storage Precaution Note"
+                type="text"
+                name="safetyNote"
+                value={formData.safetyNote}
+                onChange={handleInputChange}
+                placeholder="For external application only. Store in a cool, dry place."
+              />
             </div>
           </AdminCard>
 

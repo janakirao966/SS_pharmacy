@@ -3,8 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminSkeleton, AdminStatusBadge } from '../components/admin/AdminPrimitives';
-import { CaretLeft, ShieldWarning, PaperPlane } from '@phosphor-icons/react';
+import { AdminCard, AdminSkeleton, AdminStatusBadge, AdminTextarea, AdminSelect } from '../components/admin/AdminPrimitives';
+import { CaretLeft, PaperPlane, ShieldWarning } from '@phosphor-icons/react';
 
 export default function AdminSupportDetail() {
   const { ticketNumber } = useParams<{ ticketNumber: string }>();
@@ -222,29 +222,31 @@ export default function AdminSupportDetail() {
               <p className="text-xs text-[#71717a] m-0">Customer: {ticket?.customer_name} • Email: {ticket?.customer_email || 'N/A'}</p>
             </div>
             <div className="flex items-center gap-2">
-              <select
+              <AdminSelect
                 value={ticket?.priority}
                 onChange={(e) => handleUpdatePriority(e.target.value)}
                 className="py-1.5 px-2.5 text-xs font-semibold rounded-lg border border-[#e4e4e7] bg-[#ffffff] text-[#000000]"
-              >
-                <option value="low">Low Priority</option>
-                <option value="normal">Normal Priority</option>
-                <option value="high">High Priority</option>
-                <option value="urgent">Urgent Priority</option>
-              </select>
+                options={[
+                  { label: "Low Priority", value: "low" },
+                  { label: "Normal Priority", value: "normal" },
+                  { label: "High Priority", value: "high" },
+                  { label: "Urgent Priority", value: "urgent" }
+                ]}
+              />
 
-              <select
+              <AdminSelect
                 value={ticket?.status}
                 onChange={(e) => handleUpdateStatus(e.target.value)}
                 className="py-1.5 px-2.5 text-xs font-semibold rounded-lg border border-[#e4e4e7] bg-[#ffffff] text-[#000000]"
-              >
-                <option value="open">Open</option>
-                <option value="assigned">Assigned</option>
-                <option value="waiting_for_customer">Waiting for Customer</option>
-                <option value="waiting_for_internal">Waiting for Internal</option>
-                <option value="resolved">Resolved</option>
-                <option value="closed">Closed</option>
-              </select>
+                options={[
+                  { label: "Open", value: "open" },
+                  { label: "Assigned", value: "assigned" },
+                  { label: "Waiting for Customer", value: "waiting_for_customer" },
+                  { label: "Waiting for Internal", value: "waiting_for_internal" },
+                  { label: "Resolved", value: "resolved" },
+                  { label: "Closed", value: "closed" }
+                ]}
+              />
             </div>
           </div>
 
@@ -340,25 +342,21 @@ export default function AdminSupportDetail() {
 
               <form onSubmit={handleSendReply} className="space-y-3 text-xs">
                 {isInternalNote ? (
-                  <div>
-                    <textarea
-                      rows={3}
-                      placeholder="Add an internal operational note (not visible to customer)..."
-                      value={noteText}
-                      onChange={(e) => setNoteText(e.target.value)}
-                      className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs bg-[#fbfbf5] focus:outline-none focus:border-[#000000]"
-                    />
-                  </div>
+                  <AdminTextarea
+                    rows={3}
+                    placeholder="Add an internal operational note (not visible to customer)..."
+                    value={noteText}
+                    onChange={(e) => setNoteText(e.target.value)}
+                    className="bg-[#fbfbf5] focus:outline-none focus:border-[#000000]"
+                  />
                 ) : (
-                  <div>
-                    <textarea
-                      rows={4}
-                      placeholder="Type response to customer..."
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs focus:outline-none focus:border-[#000000]"
-                    />
-                  </div>
+                  <AdminTextarea
+                    rows={4}
+                    placeholder="Type response to customer..."
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    className="focus:outline-none focus:border-[#000000]"
+                  />
                 )}
 
                 <div className="flex justify-end">

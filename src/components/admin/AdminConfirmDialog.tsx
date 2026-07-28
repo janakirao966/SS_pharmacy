@@ -75,7 +75,7 @@ export function AdminConfirmDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="admin-app">
+    <>
       <div className="admin-confirm-overlay" role="presentation" onClick={onCancel}>
         <div
           ref={dialogRef}
@@ -128,6 +128,6 @@ export function AdminConfirmDialog({
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

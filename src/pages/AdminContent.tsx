@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminInput, AdminTextarea } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { FloppyDisk } from '@phosphor-icons/react';
 
@@ -64,39 +64,32 @@ export default function AdminContent() {
             </div>
 
             <div className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Hero Title (H1 Header) *</label>
-                <input
-                  type="text"
-                  name="heroTitle"
-                  value={homepage.heroTitle}
-                  onChange={handleInputChange}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-semibold text-[#000000]"
-                />
-              </div>
+              <AdminInput
+                label="Hero Title (H1 Header) *"
+                type="text"
+                name="heroTitle"
+                value={homepage.heroTitle}
+                onChange={handleInputChange}
+                className="font-semibold text-[#000000]"
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-semibold text-[#000000] mb-1">Hero Subtitle Eyebrow</label>
-                  <input
-                    type="text"
-                    name="heroSubtitle"
-                    value={homepage.heroSubtitle}
-                    onChange={handleInputChange}
-                    className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono uppercase"
-                  />
-                </div>
+                <AdminInput
+                  label="Hero Subtitle Eyebrow"
+                  type="text"
+                  name="heroSubtitle"
+                  value={homepage.heroSubtitle}
+                  onChange={handleInputChange}
+                  className="font-mono uppercase"
+                />
                 
-                <div>
-                  <label className="block font-semibold text-[#000000] mb-1">Hero Description Paragraph</label>
-                  <textarea
-                    rows={2}
-                    name="heroDescription"
-                    value={homepage.heroDescription}
-                    onChange={handleInputChange}
-                    className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                  />
-                </div>
+                <AdminTextarea
+                  label="Hero Description Paragraph"
+                  rows={2}
+                  name="heroDescription"
+                  value={homepage.heroDescription}
+                  onChange={handleInputChange}
+                />
               </div>
             </div>
 
@@ -106,27 +99,23 @@ export default function AdminContent() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Trust Card Title</label>
-                <input
-                  type="text"
-                  name="trustHeading"
-                  value={homepage.trustHeading}
-                  onChange={handleInputChange}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-semibold text-[#000000]"
-                />
-              </div>
+              <AdminInput
+                label="Trust Card Title"
+                type="text"
+                name="trustHeading"
+                value={homepage.trustHeading}
+                onChange={handleInputChange}
+                className="font-semibold text-[#000000]"
+              />
               
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Licence Statement</label>
-                <textarea
-                  rows={2}
-                  name="trustText"
-                  value={homepage.trustText}
-                  onChange={handleInputChange}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminTextarea
+                label="Licence Statement"
+                rows={2}
+                name="trustText"
+                value={homepage.trustText}
+                onChange={handleInputChange}
+                className="font-mono"
+              />
             </div>
 
             <div className="flex justify-end pt-3 border-t border-[#f4f4f0]">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminEmptyState } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminEmptyState, AdminInput, AdminSelect } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { Plus, Trash, Copy, Image } from '@phosphor-icons/react';
 
@@ -193,30 +193,26 @@ export default function AdminMedia() {
             </div>
 
             <form onSubmit={handleUploadSubmit} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Filename / Asset Identifier *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. pain_cream_hero_banner.webp"
-                  value={newFilename}
-                  onChange={(e) => setNewFilename(e.target.value)}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminInput
+                label="Filename / Asset Identifier *"
+                type="text"
+                placeholder="e.g. pain_cream_hero_banner.webp"
+                value={newFilename}
+                onChange={(e) => setNewFilename(e.target.value)}
+                className="font-mono"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Asset Category</label>
-                <select
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs bg-[#ffffff]"
-                >
-                  <option value="Product Image">Product Image</option>
-                  <option value="Hero Slide">Hero Slide</option>
-                  <option value="Branding Logo">Branding Logo</option>
-                  <option value="Banner">Banner</option>
-                </select>
-              </div>
+              <AdminSelect
+                label="Asset Category"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                options={[
+                  { label: "Product Image", value: "Product Image" },
+                  { label: "Hero Slide", value: "Hero Slide" },
+                  { label: "Branding Logo", value: "Branding Logo" },
+                  { label: "Banner", value: "Banner" }
+                ]}
+              />
 
               {/* Upload Dropzone */}
               <div className="p-4 border-2 border-dashed border-[#e4e4e7] rounded-xl text-center bg-[#fbfbf5] space-y-1">

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase, type DatabaseTaxSettings } from '../lib/supabase';
 import { useToast } from '../context/ToastContext';
 import { AdminLayout } from '../components/admin/AdminLayout';
-import { AdminCard, AdminStatusBadge } from '../components/admin/AdminPrimitives';
+import { AdminCard, AdminStatusBadge, AdminInput, AdminSelect, AdminTextarea } from '../components/admin/AdminPrimitives';
 import { AdminConfirmDialog } from '../components/admin/AdminConfirmDialog';
 import { FloppyDisk, ShieldCheck, Warning, Receipt } from '@phosphor-icons/react';
 
@@ -167,26 +167,20 @@ export default function AdminSettings() {
               <h3 className="text-xs font-semibold uppercase tracking-wider text-[#71717a]">1. Business Identity & Ayurvedic Licensing</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Trade Name / Brand</label>
-                <input
-                  type="text"
-                  value={taxSettings.trade_name || 'S.S. PHARMACY'}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, trade_name: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminInput
+                label="Trade Name / Brand"
+                type="text"
+                value={taxSettings.trade_name || 'S.S. PHARMACY'}
+                onChange={(e) => setTaxSettings({ ...taxSettings, trade_name: e.target.value })}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Legal Registered Entity Name *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. S.S. PHARMACY Ayurvedic Pvt Ltd"
-                  value={taxSettings.legal_business_name || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, legal_business_name: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminInput
+                label="Legal Registered Entity Name *"
+                type="text"
+                placeholder="e.g. S.S. PHARMACY Ayurvedic Pvt Ltd"
+                value={taxSettings.legal_business_name || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, legal_business_name: e.target.value })}
+              />
             </div>
 
             <div className="p-3 bg-[#fbfbf5] border border-[#e4e4e7] rounded-lg text-xs font-mono">
@@ -202,77 +196,65 @@ export default function AdminSettings() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">GST Registration Mode *</label>
-                <select
-                  value={taxSettings.tax_mode}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, tax_mode: e.target.value as any })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs bg-[#ffffff]"
-                >
-                  <option value="UNCONFIGURED">UNCONFIGURED (Blocked)</option>
-                  <option value="GST_REGISTERED">GST Registered (Tax Invoice)</option>
-                  <option value="COMPOSITION">Composition Scheme (Bill of Supply)</option>
-                  <option value="NON_GST">Non-GST / Exempt (Bill of Supply)</option>
-                </select>
-              </div>
+              <AdminSelect
+                label="GST Registration Mode *"
+                value={taxSettings.tax_mode}
+                onChange={(e) => setTaxSettings({ ...taxSettings, tax_mode: e.target.value as any })}
+                options={[
+                  { value: 'UNCONFIGURED', label: 'UNCONFIGURED (Blocked)' },
+                  { value: 'GST_REGISTERED', label: 'GST Registered (Tax Invoice)' },
+                  { value: 'COMPOSITION', label: 'Composition Scheme (Bill of Supply)' },
+                  { value: 'NON_GST', label: 'Non-GST / Exempt (Bill of Supply)' },
+                ]}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Pricing Tax Mode</label>
-                <select
-                  value={taxSettings.pricing_tax_mode || 'TAX_INCLUSIVE'}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, pricing_tax_mode: e.target.value as any })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs bg-[#ffffff]"
-                >
-                  <option value="TAX_INCLUSIVE">TAX INCLUSIVE (MRP includes GST)</option>
-                  <option value="TAX_EXCLUSIVE">TAX EXCLUSIVE (GST added on top)</option>
-                </select>
-              </div>
+              <AdminSelect
+                label="Pricing Tax Mode"
+                value={taxSettings.pricing_tax_mode || 'TAX_INCLUSIVE'}
+                onChange={(e) => setTaxSettings({ ...taxSettings, pricing_tax_mode: e.target.value as any })}
+                options={[
+                  { value: 'TAX_INCLUSIVE', label: 'TAX INCLUSIVE (MRP includes GST)' },
+                  { value: 'TAX_EXCLUSIVE', label: 'TAX EXCLUSIVE (GST added on top)' },
+                ]}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Supplier GSTIN (15 Digits)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 37AAAAA0000A1Z5"
-                  value={taxSettings.gstin || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, gstin: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono uppercase"
-                />
-              </div>
+              <AdminInput
+                label="Supplier GSTIN (15 Digits)"
+                type="text"
+                placeholder="e.g. 37AAAAA0000A1Z5"
+                value={taxSettings.gstin || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, gstin: e.target.value })}
+                className="font-mono uppercase"
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Default HSN Code</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 30049011"
-                  value={taxSettings.default_hsn_code || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, default_hsn_code: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminInput
+                label="Default HSN Code"
+                type="text"
+                placeholder="e.g. 30049011"
+                value={taxSettings.default_hsn_code || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, default_hsn_code: e.target.value })}
+                className="font-mono"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Default Product GST Rate (%)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={taxSettings.default_gst_rate}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, default_gst_rate: parseFloat(e.target.value) || 0 })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminInput
+                label="Default Product GST Rate (%)"
+                type="number"
+                step="0.01"
+                value={taxSettings.default_gst_rate}
+                onChange={(e) => setTaxSettings({ ...taxSettings, default_gst_rate: parseFloat(e.target.value) || 0 })}
+                className="font-mono"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Delivery Charge GST Rate (%)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={taxSettings.delivery_gst_rate}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, delivery_gst_rate: parseFloat(e.target.value) || 0 })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminInput
+                label="Delivery Charge GST Rate (%)"
+                type="number"
+                step="0.01"
+                value={taxSettings.delivery_gst_rate}
+                onChange={(e) => setTaxSettings({ ...taxSettings, delivery_gst_rate: parseFloat(e.target.value) || 0 })}
+                className="font-mono"
+              />
             </div>
           </AdminCard>
 
@@ -283,75 +265,59 @@ export default function AdminSettings() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Address Line 1 *</label>
-                <input
-                  type="text"
-                  placeholder="D. No. 1-2-211, Prakash Nagar"
-                  value={taxSettings.registered_address_line1 || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, registered_address_line1: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminInput
+                label="Address Line 1 *"
+                type="text"
+                placeholder="D. No. 1-2-211, Prakash Nagar"
+                value={taxSettings.registered_address_line1 || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, registered_address_line1: e.target.value })}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Address Line 2</label>
-                <input
-                  type="text"
-                  placeholder="Narsipatnam, Anakapalli Dist"
-                  value={taxSettings.registered_address_line2 || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, registered_address_line2: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminInput
+                label="Address Line 2"
+                type="text"
+                placeholder="Narsipatnam, Anakapalli Dist"
+                value={taxSettings.registered_address_line2 || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, registered_address_line2: e.target.value })}
+              />
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">City *</label>
-                <input
-                  type="text"
-                  placeholder="Narsipatnam"
-                  value={taxSettings.city || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, city: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminInput
+                label="City *"
+                type="text"
+                placeholder="Narsipatnam"
+                value={taxSettings.city || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, city: e.target.value })}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">State *</label>
-                <input
-                  type="text"
-                  placeholder="Andhra Pradesh"
-                  value={taxSettings.state || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, state: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
-                />
-              </div>
+              <AdminInput
+                label="State *"
+                type="text"
+                placeholder="Andhra Pradesh"
+                value={taxSettings.state || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, state: e.target.value })}
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">State Code (2 Digits) *</label>
-                <input
-                  type="text"
-                  placeholder="37"
-                  maxLength={2}
-                  value={taxSettings.state_code || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, state_code: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminInput
+                label="State Code (2 Digits) *"
+                type="text"
+                placeholder="37"
+                maxLength={2}
+                value={taxSettings.state_code || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, state_code: e.target.value })}
+                className="font-mono"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Pincode *</label>
-                <input
-                  type="text"
-                  placeholder="531116"
-                  maxLength={6}
-                  value={taxSettings.postal_code || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, postal_code: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminInput
+                label="Pincode *"
+                type="text"
+                placeholder="531116"
+                maxLength={6}
+                value={taxSettings.postal_code || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, postal_code: e.target.value })}
+                className="font-mono"
+              />
             </div>
           </AdminCard>
 
@@ -362,56 +328,45 @@ export default function AdminSettings() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Invoice Prefix</label>
-                <input
-                  type="text"
-                  value={taxSettings.invoice_prefix || 'SSP'}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, invoice_prefix: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminInput
+                label="Invoice Prefix"
+                type="text"
+                value={taxSettings.invoice_prefix || 'SSP'}
+                onChange={(e) => setTaxSettings({ ...taxSettings, invoice_prefix: e.target.value })}
+                className="font-mono"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Credit Note Prefix</label>
-                <input
-                  type="text"
-                  value={taxSettings.credit_note_prefix || 'CN'}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, credit_note_prefix: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminInput
+                label="Credit Note Prefix"
+                type="text"
+                value={taxSettings.credit_note_prefix || 'CN'}
+                onChange={(e) => setTaxSettings({ ...taxSettings, credit_note_prefix: e.target.value })}
+                className="font-mono"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Support Email</label>
-                <input
-                  type="email"
-                  value={taxSettings.support_email || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, support_email: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
+              <AdminInput
+                label="Support Email"
+                type="email"
+                value={taxSettings.support_email || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, support_email: e.target.value })}
+                className="font-mono"
+              />
 
-              <div>
-                <label className="block font-semibold text-[#000000] mb-1">Support Phone</label>
-                <input
-                  type="text"
-                  value={taxSettings.support_phone || ''}
-                  onChange={(e) => setTaxSettings({ ...taxSettings, support_phone: e.target.value })}
-                  className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs font-mono"
-                />
-              </div>
-            </div>
-
-            <div className="text-xs">
-              <label className="block font-semibold text-[#000000] mb-1">Invoice Terms & Conditions</label>
-              <textarea
-                rows={2}
-                value={taxSettings.invoice_terms || ''}
-                onChange={(e) => setTaxSettings({ ...taxSettings, invoice_terms: e.target.value })}
-                className="w-full p-2.5 border border-[#e4e4e7] rounded-lg text-xs"
+              <AdminInput
+                label="Support Phone"
+                type="text"
+                value={taxSettings.support_phone || ''}
+                onChange={(e) => setTaxSettings({ ...taxSettings, support_phone: e.target.value })}
+                className="font-mono"
               />
             </div>
+
+            <AdminTextarea
+              label="Invoice Terms & Conditions"
+              rows={2}
+              value={taxSettings.invoice_terms || ''}
+              onChange={(e) => setTaxSettings({ ...taxSettings, invoice_terms: e.target.value })}
+            />
           </AdminCard>
 
           {/* Form Action Controls */}
